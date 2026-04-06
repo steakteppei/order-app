@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ST Order">
+<title>Steak Teppei — Order App</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #f9f8f6;
+    --card: #ffffff;
+    --border: rgba(0,0,0,0.09);
+    --border-md: rgba(0,0,0,0.15);
+    --text: #1a1a1a;
+    --text-sub: #666;
+    --text-hint: #999;
+    --radius: 14px;
+    --radius-sm: 9px;
+    --blue: #1a56db;
+    --blue-light: #ebf1ff;
+    --green-line: #06c755;
+    --green-sms: #1c8a3a;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --amber-border: #fbbf24;
+    --red-soft: #fff5f5;
+  }
+  html, body { height: 100%; background: var(--bg); font-family: -apple-system, 'SF Pro Text', sans-serif; color: var(--text); }
+  body { padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0); }
+
+  /* APP SHELL */
+  .app { max-width: 480px; margin: 0 auto; padding: 16px 14px 32px; }
+
+  /* HEADER */
+  .header { text-align: center; margin-bottom: 18px; padding-top: 8px; }
+  .header-logo { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 4px; }
+  .header h1 { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .header-sub { font-size: 11px; color: var(--text-hint); margin-top: 3px; line-height: 1.5; }
+
+  /* SECTION */
+  .section { margin-bottom: 12px; }
+  .card { background: var(--card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 14px; }
+  .slabel { font-size: 10px; color: var(--text-hint); margin-bottom: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* VENDOR GRID */
+  .vendor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .vbtn { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 9px; cursor: pointer; text-align: left; transition: border-color 0.15s; }
+  .vbtn:active { opacity: 0.75; }
+  .vbtn.selected { border: 1.5px solid var(--blue); background: var(--blue-light); }
+  .vbtn .vn { font-size: 10.5px; font-weight: 600; color: var(--text); line-height: 1.35; }
+  .vbtn .vc { font-size: 9.5px; color: var(--text-hint); margin-top: 2px; }
+  .vbtn .vm { font-size: 9px; margin-top: 4px; font-weight: 600; }
+  .vm-line  { color: var(--green-line); }
+  .vm-sms   { color: var(--green-sms); }
+  .vm-email { color: var(--blue); }
+
+  /* FLEX TOGGLE */
+  .flex-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 10px 12px; background: var(--amber-light); border: 0.5px solid var(--amber-border); border-radius: var(--radius-sm); }
+  .flex-toggle-label { font-size: 11px; color: #92400e; line-height: 1.5; }
+  .flex-toggle-label strong { display: block; font-weight: 600; font-size: 11.5px; }
+  .toggle-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 10px; }
+  .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top:0;left:0;right:0;bottom:0; background: #d1d5db; border-radius: 22px; transition: .2s; }
+  .slider:before { position: absolute; content:""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  input:checked + .slider { background: var(--amber); }
+  input:checked + .slider:before { transform: translateX(16px); }
+  .toggle-txt { font-size: 10px; font-weight: 700; color: var(--text-hint); min-width: 20px; }
+  .toggle-txt.on { color: var(--amber); }
+
+  /* DEADLINE INFO */
+  .deadline-box { border-radius: var(--radius-sm); padding: 9px 11px; margin-bottom: 12px; font-size: 11px; line-height: 1.6; }
+  .deadline-normal { background: #f3f4f6; color: var(--text-sub); }
+  .deadline-normal strong { color: var(--text); font-weight: 600; }
+  .deadline-tbd { background: #f3f4f6; color: var(--text-hint); font-style: italic; }
+
+  /* CALENDAR */
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cal-nav-btn { background: var(--bg); border: 0.5px solid var(--border); border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+  .cal-nav-btn:active { opacity: 0.6; }
+  .cal-month-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-dh { text-align: center; font-size: 9px; color: var(--text-hint); padding: 3px 0; font-weight: 600; }
+  .cal-cell { text-align: center; padding: 6px 1px; font-size: 12px; cursor: pointer; color: var(--text); border-radius: 50%; -webkit-user-select: none; }
+  .cal-cell:active { background: #e5e7eb; }
+  .cal-cell.empty { cursor: default; }
+  .cal-cell.unavail { color: #d1d5db; cursor: not-allowed; }
+  .cal-cell.unavail:active { background: none; }
+  .cal-cell.selected { background: var(--blue); color: #fff; font-weight: 600; }
+  .cal-cell.today { color: var(--blue); font-weight: 700; }
+  .cal-cell.today.selected { color: #fff; }
+  .cal-cell.flex-ok { background: #fef3c7; }
+  .cal-cell.flex-ok:active { background: #fde68a; }
+  .cal-selected { font-size: 11.5px; margin-top: 8px; color: var(--text-hint); }
+  .cal-selected span { color: var(--blue); font-weight: 600; }
+  .cal-deadline-warn { font-size: 11px; margin-top: 5px; color: var(--amber); font-weight: 600; }
+
+  /* ITEMS */
+  .item-row { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .item-row:last-child { border-bottom: none; }
+  .iname { flex: 1; font-size: 13px; color: var(--text); line-height: 1.35; }
+  .qc { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .qbtn { width: 28px; height: 28px; border: 0.5px solid var(--border-md); border-radius: 8px; background: var(--bg); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--text); }
+  .qbtn:active { background: #e5e7eb; }
+  .qnum { width: 28px; text-align: center; font-size: 14px; font-weight: 700; color: var(--text); }
+  .ulabel { font-size: 10px; color: var(--text-hint); min-width: 22px; }
+  .add-row { display: flex; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+  .add-row input { flex: 1; font-size: 13px; padding: 8px 10px; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); outline: none; }
+  .add-row input:focus { border-color: var(--blue); }
+  .add-row button { font-size: 12px; font-weight: 600; padding: 8px 12px; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); background: var(--bg); cursor: pointer; color: var(--text); white-space: nowrap; }
+  .add-row button:active { background: #e5e7eb; }
+  .items-placeholder { font-size: 13px; color: var(--text-hint); padding: 12px 0; text-align: center; }
+
+  /* SEND METHOD BADGE */
+  .send-method-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
+  .badge-line  { background: #e6f9ee; color: var(--green-line); border: 0.5px solid var(--green-line); }
+  .badge-sms   { background: #1c1c1e; color: #30d158; }
+  .badge-email { background: var(--blue-light); color: var(--blue); border: 0.5px solid var(--blue); }
+
+  /* EMAIL PREVIEW */
+  .email-wrap { background: #f9fafb; border-radius: 10px; overflow: hidden; border: 0.5px solid #e5e7eb; }
+  .email-hdr { background: #fff; padding: 9px 12px; border-bottom: 0.5px solid #e5e7eb; }
+  .ef { display: flex; gap: 6px; font-size: 11px; padding: 2px 0; }
+  .efl { color: var(--text-hint); min-width: 44px; }
+  .efv { color: var(--text-sub); font-size: 11px; }
+  .email-body { padding: 11px 12px; font-size: 11.5px; line-height: 1.75; color: #333; white-space: pre-wrap; background: #fff; max-height: 180px; overflow-y: auto; }
+
+  /* SMS PREVIEW */
+  .sms-wrap { background: #1c1c1e; border-radius: 16px; padding: 14px 12px; }
+  .sms-hdr { text-align: center; font-size: 11px; color: #8e8e93; margin-bottom: 12px; }
+  .sms-bubble { background: #30d158; border-radius: 18px 18px 4px 18px; padding: 10px 14px; font-size: 12px; line-height: 1.65; color: #000; white-space: pre-wrap; max-width: 88%; margin-left: auto; max-height: 180px; overflow-y: auto; }
+
+  /* LINE PREVIEW */
+  .line-wrap { background: var(--green-line); border-radius: 12px 12px 0 0; }
+  .line-top { padding: 9px 12px; display: flex; align-items: center; gap: 8px; }
+  .line-back { color: #fff; font-size: 18px; line-height: 1; }
+  .line-title { color: #fff; font-size: 13px; font-weight: 600; flex: 1; text-align: center; }
+  .line-body { background: #87ceeb; padding: 12px; border-radius: 0 0 12px 12px; }
+  .line-bubble { background: #fff; border-radius: 4px 18px 18px 18px; padding: 10px 12px; font-size: 12px; line-height: 1.65; color: #222; white-space: pre-wrap; max-width: 88%; display: inline-block; max-height: 180px; overflow-y: auto; }
+
+  /* SEND BUTTON */
+  .send-btn { width: 100%; padding: 13px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-weight: 600; border: none; margin-top: 10px; letter-spacing: -0.2px; }
+  .send-btn:active { opacity: 0.82; }
+  .btn-email { background: var(--blue); color: #fff; }
+  .btn-sms   { background: #1c1c1e; color: #30d158; }
+  .btn-line  { background: var(--green-line); color: #fff; }
+  .copied { display: none; text-align: center; font-size: 12px; color: var(--green-sms); margin-top: 7px; font-weight: 600; }
+
+  /* RESET */
+  .reset-row { text-align: center; margin-top: 8px; }
+  .reset-row button { font-size: 12px; background: none; border: none; color: var(--text-hint); cursor: pointer; text-decoration: underline; padding: 6px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--card); border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 24px); max-height: 90vh; overflow-y: auto; }
+  .modal-handle { width: 40px; height: 4px; background: #d1d5db; border-radius: 4px; margin: 0 auto 18px; }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .modal-subtitle { font-size: 12px; color: var(--text-hint); margin-bottom: 16px; }
+  .modal-vendor { font-size: 14px; font-weight: 600; color: var(--text); padding: 10px 0 5px; border-bottom: 0.5px solid var(--border); margin-bottom: 6px; }
+  .modal-date { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+  .modal-deadline { font-size: 12px; color: var(--amber); margin-bottom: 10px; font-weight: 600; }
+  .modal-flex-note { font-size: 11px; background: var(--amber-light); color: #92400e; border-radius: 6px; padding: 6px 10px; margin-bottom: 10px; border: 0.5px solid var(--amber-border); }
+  .modal-items-wrap { background: var(--bg); border-radius: var(--radius-sm); padding: 4px 10px; margin-bottom: 4px; }
+  .modal-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text); padding: 7px 0; border-bottom: 0.5px solid var(--border); }
+  .modal-item:last-of-type { border-bottom: none; }
+  .modal-item-qty { font-weight: 700; color: var(--blue); white-space: nowrap; margin-left: 8px; }
+  .modal-no-items { font-size: 13px; color: var(--text-hint); padding: 10px 0; }
+  .modal-via { font-size: 12px; color: var(--text-hint); margin-top: 14px; margin-bottom: 14px; }
+  .modal-via span { font-weight: 600; color: var(--text); }
+  .modal-actions { display: flex; gap: 9px; }
+  .modal-actions button { flex: 1; padding: 13px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .modal-actions button:active { opacity: 0.8; }
+  .modal-cancel { background: var(--bg); border: 0.5px solid var(--border-md); color: var(--text); }
+  .modal-confirm { border: none; color: #fff; }
+  .modal-confirm.c-email { background: var(--blue); }
+  .modal-confirm.c-sms   { background: #1c1c1e; color: #30d158; }
+  .modal-confirm.c-line  { background: var(--green-line); }
+
+  /* NO SUPPLIER SELECTED STATE */
+  .preview-placeholder { font-size: 13px; color: var(--text-hint); padding: 14px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-logo">Teppei USA, Inc.</div>
+    <h1>Steak Teppei Orders</h1>
+    <div class="header-sub">Makai Market Food Court, Ala Moana Center</div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="slabel">1 — Select Supplier</div>
+      <div class="vendor-grid" id="vendorGrid"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="slabel">2 — Delivery Date</div>
+      <div id="deadlineInfo"></div>
+      <div class="flex-toggle-row">
+        <div class="flex-toggle-label">
+          <strong>Holiday / Special Schedule</strong>
+          Unlock all dates for irregular delivery
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle"><input type="checkbox" id="flexToggle" onchange="toggleFlex()"><span class="slider"></span></label>
+          <span class="toggle-txt" id="flexTxt">OFF</span>
+        </div>
+      </div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
+        <span class="cal-month-label" id="calLabel"></span>
+        <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="calHeaders"></div>
+      <div class="cal-grid" id="calCells"></div>
+      <div class="cal-selected" id="calDisplay">No date selected</div>
+      <div class="cal-deadline-warn" id="calDeadlineWarn"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="slabel">3 — Items &amp; Quantities</div>
+      <div id="itemsList"><div class="items-placeholder">Select a supplier above to see items</div></div>
+      <div class="add-row">
+        <input type="text" id="newItemName" placeholder="Add custom item..." />
+        <button onclick="addCustomItem()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="slabel">4 — Preview &amp; Send</div>
+      <div id="methodBadge"></div>
+      <div id="previewArea"><div class="preview-placeholder">Select a supplier to see send method</div></div>
+    </div>
+  </div>
+
+  <div class="reset-row"><button onclick="resetApp()">Reset / New Order</button></div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Confirm Your Order</div>
+    <div class="modal-subtitle">Please review before sending.</div>
+    <div class="modal-vendor" id="modal-vendor">—</div>
+    <div class="modal-date" id="modal-date">—</div>
+    <div class="modal-deadline" id="modal-deadline"></div>
+    <div class="modal-flex-note" id="modal-flex-note" style="display:none;">⚠ Holiday / Special Schedule — non-standard delivery date. Please confirm availability with supplier.</div>
+    <div class="modal-items-wrap" id="modal-items"></div>
+    <div class="modal-via">Sending via: <span id="modal-via-label">—</span></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Go Back</button>
+      <button class="modal-confirm" id="modal-confirm-btn" onclick="executeSend()">Confirm &amp; Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var HI_HOLIDAYS=['2026-01-01','2026-01-19','2026-02-16','2026-03-26','2026-05-25','2026-06-11','2026-07-04','2026-09-07','2026-10-12','2026-11-11','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-11','2027-07-04','2027-09-06','2027-11-11','2027-11-25','2027-12-25'];
+function isHoliday(dt){var s=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());return HI_HOLIDAYS.indexOf(s)>=0;}
+function pad(n){return n<10?'0'+n:String(n);}
+function dow(dt){return dt.getDay();}
+
+var vendors=[
+  {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',category:'Asian Food Distributor',method:'line',
+   deadlineInfo:'Delivery & order deadline: TBD — please confirm with supplier',deadlineTBD:true,
+   isDeliverable:function(){return true;},getDeadline:function(){return null;},
+   items:['Rice Sekka 40LB','Sukiyaki Sauce 5.4LB','Soy Sauce Yamasa 5GAL','MSG Aji No Moto 1LB','Starch Potato Katakuriko 5LB','Wasabi Nama Fresh FRZ 800G']},
+  {id:'cocacola',name:'Coca-Cola Bottling Co. of Hawaii',short:'Coca-Cola Hawaii',category:'Beverage Distributor',method:'sms',
+   deadlineInfo:'Delivery: Tuesday only  |  Order deadline: Previous Friday by 2:00 PM',deadlineTBD:false,
+   isDeliverable:function(dt){return dow(dt)===2;},
+   getDeadline:function(dt){var f=new Date(dt);f.setDate(f.getDate()-4);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 2:00 PM';},
+   items:['Coca-Cola Original','Coca-Cola Zero','Sprite']},
+  {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',category:'Seafood / Meat Supplier',method:'sms',
+   deadlineInfo:'Delivery: Mon–Sat (no holidays)  |  Order deadline: Same day by 7:00 AM',deadlineTBD:false,
+   isDeliverable:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
+   getDeadline:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
+   items:['Beef Vein Steak Choice 20/8oz']},
+  {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',category:'Seafood Supplier',method:'email',
+   deadlineInfo:'Delivery: Mon–Fri (no holidays)  |  Order deadline: Previous day by 3:00 PM',deadlineTBD:false,
+   isDeliverable:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
+   getDeadline:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 3:00 PM';},
+   items:['Shrimp 21-25 White P&D T-On (Aqua Star)','Shrimp 21-25 White P&D T-On (Seaport)']},
+  {id:'apax',name:'CPH Holdings dba Apax Hawaii',short:'Apax Hawaii',category:'Foodservice Supplies',method:'line',
+   deadlineInfo:'Delivery & order deadline: TBD — please confirm with supplier',deadlineTBD:true,
+   isDeliverable:function(){return true;},getDeadline:function(){return null;},
+   items:['8" 3-Comp Container (ML-83 Black)','8" 3-Comp Container (FPE-83 White)','Fork Compostable 6" CPLA','2 oz Cup (P200N)','2 oz Lid (PL200N)','16 oz PP Round (848)','1 oz Cup (P100N)','0.75/1 oz Lid (PL100N)','Dinner Napkin 2PLY','Multifold Towel Trifold','32 oz PP Bento Rectangle (828)']},
+  {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",category:'Wholesale Meat',method:'sms',
+   deadlineInfo:'Delivery: Mon–Fri (no holidays)  |  Order deadline: Previous day by 2:00 PM',deadlineTBD:false,
+   isDeliverable:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
+   getDeadline:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 2:00 PM';},
+   items:["Beef Loin Strip Steak 8oz (Choice)","Beef Riverbend Strip Steak 8oz (Choice)","Chicken Thighs Boneless Skinless 4x10LB","Pork Back Fat Skinned 50LB"]},
+  {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',category:'Produce Supplier',method:'email',
+   deadlineInfo:'Delivery & order deadline: TBD — please confirm with supplier',deadlineTBD:true,
+   isDeliverable:function(){return true;},getDeadline:function(){return null;},
+   items:['Lemon 140s Choice','Onion Jumbo 50# Sack','Spring Mix 3#']},
+  {id:'costco',name:'Costco Wholesale',short:'Costco',category:'Wholesale / General',method:'email',
+   deadlineInfo:'Delivery: Mon & Thu only  |  Mon order: Prev Fri by 12:00 PM  |  Thu order: Prev Wed by 12:00 PM',deadlineTBD:false,
+   isDeliverable:function(dt){return dow(dt)===1||dow(dt)===4;},
+   getDeadline:function(dt){if(dow(dt)===1){var f=new Date(dt);f.setDate(f.getDate()-3);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';}else{var w=new Date(dt);w.setDate(w.getDate()-1);return 'Order by: '+w.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';}},
+   items:['Organic Heavy Whipping Cream 64oz','Kirkland Unsalted Butter 4/1LB','Kirkland Cage Free Large Eggs AA 5 Dozen','Christopher Ranch Peeled Garlic 3LB','Kirkland Soybean Salad Oil 35LB','Kirkland Premium Drinking Water 40/16.9oz']}
+];
+
+var ML={email:'Gmail',sms:'Text Message',line:'LINE'};
+var MB={email:'badge-email',sms:'badge-sms',line:'badge-line'};
+var MM={email:'c-email',sms:'c-sms',line:'c-line'};
+var selId=null,quantities={},customItems=[],selectedDate=null,builtMsg='',builtDate='',flexMode=false;
+var today=new Date();today.setHours(0,0,0,0);
+var calYear=today.getFullYear(),calMonth=today.getMonth();
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getVendor(){for(var i=0;i<vendors.length;i++){if(vendors[i].id===selId)return vendors[i];}return null;}
+
+function toggleFlex(){
+  flexMode=document.getElementById('flexToggle').checked;
+  var t=document.getElementById('flexTxt');t.textContent=flexMode?'ON':'OFF';t.className='toggle-txt'+(flexMode?' on':'');
+  selectedDate=null;builtDate='';
+  document.getElementById('calDisplay').textContent='No date selected';
+  document.getElementById('calDeadlineWarn').textContent='';
+  renderCalendar();renderPreview();
+}
+
+function renderVendors(){
+  var h='';
+  for(var i=0;i<vendors.length;i++){
+    var v=vendors[i];var mc=v.method==='line'?'vm-line':(v.method==='sms'?'vm-sms':'vm-email');
+    h+='<button class="vbtn" id="vbtn-'+v.id+'" onclick="selectVendor(\''+v.id+'\')">'
+      +'<div class="vn">'+v.name+'</div><div class="vc">'+v.category+'</div>'
+      +'<div class="vm '+mc+'">via '+ML[v.method]+'</div></button>';
+  }
+  document.getElementById('vendorGrid').innerHTML=h;
+}
+
+function selectVendor(id){
+  selId=id;selectedDate=null;builtDate='';
+  document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
+  document.getElementById('vbtn-'+id).classList.add('selected');
+  quantities={};customItems=[];
+  var v=getVendor();
+  var di=document.getElementById('deadlineInfo');
+  di.innerHTML=v.deadlineTBD
+    ?'<div class="deadline-box deadline-tbd">'+v.deadlineInfo+'</div>'
+    :'<div class="deadline-box deadline-normal"><strong>Schedule:</strong> '+v.deadlineInfo+'</div>';
+  document.getElementById('calDisplay').textContent='No date selected';
+  document.getElementById('calDeadlineWarn').textContent='';
+  renderCalendar();renderItems();renderPreview();
+}
+
+function renderCalendar(){
+  document.getElementById('calLabel').textContent=MONTHS[calMonth]+' '+calYear;
+  var hdr='';for(var i=0;i<7;i++)hdr+='<div class="cal-dh">'+DAYS[i]+'</div>';
+  document.getElementById('calHeaders').innerHTML=hdr;
+  var first=new Date(calYear,calMonth,1).getDay();
+  var dim=new Date(calYear,calMonth+1,0).getDate();
+  var v=getVendor();var cells='';
+  for(var i=0;i<first;i++)cells+='<div class="cal-cell empty"></div>';
+  for(var d=1;d<=dim;d++){
+    var dt=new Date(calYear,calMonth,d);dt.setHours(0,0,0,0);
+    var isPast=dt<today;
+    var normalOk=v?v.isDeliverable(dt):true;
+    var isToday=dt.getTime()===today.getTime();
+    var isSel=selectedDate&&dt.getTime()===selectedDate.getTime();
+    var cls='cal-cell';
+    if(isSel) cls+=' selected';
+    else if(isPast) cls+=' unavail';
+    else if(!flexMode&&!normalOk) cls+=' unavail';
+    else if(flexMode&&!normalOk) cls+=' flex-ok';
+    else if(isToday) cls+=' today';
+    var canClick=!isPast&&(flexMode||normalOk);
+    var oc=canClick?' onclick="pickDate('+calYear+','+calMonth+','+d+')"':'';
+    cells+='<div class="'+cls+'"'+oc+'>'+d+'</div>';
+  }
+  document.getElementById('calCells').innerHTML=cells;
+}
+
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+
+function pickDate(y,m,d){
+  selectedDate=new Date(y,m,d);selectedDate.setHours(0,0,0,0);
+  builtDate=selectedDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('calDisplay').innerHTML='<span>'+builtDate+'</span>';
+  var v=getVendor();var warn=document.getElementById('calDeadlineWarn');
+  var dl=v&&!v.deadlineTBD?v.getDeadline(selectedDate):null;
+  var isNonStd=flexMode&&v&&!v.isDeliverable(selectedDate);
+  warn.textContent=(dl||'')+(isNonStd?(dl?' · ':'')+' ⚠ Non-standard date — confirm with supplier':'');
+  renderCalendar();renderPreview();
+}
+
+function renderItems(){
+  if(!selId){document.getElementById('itemsList').innerHTML='<div class="items-placeholder">Select a supplier above to see items</div>';return;}
+  var v=getVendor();var all=v.items.concat(customItems);var h='';
+  for(var i=0;i<all.length;i++){
+    var k='i'+i;if(quantities[k]===undefined)quantities[k]=0;
+    h+='<div class="item-row"><span class="iname">'+all[i]+'</span>'
+      +'<div class="qc"><button class="qbtn" onclick="cq(\''+k+'\',-1)">−</button>'
+      +'<span class="qnum" id="q'+k+'">'+quantities[k]+'</span>'
+      +'<button class="qbtn" onclick="cq(\''+k+'\',1)">+</button></div>'
+      +'<span class="ulabel">unit</span></div>';
+  }
+  document.getElementById('itemsList').innerHTML=h;
+}
+
+function cq(k,d){
+  quantities[k]=Math.max(0,(quantities[k]||0)+d);
+  var el=document.getElementById('q'+k);if(el)el.textContent=quantities[k];
+  renderPreview();
+}
+
+function addCustomItem(){
+  if(!selId)return;
+  var inp=document.getElementById('newItemName');
+  var n=inp.value.trim();if(!n)return;
+  customItems.push(n);inp.value='';renderItems();renderPreview();
+}
+
+function buildMessage(){
+  var v=getVendor();if(!v||!selectedDate)return null;
+  var all=v.items.concat(customItems);var lines=[];
+  for(var i=0;i<all.length;i++){var qty=quantities['i'+i]||0;if(qty>0)lines.push('  - '+all[i]+' x '+qty);}
+  var dl=v&&!v.deadlineTBD&&v.getDeadline(selectedDate)?'\nOrder Deadline: '+v.getDeadline(selectedDate):'';
+  var fx=flexMode&&v&&!v.isDeliverable(selectedDate)?'\n** SPECIAL SCHEDULE REQUEST — please confirm availability **':'';
+  return 'Hi '+v.short+' Team,\n\nHope you\'re doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\nPlease see our order details below:\n\nRequested Delivery Date: '+builtDate+dl+fx+'\nReceiving Hours: 10:00 AM – 8:00 PM\n\n--- Order Details ---\n'
+    +(lines.length?lines.join('\n'):'  (No items selected)')
+    +'\n\nPlease confirm receipt at your earliest convenience.\nThank you!\n\nBest regards,\nSteak Teppei (Teppei USA, Inc.)\nMakai Market Food Court, Ala Moana Center\n1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\nTel: (808) 636-4455';
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+function renderPreview(){
+  var v=getVendor();
+  if(!v){document.getElementById('methodBadge').innerHTML='';document.getElementById('previewArea').innerHTML='<div class="preview-placeholder">Select a supplier to see send method</div>';return;}
+  var method=v.method;
+  var msg=buildMessage()||'Select a delivery date to preview the message';
+  builtMsg=msg||'';
+  document.getElementById('methodBadge').innerHTML='<span class="send-method-badge '+MB[method]+'">via '+ML[method]+'</span>';
+  var subj='Order Request — Steak Teppei'+(builtDate?' ('+builtDate+')':'');
+  var area='';
+  if(method==='email'){
+    area='<div class="email-wrap"><div class="email-hdr">'
+      +'<div class="ef"><span class="efl">To</span><span class="efv">'+v.short+'</span></div>'
+      +'<div class="ef"><span class="efl">Subject</span><span class="efv">'+subj+'</span></div>'
+      +'</div><div class="email-body">'+escHtml(msg)+'</div></div>'
+      +'<button class="send-btn btn-email" onclick="confirmSend()">Review &amp; Send via Gmail</button>';
+  } else if(method==='sms'){
+    area='<div class="sms-wrap"><div class="sms-hdr">To: '+v.short+'</div>'
+      +'<div class="sms-bubble">'+escHtml(msg)+'</div></div>'
+      +'<button class="send-btn btn-sms" onclick="confirmSend()">Review &amp; Send via Text Message</button>';
+  } else {
+    area='<div class="line-wrap"><div class="line-top"><span class="line-back">&#8249;</span><span class="line-title">'+v.short+'</span></div>'
+      +'<div class="line-body"><div class="line-bubble">'+escHtml(msg)+'</div></div></div>'
+      +'<button class="send-btn btn-line" onclick="confirmSend()">Review &amp; Send via LINE</button>'
+      +'<div class="copied" id="copiedBadge">Copied! Open LINE and paste.</div>';
+  }
+  document.getElementById('previewArea').innerHTML=area;
+}
+
+function confirmSend(){
+  var v=getVendor();
+  if(!v||!selectedDate){alert('Please select a supplier and delivery date first.');return;}
+  document.getElementById('modal-vendor').textContent=v.name;
+  document.getElementById('modal-date').textContent='Delivery Date: '+builtDate;
+  var dl=v&&!v.deadlineTBD&&v.getDeadline(selectedDate)?v.getDeadline(selectedDate):'';
+  document.getElementById('modal-deadline').textContent=dl;
+  var fn=document.getElementById('modal-flex-note');
+  fn.style.display=(flexMode&&!v.isDeliverable(selectedDate))?'block':'none';
+  var all=v.items.concat(customItems);var h='';var hasAny=false;
+  for(var i=0;i<all.length;i++){var qty=quantities['i'+i]||0;if(qty>0){hasAny=true;h+='<div class="modal-item"><span>'+all[i]+'</span><span class="modal-item-qty">'+qty+' unit(s)</span></div>';}}
+  document.getElementById('modal-items').innerHTML=hasAny?h:'<div class="modal-no-items">No items with quantity entered.</div>';
+  document.getElementById('modal-via-label').textContent=ML[v.method];
+  document.getElementById('modal-confirm-btn').className='modal-confirm '+MM[v.method];
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+
+function executeSend(){
+  closeModal();
+  var v=getVendor();if(!v)return;
+  var method=v.method;
+  if(method==='email'){
+    var s=encodeURIComponent('Order Request — Steak Teppei'+(builtDate?' ('+builtDate+')':''));
+    window.location.href='mailto:?subject='+s+'&body='+encodeURIComponent(builtMsg);
+  } else if(method==='sms'){
+    window.location.href='sms:?body='+encodeURIComponent(builtMsg);
+  } else {
+    navigator.clipboard.writeText(builtMsg).then(function(){
+      var b=document.getElementById('copiedBadge');if(b){b.style.display='block';setTimeout(function(){b.style.display='none';},3000);}
+    }).catch(function(){alert('Copy failed. Please copy manually.');});
+  }
+}
+
+function resetApp(){
+  selId=null;quantities={};customItems=[];selectedDate=null;builtMsg='';builtDate='';flexMode=false;
+  document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
+  document.getElementById('calDisplay').textContent='No date selected';
+  document.getElementById('calDeadlineWarn').textContent='';
+  document.getElementById('deadlineInfo').innerHTML='';
+  document.getElementById('newItemName').value='';
+  document.getElementById('methodBadge').innerHTML='';
+  document.getElementById('flexToggle').checked=false;
+  document.getElementById('flexTxt').textContent='OFF';
+  document.getElementById('flexTxt').className='toggle-txt';
+  document.getElementById('previewArea').innerHTML='<div class="preview-placeholder">Select a supplier to see send method</div>';
+  calYear=today.getFullYear();calMonth=today.getMonth();
+  renderCalendar();renderItems();
+}
+
+renderVendors();renderCalendar();
+</script>
+</body>
+</html>
