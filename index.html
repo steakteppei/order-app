@@ -426,13 +426,19 @@ function addCustomItem(){
   customItems.push(n);inp.value='';renderItems();renderPreview();
 }
 
+// Email config per vendor
+var EMAIL_CONFIG = {
+  eskimo:   { to:'oahuorders@eskimocandy.com',    cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com' },
+  alamoana: { to:'order@alamoanaproduce.com',      cc:'todd@alamoanaproduce.com,aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com' },
+  costco:   { to:'w687mbd9@costco.com',            cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com' }
+};
+
 function buildMessage(){
   var v=getVendor();if(!v||!selectedDate)return null;
   var all=v.items.concat(customItems);var lines=[];
   for(var i=0;i<all.length;i++){var qty=quantities['i'+i]||0;if(qty>0)lines.push('  - '+all[i]+' x '+qty);}
-  var dl=v&&!v.deadlineTBD&&v.getDeadline(selectedDate)?'\nOrder Deadline: '+v.getDeadline(selectedDate):'';
   var fx=flexMode&&v&&!v.isDeliverable(selectedDate)?'\n** SPECIAL SCHEDULE REQUEST — please confirm availability **':'';
-  return 'Hi '+v.short+' Team,\n\nHope you\'re doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\nPlease see our order details below:\n\nRequested Delivery Date: '+builtDate+dl+fx+'\nReceiving Hours: 10:00 AM – 8:00 PM\n\n--- Order Details ---\n'
+  return 'Hi '+v.short+' Team,\n\nHope you\'re doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\nPlease see our order details below:\n\nRequested Delivery Date: '+builtDate+fx+'\nReceiving Hours: 10:00 AM \u2013 8:00 PM\n\n--- Order Details ---\n'
     +(lines.length?lines.join('\n'):'  (No items selected)')
     +'\n\nPlease confirm receipt at your earliest convenience.\nThank you!\n\nBest regards,\nSteak Teppei (Teppei USA, Inc.)\nMakai Market Food Court, Ala Moana Center\n1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\nTel: (808) 636-4455';
 }
@@ -449,8 +455,11 @@ function renderPreview(){
   var subj='Order Request — Steak Teppei'+(builtDate?' ('+builtDate+')':'');
   var area='';
   if(method==='email'){
+    var ec=EMAIL_CONFIG[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var ccDisplay=ec.cc.split(',').join(', ');
     area='<div class="email-wrap"><div class="email-hdr">'
-      +'<div class="ef"><span class="efl">To</span><span class="efv">'+v.short+'</span></div>'
+      +'<div class="ef"><span class="efl">To</span><span class="efv">'+ec.to+'</span></div>'
+      +'<div class="ef"><span class="efl">CC</span><span class="efv">'+ccDisplay+'</span></div>'
       +'<div class="ef"><span class="efl">Subject</span><span class="efv">'+subj+'</span></div>'
       +'</div><div class="email-body">'+escHtml(msg)+'</div></div>'
       +'<button class="send-btn btn-email" onclick="confirmSend()">Review &amp; Send via Gmail</button>';
@@ -461,8 +470,7 @@ function renderPreview(){
   } else {
     area='<div class="line-wrap"><div class="line-top"><span class="line-back">&#8249;</span><span class="line-title">'+v.short+'</span></div>'
       +'<div class="line-body"><div class="line-bubble">'+escHtml(msg)+'</div></div></div>'
-      +'<button class="send-btn btn-line" onclick="confirmSend()">Review &amp; Send via LINE</button>'
-      +'<div class="copied" id="copiedBadge">Copied! Open LINE and paste.</div>';
+      +'<button class="send-btn btn-line" onclick="confirmSend()">Select Recipient &amp; Send via LINE</button>';
   }
   document.getElementById('previewArea').innerHTML=area;
 }
@@ -491,14 +499,16 @@ function executeSend(){
   var v=getVendor();if(!v)return;
   var method=v.method;
   if(method==='email'){
+    var ec=EMAIL_CONFIG[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
     var s=encodeURIComponent('Order Request — Steak Teppei'+(builtDate?' ('+builtDate+')':''));
-    window.location.href='mailto:?subject='+s+'&body='+encodeURIComponent(builtMsg);
+    // Gmail needs \r\n for line breaks in mailto body
+    var bodyForMail=builtMsg.replace(/\n/g,'\r\n');
+    window.location.href='mailto:'+encodeURIComponent(ec.to)+'?cc='+encodeURIComponent(ec.cc)+'&subject='+s+'&body='+encodeURIComponent(bodyForMail);
   } else if(method==='sms'){
     window.location.href='sms:?body='+encodeURIComponent(builtMsg);
   } else {
-    navigator.clipboard.writeText(builtMsg).then(function(){
-      var b=document.getElementById('copiedBadge');if(b){b.style.display='block';setTimeout(function(){b.style.display='none';},3000);}
-    }).catch(function(){alert('Copy failed. Please copy manually.');});
+    var lineUrl='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent('https://steakteppei.github.io/order-app/')+'&text='+encodeURIComponent(builtMsg);
+    window.open(lineUrl,'_blank');
   }
 }
 
