@@ -186,7 +186,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'box'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'case'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -196,16 +196,16 @@ var V=[
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
    ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
-   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'LB'}]},
+   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'case'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
    di:'Delivery & order deadline: TBD',tbd:true,
    ok:function(){return true;},dl:function(){return null;},
-   items:[{n:'MSG Aji No Moto 1LB',u:'Ea'},{n:'Rice Sekka 40LB',u:'Ea'},{n:'Soy Sauce Yamasa 5GAL',u:'Ea'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'CS'},{n:'Wasabi Nama Fresh FRZ 800G',u:'Ea'}]},
+   items:[{n:'Hondashi',u:'box'},{n:'Miso Dispenser',u:'bag'},{n:'Mizkan Rice Vinegar',u:'bottle'},{n:'MSG Aji No Moto 1LB',u:'bag'},{n:'Rice Sekka 40LB',u:'bag'},{n:'Soy Sauce Yamasa 5GAL',u:'container'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'box'},{n:'Wasabi Nama Fresh FRZ 800G',u:'bag'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 2:00 PM';},
-   items:[{n:'Beef Strip Steak 8oz',u:'LB'},{n:'Chicken Thighs Boneless Skinless 4x10LB',u:'LB'},{n:'Pork Back Fat Skinned 50LB',u:'LB'}]}
+   items:[{n:'Beef Strip Steak 8oz',u:'case'},{n:'Chicken Thighs Boneless Skinless 4x10LB',u:'case'},{n:'Pork Back Fat Skinned 50LB',u:'case'}]}
 ];
 function gv(id){for(var i=0;i<V.length;i++)if(V[i].id===id)return V[i];return null;}
 
