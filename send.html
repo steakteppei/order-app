@@ -152,7 +152,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="os-deadline dl-ok" id="os-deadline"></div>
   </div>
   <div class="card">
-    <div class="slabel">Sent by</div>
+    <div class="slabel">Sent by <span id="senderHint" style="color:#dc2626;font-size:10px;font-weight:400;margin-left:4px;">&#x2014; please select your name</span></div>
     <div class="sender-row" id="senderRow"></div>
     <div id="methodBadge"></div>
     <div id="previewArea"></div>
@@ -268,6 +268,8 @@ function selSender(key){
   sender=key;
   document.querySelectorAll('.sender-btn').forEach(function(b){b.classList.remove('selected');});
   document.getElementById('sb'+key).classList.add('selected');
+  var hint=document.getElementById('senderHint');
+  if(hint)hint.style.display='none';
   var v=gv(data.vendorId);
   buildMsg(v,key);
   renderSend(v);
@@ -301,7 +303,6 @@ function buildMsg(v,senderKey){
   b+='Makai Market Food Court, Ala Moana Center\n';
   b+='1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\n';
   b+='Tel: (808) 636-4455';
-  if(sObj)b+='\nSent by: '+sObj.label;
   msg=b;
 }
 
@@ -318,8 +319,13 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 function renderSend(v){
   var m=v.method;
   var subj='Order Request - Steak Teppei ('+data.dateStr+')';
-  document.getElementById('methodBadge').innerHTML='<span class="send-method-badge '+MB[m]+'">via '+ML[m]+'</span>';
-  var copy='<button class="send-btn btn-copy" onclick="copyOrder()">Copy Order Message</button><div class="copied" id="copiedBadge">Copied to clipboard!</div>';
+  document.getElementById('methodBadge').innerHTML=sender?'<span class="send-method-badge '+MB[m]+'">via '+ML[m]+'</span>':'';
+  if(!sender){
+    document.getElementById('previewArea').innerHTML='<div style="text-align:center;padding:20px 0;font-size:13px;color:var(--text-hint);">Select your name above to preview</div>';
+    return;
+  }
+  var locked=false;
+  var copy='<button class="send-btn btn-copy" id="copyBtn" onclick="copyOrder()"'+(locked?' disabled style="opacity:.35;cursor:not-allowed"':'')+'>Copy Order Message</button><div class="copied" id="copiedBadge">Copied to clipboard!</div>';
   var area='';
   if(m==='email'){
     var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
@@ -329,20 +335,21 @@ function renderSend(v){
     area+='<div class="ef"><span class="efl">CC</span><span class="efv">'+cc.split(',').join(', ')+'</span></div>';
     area+='<div class="ef"><span class="efl">Subject</span><span class="efv">'+subj+'</span></div>';
     area+='</div><div class="email-body">'+esc(msg)+'</div></div>';
-    area+='<button class="send-btn btn-email" onclick="doSend()">Send via Gmail</button>'+copy;
+    area+='<button class="send-btn btn-email" id="sendBtn" onclick="doSend()"'+(locked?' disabled style="opacity:.35;cursor:not-allowed"':'')+'>Send via Gmail</button>'+copy;
   }else if(m==='sms'){
     area='<div class="sms-wrap"><div class="sms-hdr">To: '+v.short+'</div>';
     area+='<div class="sms-bubble">'+esc(msg)+'</div></div>';
-    area+='<button class="send-btn btn-sms" onclick="doSend()">Send via Text Message</button>'+copy;
+    area+='<button class="send-btn btn-sms" id="sendBtn" onclick="doSend()"'+(locked?' disabled style="opacity:.35;cursor:not-allowed"':'')+'>Send via Text Message</button>'+copy;
   }else{
     area='<div class="line-wrap"><div class="line-top"><span class="line-back">&#8249;</span><span class="line-title">'+v.short+'</span></div>';
     area+='<div class="line-body"><div class="line-bubble">'+esc(msg)+'</div></div></div>';
-    area+='<button class="send-btn btn-line" onclick="doSend()">Select Recipient &amp; Send via LINE</button>'+copy;
+    area+='<button class="send-btn btn-line" id="sendBtn" onclick="doSend()"'+(locked?' disabled style="opacity:.35;cursor:not-allowed"':'')+'>Select Recipient &amp; Send via LINE</button>'+copy;
   }
   document.getElementById('previewArea').innerHTML=area;
 }
 
 function doSend(){
+  if(!sender){alert('Please select your name first.');return;}
   var v=gv(data.vendorId);
   if(v.method==='email'){
     var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
@@ -353,12 +360,13 @@ function doSend(){
   }else if(v.method==='sms'){
     window.location.href='sms:?body='+encodeURIComponent(msg);
   }else{
-    var u='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent('https://steakteppei.github.io/order-app/')+'&text='+encodeURIComponent(msg);
+    var u='https://line.me/R/share?text='+encodeURIComponent(msg);
     window.open(u,'_blank');
   }
 }
 
 function copyOrder(){
+  if(!sender){alert('Please select your name first.');return;}
   navigator.clipboard.writeText(msg).then(function(){
     var b=document.getElementById('copiedBadge');
     if(b){b.style.display='block';setTimeout(function(){b.style.display='none';},2500);}
