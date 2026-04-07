@@ -289,20 +289,15 @@ function buildMsg(v,senderKey){
   }
   var sObj=null;
   if(senderKey){for(var i=0;i<SENDERS.length;i++)if(SENDERS[i].key===senderKey){sObj=SENDERS[i];break;}}
-  var b='Hi '+v.short+' Team,\n\n';
-  b+='Hope you are doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\n';
-  b+='Please see our order details below:\n\n';
-  b+='Requested Delivery Date: '+data.dateStr+'\n';
+  var b='Hi '+v.short+',\n\n';
+  b+='Order request from Steak Teppei:\n\n';
+  b+='Delivery: '+data.dateStr+'\n';
   if(data.flex)b+='** SPECIAL SCHEDULE REQUEST - please confirm availability **\n';
-  b+='Receiving Hours: 10:00 AM - 8:00 PM\n\n';
-  b+='--- Order Details ---\n';
+  b+='\n';
   b+=(lines.length?lines.join('\n'):'  (No items selected)');
   if(data.note)b+='\n\nNote: '+data.note;
-  b+='\n\nPlease confirm receipt at your earliest convenience.\nThank you!\n\n';
-  b+='Best regards,\nSteak Teppei (Teppei USA, Inc.)\n';
-  b+='Makai Market Food Court, Ala Moana Center\n';
-  b+='1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\n';
-  b+='Tel: (808) 636-4455';
+  b+='\n\nReceiving Hours: 10:00 AM - 8:00 PM';
+  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\nSteak Teppei';
   msg=b;
 }
 

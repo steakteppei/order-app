@@ -321,7 +321,7 @@ function deadlineClass(v,dt){
 
 function pickD(y,m,d){
   selDate=new Date(y,m,d);selDate.setHours(0,0,0,0);
-  dateStr=selDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  dateStr=selDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
   document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>';
   var v=selId?gv(selId):null;
   var dlEl=document.getElementById('calDeadline');
