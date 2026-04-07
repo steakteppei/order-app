@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ST Order">
-<title>Steak Teppei — Order App</title>
+<title>Steak Teppei — Preview & Send</title>
 <style>
 
 :root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--blue:#1a56db;--blue-light:#ebf1ff;--green-line:#06c755;--green-sms:#1a7a3c;--amber:#d97706;--amber-light:#fffbeb;--amber-border:#fbbf24;}
@@ -86,6 +86,65 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:disabled{background:#ccc;cursor:not-allowed;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 
+.send-method-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:12px;}
+.badge-line{background:#e6f9ee;color:var(--green-line);border:.5px solid var(--green-line);}
+.badge-sms{background:#1c1c1e;color:#30d158;}
+.badge-email{background:var(--blue-light);color:var(--blue);border:.5px solid var(--blue);}
+.email-wrap{background:#f9fafb;border-radius:10px;overflow:hidden;border:.5px solid #e5e7eb;}
+.email-hdr{background:#fff;padding:9px 12px;border-bottom:.5px solid #e5e7eb;}
+.ef{display:flex;gap:6px;font-size:10.5px;padding:2px 0;}
+.efl{color:#999;min-width:44px;}
+.efv{color:#333;font-size:10.5px;}
+.email-body{padding:11px 12px;font-size:11.5px;line-height:1.75;color:#333;white-space:pre-wrap;background:#fff;max-height:200px;overflow-y:auto;}
+.sms-wrap{background:#1c1c1e;border-radius:16px;padding:14px 12px;}
+.sms-hdr{text-align:center;font-size:11px;color:#8e8e93;margin-bottom:12px;}
+.sms-bubble{background:#30d158;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:12px;line-height:1.65;color:#000;white-space:pre-wrap;max-width:88%;margin-left:auto;max-height:200px;overflow-y:auto;}
+.line-wrap{background:var(--green-line);border-radius:12px 12px 0 0;}
+.line-top{padding:9px 12px;display:flex;align-items:center;gap:8px;}
+.line-back{color:#fff;font-size:18px;line-height:1;}
+.line-title{color:#fff;font-size:13px;font-weight:600;flex:1;text-align:center;}
+.line-body{background:#87ceeb;padding:12px;border-radius:0 0 12px 12px;}
+.line-bubble{background:#fff;border-radius:4px 18px 18px 18px;padding:10px 12px;font-size:12px;line-height:1.65;color:#222;white-space:pre-wrap;max-width:88%;display:inline-block;max-height:200px;overflow-y:auto;}
+.send-btn{width:100%;padding:13px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:600;border:none;margin-top:9px;letter-spacing:-.2px;}
+.send-btn:active{opacity:.8;}
+.btn-email{background:var(--blue);color:#fff;}
+.btn-sms{background:#1c1c1e;color:#30d158;}
+.btn-line{background:var(--green-line);color:#fff;}
+.btn-copy{background:var(--bg);color:var(--text);border:.5px solid var(--border-md)!important;}
+.copied{display:none;text-align:center;font-size:12px;color:var(--green-sms);margin-top:7px;font-weight:600;}
+.back-btn{width:100%;padding:12px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:600;background:var(--bg);color:var(--text);border:.5px solid var(--border-md);margin-top:8px;}
+.back-btn:active{opacity:.8;}
+.order-summary{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;border:.5px solid var(--border);}
+.os-vendor{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.os-date{font-size:11px;color:var(--text-hint);}
+.os-deadline{font-size:11px;color:var(--amber);font-weight:600;margin-top:3px;}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.48);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 18px calc(env(safe-area-inset-bottom,0px) + 24px);max-height:90vh;overflow-y:auto;}
+.modal-handle{width:40px;height:4px;background:var(--border-md);border-radius:4px;margin:0 auto 18px;}
+.modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-subtitle{font-size:12px;color:var(--text-hint);margin-bottom:16px;}
+.modal-vendor{font-size:14px;font-weight:600;color:var(--text);padding:8px 0 5px;border-bottom:.5px solid var(--border);margin-bottom:6px;}
+.modal-date{font-size:12px;color:var(--text-sub);margin-bottom:4px;}
+.modal-deadline{font-size:12px;color:var(--amber);margin-bottom:10px;font-weight:600;}
+.modal-flex-note{font-size:11px;background:var(--amber-light);color:#92400e;border-radius:6px;padding:6px 10px;margin-bottom:10px;border:.5px solid var(--amber-border);}
+.modal-items-wrap{background:var(--bg);border-radius:var(--radius-sm);padding:4px 10px;margin-bottom:4px;}
+.modal-item{display:flex;justify-content:space-between;font-size:13px;color:var(--text);padding:7px 0;border-bottom:.5px solid var(--border);}
+.modal-item:last-of-type{border-bottom:none;}
+.modal-item-qty{font-weight:700;color:var(--orange);white-space:nowrap;margin-left:8px;}
+.modal-note-display{font-size:11px;color:var(--text-sub);margin-top:8px;padding:7px 10px;background:var(--bg);border-radius:var(--radius-sm);border-left:3px solid var(--orange);}
+.modal-no-items{font-size:13px;color:var(--text-hint);padding:10px 0;}
+.modal-via{font-size:12px;color:var(--text-hint);margin-top:14px;margin-bottom:14px;}
+.modal-via span{font-weight:600;color:var(--text);}
+.modal-actions{display:flex;gap:9px;}
+.modal-actions button{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;}
+.modal-actions button:active{opacity:.8;}
+.modal-cancel{background:var(--bg);border:.5px solid var(--border-md);color:var(--text);}
+.modal-confirm{border:none;color:#fff;}
+.modal-confirm.c-email{background:var(--blue);}
+.modal-confirm.c-sms{background:#1c1c1e;color:#30d158;}
+.modal-confirm.c-line{background:var(--green-line);}
+
 .update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
 .update-banner.show{display:block;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
@@ -98,47 +157,36 @@ input:checked+.slider:before{transform:translateX(16px);}
 <div class="app">
   <div class="header">
     <h1>Steak Teppei Orders</h1>
-    <div class="header-sub">Makai Market Food Court &middot; Ala Moana Center</div>
+    <div class="header-sub">Preview &amp; Send</div>
   </div>
-  <div class="deadline-alert" id="deadlineAlertBanner"></div>
-  <div class="card">
-    <div class="slabel">1 &mdash; Select Supplier</div>
-    <div class="vendor-grid" id="vendorGrid"></div>
-  </div>
-  <div class="card">
-    <div class="slabel">2 &mdash; Delivery Date</div>
-    <div id="deadlineInfo"></div>
-    <div class="flex-toggle-row">
-      <div class="flex-toggle-label"><strong>Holiday / Special Schedule</strong>Unlock all dates for irregular delivery</div>
-      <div class="toggle-wrap">
-        <label class="toggle"><input type="checkbox" id="flexToggle" onchange="toggleFlex()"><span class="slider"></span></label>
-        <span class="toggle-txt" id="flexTxt">OFF</span>
-      </div>
-    </div>
-    <div class="cal-nav">
-      <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
-      <span class="cal-month-label" id="calLabel"></span>
-      <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
-    </div>
-    <div class="cal-grid" id="calHeaders"></div>
-    <div class="cal-grid" id="calCells"></div>
-    <div class="cal-selected" id="calDisplay">No date selected</div>
-    <div class="cal-deadline-warn" id="calDeadlineWarn"></div>
+  <div class="card order-summary">
+    <div class="os-vendor" id="os-vendor"></div>
+    <div class="os-date" id="os-date"></div>
+    <div class="os-deadline" id="os-deadline"></div>
   </div>
   <div class="card">
-    <div class="slabel">3 &mdash; Items &amp; Quantities</div>
-    <div id="itemsList"><div class="items-placeholder">Select a supplier above to see items</div></div>
-    <div class="add-row">
-      <input type="text" id="newItemName" placeholder="Add custom item...">
-      <button onclick="addCustomItem()">+ Add</button>
-    </div>
-    <div class="note-wrap">
-      <div class="note-label">Note (optional)</div>
-      <textarea id="orderNote" placeholder="e.g. Please call before delivery, smaller portions this week..."></textarea>
-    </div>
+    <div class="slabel">Preview &amp; Send</div>
+    <div id="methodBadge"></div>
+    <div id="previewArea"></div>
+    <button class="back-btn" onclick="goBack()">&larr; Back to Order</button>
   </div>
-  <div class="card">
-    <button class="go-btn" id="goBtn" onclick="goToSend()" disabled>Preview &amp; Send &rarr;</button>
+</div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Confirm Your Order</div>
+    <div class="modal-subtitle">Please review before sending.</div>
+    <div class="modal-vendor" id="modal-vendor"></div>
+    <div class="modal-date" id="modal-date"></div>
+    <div class="modal-deadline" id="modal-deadline"></div>
+    <div class="modal-flex-note" id="modal-flex-note" style="display:none;">&#9888; Special Schedule &mdash; please confirm availability with supplier.</div>
+    <div class="modal-items-wrap" id="modal-items"></div>
+    <div class="modal-note-display" id="modal-note-display" style="display:none;"></div>
+    <div class="modal-via">Sending via: <span id="modal-via-label"></span></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Go Back</button>
+      <button class="modal-confirm" id="modal-confirm-btn" onclick="executeSend()">Confirm &amp; Send</button>
+    </div>
   </div>
 </div>
 <div class="app-version">Last updated: April 07, 2026</div>
@@ -195,145 +243,135 @@ var V=[
 function gv(id){for(var i=0;i<V.length;i++)if(V[i].id===id)return V[i];return null;}
 
 var ML={email:'Gmail',sms:'Text Message',line:'LINE'};
-var selId=null,qty={},custom=[],selDate=null,dateStr='',flex=false;
-var today=new Date();today.setHours(0,0,0,0);
-var cy=today.getFullYear(),cm=today.getMonth();
-var MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var DAY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MB={email:'badge-email',sms:'badge-sms',line:'badge-line'};
+var MM={email:'c-email',sms:'c-sms',line:'c-line'};
 
-function checkBanner(){
-  var now=new Date(),msgs=[];
-  if(dow(now)===5){msgs.push('Coca-Cola deadline TODAY by 2:00 PM');msgs.push('Costco deadline TODAY by 12:00 PM (Mon delivery)');}
-  if(dow(now)===3)msgs.push('Costco deadline TODAY by 12:00 PM (Thu delivery)');
-  if(now.getHours()<7&&dow(now)!==0&&!isHoliday(now))msgs.push('Fresh Island Fish deadline TODAY by 7:00 AM');
-  var tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
-  if(dow(tmr)>=1&&dow(tmr)<=5&&!isHoliday(tmr)){msgs.push('Eskimo Candy deadline TODAY by 3:00 PM');msgs.push("Wong's deadline TODAY by 2:00 PM");}
-  var b=document.getElementById('deadlineAlertBanner');
-  if(msgs.length){b.innerHTML='\u23f0 '+msgs.join(' \xb7 ');b.classList.add('show');}
-  else b.classList.remove('show');
+var data=null,msg='';
+
+function init(){
+  var raw=sessionStorage.getItem('orderData');
+  if(!raw){window.location.href='index.html';return;}
+  data=JSON.parse(raw);
+  var v=gv(data.vendorId);
+  if(!v){window.location.href='index.html';return;}
+
+  // Summary bar
+  var dl=v&&!v.tbd&&v.dl?v.dl(new Date()):null;
+  try{
+    var sd=new Date(data.dateStr);
+    dl=v&&!v.tbd?v.dl(sd):null;
+  }catch(e){}
+  document.getElementById('os-vendor').textContent=v.name;
+  document.getElementById('os-date').textContent='Delivery: '+data.dateStr;
+  var dlEl=document.getElementById('os-deadline');
+  dlEl.textContent=dl?dl:'';
+
+  buildMsg(v);
+  renderSend(v);
 }
 
-function toggleFlex(){
-  flex=document.getElementById('flexToggle').checked;
-  var t=document.getElementById('flexTxt');
-  t.textContent=flex?'ON':'OFF';t.className='toggle-txt'+(flex?' on':'');
-  selDate=null;dateStr='';
-  document.getElementById('calDisplay').textContent='No date selected';
-  document.getElementById('calDeadlineWarn').textContent='';
-  renderCal();updateGoBtn();
+function buildMsg(v){
+  var lines=[];
+  for(var i=0;i<data.items.length;i++){
+    var it=data.items[i];
+    lines.push('  - '+it.n+' x '+it.q+' '+it.u);
+  }
+  var b='Hi '+v.short+' Team,\n\n';
+  b+='Hope you are doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\n';
+  b+='Please see our order details below:\n\n';
+  b+='Requested Delivery Date: '+data.dateStr+'\n';
+  if(data.flex){b+='** SPECIAL SCHEDULE REQUEST - please confirm availability **\n';}
+  b+='Receiving Hours: 10:00 AM - 8:00 PM\n\n';
+  b+='--- Order Details ---\n';
+  b+=(lines.length?lines.join('\n'):'  (No items selected)');
+  if(data.note)b+='\n\nNote: '+data.note;
+  b+='\n\nPlease confirm receipt at your earliest convenience.\nThank you!\n\n';
+  b+='Best regards,\nSteak Teppei (Teppei USA, Inc.)\n';
+  b+='Makai Market Food Court, Ala Moana Center\n';
+  b+='1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\n';
+  b+='Tel: (808) 636-4455';
+  msg=b;
 }
 
-function renderVendors(){
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+function renderSend(v){
+  var m=v.method;
+  var subj='Order Request - Steak Teppei ('+data.dateStr+')';
+  document.getElementById('methodBadge').innerHTML='<span class="send-method-badge '+MB[m]+'">via '+ML[m]+'</span>';
+  var copy='<button class="send-btn btn-copy" onclick="copyOrder()">Copy Order Message</button><div class="copied" id="copiedBadge">Copied to clipboard!</div>';
+  var area='';
+  if(m==='email'){
+    var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    area='<div class="email-wrap"><div class="email-hdr">';
+    area+='<div class="ef"><span class="efl">To</span><span class="efv">'+ec.to+'</span></div>';
+    area+='<div class="ef"><span class="efl">CC</span><span class="efv">'+ec.cc.split(',').join(', ')+'</span></div>';
+    area+='<div class="ef"><span class="efl">Subject</span><span class="efv">'+subj+'</span></div>';
+    area+='</div><div class="email-body">'+esc(msg)+'</div></div>';
+    area+='<button class="send-btn btn-email" onclick="confirmSend()">Review &amp; Send via Gmail</button>'+copy;
+  }else if(m==='sms'){
+    area='<div class="sms-wrap"><div class="sms-hdr">To: '+v.short+'</div>';
+    area+='<div class="sms-bubble">'+esc(msg)+'</div></div>';
+    area+='<button class="send-btn btn-sms" onclick="confirmSend()">Review &amp; Send via Text Message</button>'+copy;
+  }else{
+    area='<div class="line-wrap"><div class="line-top"><span class="line-back">&#8249;</span><span class="line-title">'+v.short+'</span></div>';
+    area+='<div class="line-body"><div class="line-bubble">'+esc(msg)+'</div></div></div>';
+    area+='<button class="send-btn btn-line" onclick="confirmSend()">Select Recipient &amp; Send via LINE</button>'+copy;
+  }
+  document.getElementById('previewArea').innerHTML=area;
+}
+
+function confirmSend(){
+  var v=gv(data.vendorId);
+  document.getElementById('modal-vendor').textContent=v.name;
+  document.getElementById('modal-date').textContent='Delivery Date: '+data.dateStr;
+  var sd=new Date(data.dateStr);
+  var dl=v&&!v.tbd?v.dl(sd):'';
+  document.getElementById('modal-deadline').textContent=dl||'';
+  document.getElementById('modal-flex-note').style.display=data.flex?'block':'none';
   var h='';
-  for(var i=0;i<V.length;i++){
-    var v=V[i];
-    var mc=v.method==='line'?'vm-line':(v.method==='sms'?'vm-sms':'vm-email');
-    h+='<button class="vbtn" id="vb'+v.id+'" onclick="selV(\''+v.id+'\')"><div class="vn">'+v.name+'</div><div class="vm '+mc+'">via '+ML[v.method]+'</div></button>';
+  for(var i=0;i<data.items.length;i++){
+    var it=data.items[i];
+    h+='<div class="modal-item"><span>'+it.n+'</span><span class="modal-item-qty">'+it.q+' '+it.u+'</span></div>';
   }
-  document.getElementById('vendorGrid').innerHTML=h;
+  document.getElementById('modal-items').innerHTML=h||'<div class="modal-no-items">No items.</div>';
+  var nd=document.getElementById('modal-note-display');
+  if(data.note){nd.style.display='block';nd.textContent='Note: '+data.note;}else nd.style.display='none';
+  document.getElementById('modal-via-label').textContent=ML[v.method];
+  document.getElementById('modal-confirm-btn').className='modal-confirm '+MM[v.method];
+  document.getElementById('modalOverlay').classList.add('open');
 }
 
-function selV(id){
-  selId=id;selDate=null;dateStr='';
-  document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
-  document.getElementById('vb'+id).classList.add('selected');
-  qty={};custom=[];
-  document.getElementById('orderNote').value='';
-  var v=gv(id);
-  document.getElementById('deadlineInfo').innerHTML=v.tbd
-    ?'<div class="deadline-box deadline-tbd">'+v.di+'</div>'
-    :'<div class="deadline-box"><strong>Schedule:</strong> '+v.di+'</div>';
-  document.getElementById('calDisplay').textContent='No date selected';
-  document.getElementById('calDeadlineWarn').textContent='';
-  renderCal();renderItems();updateGoBtn();
-}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
 
-function renderCal(){
-  document.getElementById('calLabel').textContent=MON[cm]+' '+cy;
-  var h='';for(var i=0;i<7;i++)h+='<div class="cal-dh">'+DAY[i]+'</div>';
-  document.getElementById('calHeaders').innerHTML=h;
-  var first=new Date(cy,cm,1).getDay();
-  var dim=new Date(cy,cm+1,0).getDate();
-  var v=selId?gv(selId):null;var cells='';
-  for(var i=0;i<first;i++)cells+='<div class="cal-cell empty"></div>';
-  for(var d=1;d<=dim;d++){
-    var dt=new Date(cy,cm,d);dt.setHours(0,0,0,0);
-    var past=dt<today;
-    var ok=v?v.ok(dt):true;
-    var sel=selDate&&dt.getTime()===selDate.getTime();
-    var tod=dt.getTime()===today.getTime();
-    var c='cal-cell';
-    if(sel)c+=' selected';
-    else if(past)c+=' unavail';
-    else if(!flex&&!ok)c+=' unavail';
-    else if(flex&&!ok)c+=' flex-ok';
-    else if(tod)c+=' today';
-    var click=(!past&&(flex||ok))?' onclick="pickD('+cy+','+cm+','+d+')"':'';
-    cells+='<div class="'+c+'"'+click+'>'+d+'</div>';
+function executeSend(){
+  closeModal();
+  var v=gv(data.vendorId);
+  if(v.method==='email'){
+    var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var s=encodeURIComponent('Order Request - Steak Teppei ('+data.dateStr+')');
+    var body=msg.split('\n').join('\r\n');
+    window.location.href='mailto:'+encodeURIComponent(ec.to)+'?cc='+encodeURIComponent(ec.cc)+'&subject='+s+'&body='+encodeURIComponent(body);
+  }else if(v.method==='sms'){
+    window.location.href='sms:?body='+encodeURIComponent(msg);
+  }else{
+    var u='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent('https://steakteppei.github.io/order-app/')+'&text='+encodeURIComponent(msg);
+    window.open(u,'_blank');
   }
-  document.getElementById('calCells').innerHTML=cells;
 }
 
-function calPrev(){cm--;if(cm<0){cm=11;cy--;}renderCal();}
-function calNext(){cm++;if(cm>11){cm=0;cy++;}renderCal();}
-
-function pickD(y,m,d){
-  selDate=new Date(y,m,d);selDate.setHours(0,0,0,0);
-  dateStr=selDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>';
-  var v=selId?gv(selId):null;
-  var dl=v&&!v.tbd?v.dl(selDate):null;
-  var ns=flex&&v&&!v.ok(selDate);
-  document.getElementById('calDeadlineWarn').textContent=(dl?dl:'')+(ns?(dl?' \xb7 ':'')+'\u26a0 Non-standard \u2014 confirm with supplier':'');
-  renderCal();updateGoBtn();
+function copyOrder(){
+  navigator.clipboard.writeText(msg).then(function(){
+    var b=document.getElementById('copiedBadge');
+    if(b){b.style.display='block';setTimeout(function(){b.style.display='none';},2500);}
+  }).catch(function(){alert('Copy failed. Please copy manually.');});
 }
 
-function getItems(){
-  if(!selId)return[];
-  var v=gv(selId);
-  return v.items.map(function(x){return{n:x.n,u:x.u};}).concat(custom.map(function(n){return{n:n,u:'unit'};}));
+function goBack(){
+  window.location.href='index.html';
 }
 
-function renderItems(){
-  if(!selId){document.getElementById('itemsList').innerHTML='<div class="items-placeholder">Select a supplier above to see items</div>';return;}
-  var all=getItems();var h='';
-  for(var i=0;i<all.length;i++){
-    var k='i'+i;if(qty[k]===undefined)qty[k]=0;
-    h+='<div class="item-row"><span class="iname">'+all[i].n+'</span><span class="iunit">'+all[i].u+'</span>';
-    h+='<div class="qc"><button class="qbtn" onclick="cq(\''+k+'\',-1)">\u2212</button>';
-    h+='<span class="qnum" id="q'+k+'">'+qty[k]+'</span>';
-    h+='<button class="qbtn" onclick="cq(\''+k+'\',1)">+</button></div></div>';
-  }
-  document.getElementById('itemsList').innerHTML=h;
-}
-
-function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();}
-
-function addCustomItem(){
-  if(!selId)return;
-  var inp=document.getElementById('newItemName');
-  var n=inp.value.trim();if(!n)return;
-  custom.push(n);inp.value='';renderItems();
-}
-
-function updateGoBtn(){
-  var all=getItems();var hasQty=false;
-  for(var i=0;i<all.length;i++)if(qty['i'+i]>0){hasQty=true;break;}
-  var ok=selId&&selDate&&hasQty;
-  document.getElementById('goBtn').disabled=!ok;
-}
-
-function goToSend(){
-  if(!selId||!selDate)return;
-  var all=getItems();var items=[];
-  for(var i=0;i<all.length;i++){var q=qty['i'+i]||0;if(q>0)items.push({n:all[i].n,u:all[i].u,q:q});}
-  var note=document.getElementById('orderNote').value.trim();
-  var data={vendorId:selId,dateStr:dateStr,flex:flex,items:items,note:note};
-  sessionStorage.setItem('orderData',JSON.stringify(data));
-  window.location.href='send.html';
-}
-
-renderVendors();renderCal();checkBanner();updateGoBtn();
+init();
 
 </script>
 
