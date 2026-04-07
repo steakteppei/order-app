@@ -21,7 +21,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .deadline-alert{display:none;background:var(--orange);color:#fff;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;line-height:1.5;}
 .deadline-alert.show{display:block;}
 .card{background:var(--card);border:.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;}
-.slabel{font-size:10px;color:var(--text-hint);margin-bottom:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.slabel{font-size:11px;color:var(--text-sub);margin-bottom:9px;font-weight:600;}
 .vendor-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .vbtn{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-sm);padding:8px;cursor:pointer;text-align:left;}
 .vbtn:active{opacity:.72;}
@@ -31,12 +31,6 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .vm-line{color:var(--green-line);}
 .vm-sms{color:var(--green-sms);}
 .vm-email{color:var(--blue);}
-.deadline-box{border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:11px;font-size:11px;line-height:1.6;border:.5px solid var(--border);background:var(--bg);color:var(--text-sub);}
-.deadline-box strong{color:var(--text);font-weight:600;}
-.deadline-tbd{color:var(--text-hint);font-style:italic;}
-.flex-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;padding:9px 11px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);}
-.flex-toggle-label{font-size:11px;color:#92400e;line-height:1.5;}
-.flex-toggle-label strong{display:block;font-weight:600;font-size:11.5px;}
 .toggle-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:10px;}
 .toggle{position:relative;width:38px;height:22px;flex-shrink:0;}
 .toggle input{opacity:0;width:0;height:0;}
@@ -46,7 +40,14 @@ input:checked+.slider{background:var(--amber);}
 input:checked+.slider:before{transform:translateX(16px);}
 .toggle-txt{font-size:10px;font-weight:700;color:var(--text-hint);min-width:20px;}
 .toggle-txt.on{color:var(--amber);}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.flex-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 10px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);cursor:pointer;}
+.flex-row-label{font-size:11px;color:#92400e;font-weight:600;}
+.flex-expand{display:none;margin-top:8px;padding:8px 10px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);}
+.flex-expand.open{display:block;}
+.flex-expand-inner{display:flex;align-items:center;justify-content:space-between;}
+.flex-expand-txt{font-size:11px;color:#92400e;line-height:1.5;}
+.flex-expand-txt small{display:block;font-weight:400;font-size:10px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;margin-top:10px;}
 .cal-nav-btn{background:var(--bg);border:.5px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:18px;color:var(--text);display:flex;align-items:center;justify-content:center;}
 .cal-nav-btn:active{opacity:.6;}
 .cal-month-label{font-size:13px;font-weight:600;color:var(--text);}
@@ -63,7 +64,10 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-cell.flex-ok{background:#fef3c7;color:#92400e;}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
-.cal-deadline-warn{font-size:11px;margin-top:5px;color:var(--amber);font-weight:600;}
+.cal-deadline{font-size:11px;margin-top:4px;font-weight:600;}
+.dl-urgent{color:#dc2626;}
+.dl-soon{color:var(--amber);}
+.dl-ok{color:var(--text-hint);}
 .item-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:.5px solid var(--border);}
 .item-row:last-child{border-bottom:none;}
 .iname{flex:1;font-size:13px;color:var(--text);line-height:1.35;}
@@ -72,10 +76,12 @@ input:checked+.slider:before{transform:translateX(16px);}
 .qbtn{width:28px;height:28px;border:.5px solid var(--border-md);border-radius:8px;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);}
 .qbtn:active{opacity:.6;}
 .qnum{width:28px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
-.add-row{display:flex;gap:7px;margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
-.add-row input{flex:1;font-size:13px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;}
-.add-row input:focus{border-color:var(--orange);}
-.add-row button{font-size:12px;font-weight:600;padding:8px 12px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;color:var(--text);white-space:nowrap;}
+.custom-toggle{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:8px 0 2px;display:block;text-decoration:underline;}
+.custom-row{display:none;gap:7px;margin-top:6px;}
+.custom-row.open{display:flex;}
+.custom-row input{flex:1;font-size:13px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;}
+.custom-row input:focus{border-color:var(--orange);}
+.custom-row button{font-size:12px;font-weight:600;padding:8px 12px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;color:var(--text);white-space:nowrap;}
 .items-placeholder{font-size:13px;color:var(--text-hint);padding:12px 0;text-align:center;}
 .note-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
 .note-label{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
@@ -86,6 +92,10 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:disabled{background:#ccc;cursor:not-allowed;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 
+.sender-row{display:flex;gap:7px;margin-bottom:14px;}
+.sender-btn{flex:1;padding:9px 4px;border-radius:var(--radius-sm);border:.5px solid var(--border-md);background:var(--bg);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-align:center;}
+.sender-btn:active{opacity:.72;}
+.sender-btn.selected{border:1.5px solid var(--orange);background:var(--orange-light);color:var(--orange);}
 .send-method-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;margin-bottom:12px;}
 .badge-line{background:#e6f9ee;color:var(--green-line);border:.5px solid var(--green-line);}
 .badge-sms{background:#1c1c1e;color:#30d158;}
@@ -94,7 +104,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .email-hdr{background:#fff;padding:9px 12px;border-bottom:.5px solid #e5e7eb;}
 .ef{display:flex;gap:6px;font-size:10.5px;padding:2px 0;}
 .efl{color:#999;min-width:44px;}
-.efv{color:#333;font-size:10.5px;}
+.efv{color:#333;font-size:10.5px;word-break:break-all;}
 .email-body{padding:11px 12px;font-size:11.5px;line-height:1.75;color:#333;white-space:pre-wrap;background:#fff;max-height:200px;overflow-y:auto;}
 .sms-wrap{background:#1c1c1e;border-radius:16px;padding:14px 12px;}
 .sms-hdr{text-align:center;font-size:11px;color:#8e8e93;margin-bottom:12px;}
@@ -114,40 +124,17 @@ input:checked+.slider:before{transform:translateX(16px);}
 .copied{display:none;text-align:center;font-size:12px;color:var(--green-sms);margin-top:7px;font-weight:600;}
 .back-btn{width:100%;padding:12px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:600;background:var(--bg);color:var(--text);border:.5px solid var(--border-md);margin-top:8px;}
 .back-btn:active{opacity:.8;}
-.order-summary{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;border:.5px solid var(--border);}
+.order-summary{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;border:.5px solid var(--border);}
 .os-vendor{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
 .os-date{font-size:11px;color:var(--text-hint);}
-.os-deadline{font-size:11px;color:var(--amber);font-weight:600;margin-top:3px;}
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.48);z-index:200;align-items:flex-end;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 18px calc(env(safe-area-inset-bottom,0px) + 24px);max-height:90vh;overflow-y:auto;}
-.modal-handle{width:40px;height:4px;background:var(--border-md);border-radius:4px;margin:0 auto 18px;}
-.modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.modal-subtitle{font-size:12px;color:var(--text-hint);margin-bottom:16px;}
-.modal-vendor{font-size:14px;font-weight:600;color:var(--text);padding:8px 0 5px;border-bottom:.5px solid var(--border);margin-bottom:6px;}
-.modal-date{font-size:12px;color:var(--text-sub);margin-bottom:4px;}
-.modal-deadline{font-size:12px;color:var(--amber);margin-bottom:10px;font-weight:600;}
-.modal-flex-note{font-size:11px;background:var(--amber-light);color:#92400e;border-radius:6px;padding:6px 10px;margin-bottom:10px;border:.5px solid var(--amber-border);}
-.modal-items-wrap{background:var(--bg);border-radius:var(--radius-sm);padding:4px 10px;margin-bottom:4px;}
-.modal-item{display:flex;justify-content:space-between;font-size:13px;color:var(--text);padding:7px 0;border-bottom:.5px solid var(--border);}
-.modal-item:last-of-type{border-bottom:none;}
-.modal-item-qty{font-weight:700;color:var(--orange);white-space:nowrap;margin-left:8px;}
-.modal-note-display{font-size:11px;color:var(--text-sub);margin-top:8px;padding:7px 10px;background:var(--bg);border-radius:var(--radius-sm);border-left:3px solid var(--orange);}
-.modal-no-items{font-size:13px;color:var(--text-hint);padding:10px 0;}
-.modal-via{font-size:12px;color:var(--text-hint);margin-top:14px;margin-bottom:14px;}
-.modal-via span{font-weight:600;color:var(--text);}
-.modal-actions{display:flex;gap:9px;}
-.modal-actions button{flex:1;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;}
-.modal-actions button:active{opacity:.8;}
-.modal-cancel{background:var(--bg);border:.5px solid var(--border-md);color:var(--text);}
-.modal-confirm{border:none;color:#fff;}
-.modal-confirm.c-email{background:var(--blue);}
-.modal-confirm.c-sms{background:#1c1c1e;color:#30d158;}
-.modal-confirm.c-line{background:var(--green-line);}
+.os-deadline{font-size:11px;font-weight:600;margin-top:3px;}
 
 .update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
 .update-banner.show{display:block;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
+.dl-urgent{color:#dc2626;}
+.dl-soon{color:var(--amber);}
+.dl-ok{color:var(--text-hint);}
 
 </style>
 </head>
@@ -162,31 +149,14 @@ input:checked+.slider:before{transform:translateX(16px);}
   <div class="card order-summary">
     <div class="os-vendor" id="os-vendor"></div>
     <div class="os-date" id="os-date"></div>
-    <div class="os-deadline" id="os-deadline"></div>
+    <div class="os-deadline dl-ok" id="os-deadline"></div>
   </div>
   <div class="card">
-    <div class="slabel">Preview &amp; Send</div>
+    <div class="slabel">Sent by</div>
+    <div class="sender-row" id="senderRow"></div>
     <div id="methodBadge"></div>
     <div id="previewArea"></div>
     <button class="back-btn" onclick="goBack()">&larr; Back to Order</button>
-  </div>
-</div>
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Confirm Your Order</div>
-    <div class="modal-subtitle">Please review before sending.</div>
-    <div class="modal-vendor" id="modal-vendor"></div>
-    <div class="modal-date" id="modal-date"></div>
-    <div class="modal-deadline" id="modal-deadline"></div>
-    <div class="modal-flex-note" id="modal-flex-note" style="display:none;">&#9888; Special Schedule &mdash; please confirm availability with supplier.</div>
-    <div class="modal-items-wrap" id="modal-items"></div>
-    <div class="modal-note-display" id="modal-note-display" style="display:none;"></div>
-    <div class="modal-via">Sending via: <span id="modal-via-label"></span></div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeModal()">Go Back</button>
-      <button class="modal-confirm" id="modal-confirm-btn" onclick="executeSend()">Confirm &amp; Send</button>
-    </div>
   </div>
 </div>
 <div class="app-version">Last updated: April 07, 2026</div>
@@ -219,7 +189,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'},{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'box'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'box'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -233,7 +203,7 @@ var V=[
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
    di:'Delivery & order deadline: TBD',tbd:true,
    ok:function(){return true;},dl:function(){return null;},
-   items:[{n:'Rice Sekka 40LB',u:'Ea'},{n:'Sukiyaki Sauce 5.4LB',u:'CS'},{n:'Soy Sauce Yamasa 5GAL',u:'Ea'},{n:'MSG Aji No Moto 1LB',u:'Ea'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Wasabi Nama Fresh FRZ 800G',u:'Ea'}]},
+   items:[{n:'MSG Aji No Moto 1LB',u:'Ea'},{n:'Rice Sekka 40LB',u:'Ea'},{n:'Soy Sauce Yamasa 5GAL',u:'Ea'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'CS'},{n:'Wasabi Nama Fresh FRZ 800G',u:'Ea'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -244,9 +214,13 @@ function gv(id){for(var i=0;i<V.length;i++)if(V[i].id===id)return V[i];return nu
 
 var ML={email:'Gmail',sms:'Text Message',line:'LINE'};
 var MB={email:'badge-email',sms:'badge-sms',line:'badge-line'};
-var MM={email:'c-email',sms:'c-sms',line:'c-line'};
+var data=null,msg='',sender=null;
 
-var data=null,msg='';
+var SENDERS=[
+  {key:'aki',  label:'Aki',   email:'aki@teppei-usa.com'},
+  {key:'kacee',label:'Kacee', email:'kacee@teppei-usa.com'},
+  {key:'shaine',label:'Shaine',email:'shaine@teppei-usa.com'}
+];
 
 function init(){
   var raw=sessionStorage.getItem('orderData');
@@ -255,32 +229,69 @@ function init(){
   var v=gv(data.vendorId);
   if(!v){window.location.href='index.html';return;}
 
-  // Summary bar
-  var dl=v&&!v.tbd&&v.dl?v.dl(new Date()):null;
-  try{
-    var sd=new Date(data.dateStr);
-    dl=v&&!v.tbd?v.dl(sd):null;
-  }catch(e){}
   document.getElementById('os-vendor').textContent=v.name;
   document.getElementById('os-date').textContent='Delivery: '+data.dateStr;
   var dlEl=document.getElementById('os-deadline');
-  dlEl.textContent=dl?dl:'';
+  if(!v.tbd){
+    try{
+      var sd=new Date(data.dateStr);
+      var dl=v.dl(sd);
+      if(dl){
+        dlEl.textContent=dl;
+        var now=new Date();
+        var m=dl.match(/by (\d+):(\d+) (AM|PM)/);
+        if(m){
+          var hh=parseInt(m[1]);if(m[3]==='PM'&&hh!==12)hh+=12;if(m[3]==='AM'&&hh===12)hh=0;
+          var dlD=new Date(sd);dlD.setHours(hh,parseInt(m[2]),0,0);
+          var diff=(dlD-now)/3600000;
+          dlEl.className='os-deadline '+(diff<2?'dl-urgent':diff<24?'dl-soon':'dl-ok');
+        }
+      }
+    }catch(e){}
+  }
 
-  buildMsg(v);
+  renderSenderBtns();
+  buildMsg(v,null);
   renderSend(v);
 }
 
-function buildMsg(v){
+function renderSenderBtns(){
+  var h='';
+  for(var i=0;i<SENDERS.length;i++){
+    var s=SENDERS[i];
+    h+='<button class="sender-btn" id="sb'+s.key+'" onclick="selSender(\''+s.key+'\')">'+s.label+'</button>';
+  }
+  document.getElementById('senderRow').innerHTML=h;
+}
+
+function selSender(key){
+  sender=key;
+  document.querySelectorAll('.sender-btn').forEach(function(b){b.classList.remove('selected');});
+  document.getElementById('sb'+key).classList.add('selected');
+  var v=gv(data.vendorId);
+  buildMsg(v,key);
+  renderSend(v);
+}
+
+function getSenderObj(){
+  if(!sender)return null;
+  for(var i=0;i<SENDERS.length;i++)if(SENDERS[i].key===sender)return SENDERS[i];
+  return null;
+}
+
+function buildMsg(v,senderKey){
   var lines=[];
   for(var i=0;i<data.items.length;i++){
     var it=data.items[i];
     lines.push('  - '+it.n+' x '+it.q+' '+it.u);
   }
+  var sObj=null;
+  if(senderKey){for(var i=0;i<SENDERS.length;i++)if(SENDERS[i].key===senderKey){sObj=SENDERS[i];break;}}
   var b='Hi '+v.short+' Team,\n\n';
   b+='Hope you are doing well. This is Steak Teppei (Teppei USA, Inc.) at Ala Moana Center.\n';
   b+='Please see our order details below:\n\n';
   b+='Requested Delivery Date: '+data.dateStr+'\n';
-  if(data.flex){b+='** SPECIAL SCHEDULE REQUEST - please confirm availability **\n';}
+  if(data.flex)b+='** SPECIAL SCHEDULE REQUEST - please confirm availability **\n';
   b+='Receiving Hours: 10:00 AM - 8:00 PM\n\n';
   b+='--- Order Details ---\n';
   b+=(lines.length?lines.join('\n'):'  (No items selected)');
@@ -290,7 +301,16 @@ function buildMsg(v){
   b+='Makai Market Food Court, Ala Moana Center\n';
   b+='1450 Ala Moana Blvd #1160J, Honolulu, HI 96814\n';
   b+='Tel: (808) 636-4455';
+  if(sObj)b+='\nSent by: '+sObj.label;
   msg=b;
+}
+
+function getCC(vendorId){
+  var base=EC[vendorId];
+  if(!base)return 'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com';
+  var sObj=getSenderObj();
+  if(!sObj)return base.cc;
+  return base.cc.split(',').filter(function(e){return e.trim()!==sObj.email;}).join(',');
 }
 
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
@@ -303,55 +323,33 @@ function renderSend(v){
   var area='';
   if(m==='email'){
     var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var cc=getCC(v.id);
     area='<div class="email-wrap"><div class="email-hdr">';
     area+='<div class="ef"><span class="efl">To</span><span class="efv">'+ec.to+'</span></div>';
-    area+='<div class="ef"><span class="efl">CC</span><span class="efv">'+ec.cc.split(',').join(', ')+'</span></div>';
+    area+='<div class="ef"><span class="efl">CC</span><span class="efv">'+cc.split(',').join(', ')+'</span></div>';
     area+='<div class="ef"><span class="efl">Subject</span><span class="efv">'+subj+'</span></div>';
     area+='</div><div class="email-body">'+esc(msg)+'</div></div>';
-    area+='<button class="send-btn btn-email" onclick="confirmSend()">Review &amp; Send via Gmail</button>'+copy;
+    area+='<button class="send-btn btn-email" onclick="doSend()">Send via Gmail</button>'+copy;
   }else if(m==='sms'){
     area='<div class="sms-wrap"><div class="sms-hdr">To: '+v.short+'</div>';
     area+='<div class="sms-bubble">'+esc(msg)+'</div></div>';
-    area+='<button class="send-btn btn-sms" onclick="confirmSend()">Review &amp; Send via Text Message</button>'+copy;
+    area+='<button class="send-btn btn-sms" onclick="doSend()">Send via Text Message</button>'+copy;
   }else{
     area='<div class="line-wrap"><div class="line-top"><span class="line-back">&#8249;</span><span class="line-title">'+v.short+'</span></div>';
     area+='<div class="line-body"><div class="line-bubble">'+esc(msg)+'</div></div></div>';
-    area+='<button class="send-btn btn-line" onclick="confirmSend()">Select Recipient &amp; Send via LINE</button>'+copy;
+    area+='<button class="send-btn btn-line" onclick="doSend()">Select Recipient &amp; Send via LINE</button>'+copy;
   }
   document.getElementById('previewArea').innerHTML=area;
 }
 
-function confirmSend(){
-  var v=gv(data.vendorId);
-  document.getElementById('modal-vendor').textContent=v.name;
-  document.getElementById('modal-date').textContent='Delivery Date: '+data.dateStr;
-  var sd=new Date(data.dateStr);
-  var dl=v&&!v.tbd?v.dl(sd):'';
-  document.getElementById('modal-deadline').textContent=dl||'';
-  document.getElementById('modal-flex-note').style.display=data.flex?'block':'none';
-  var h='';
-  for(var i=0;i<data.items.length;i++){
-    var it=data.items[i];
-    h+='<div class="modal-item"><span>'+it.n+'</span><span class="modal-item-qty">'+it.q+' '+it.u+'</span></div>';
-  }
-  document.getElementById('modal-items').innerHTML=h||'<div class="modal-no-items">No items.</div>';
-  var nd=document.getElementById('modal-note-display');
-  if(data.note){nd.style.display='block';nd.textContent='Note: '+data.note;}else nd.style.display='none';
-  document.getElementById('modal-via-label').textContent=ML[v.method];
-  document.getElementById('modal-confirm-btn').className='modal-confirm '+MM[v.method];
-  document.getElementById('modalOverlay').classList.add('open');
-}
-
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-
-function executeSend(){
-  closeModal();
+function doSend(){
   var v=gv(data.vendorId);
   if(v.method==='email'){
     var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var cc=getCC(v.id);
     var s=encodeURIComponent('Order Request - Steak Teppei ('+data.dateStr+')');
     var body=msg.split('\n').join('\r\n');
-    window.location.href='mailto:'+encodeURIComponent(ec.to)+'?cc='+encodeURIComponent(ec.cc)+'&subject='+s+'&body='+encodeURIComponent(body);
+    window.location.href='mailto:'+encodeURIComponent(ec.to)+'?cc='+encodeURIComponent(cc)+'&subject='+s+'&body='+encodeURIComponent(body);
   }else if(v.method==='sms'){
     window.location.href='sms:?body='+encodeURIComponent(msg);
   }else{
@@ -367,9 +365,7 @@ function copyOrder(){
   }).catch(function(){alert('Copy failed. Please copy manually.');});
 }
 
-function goBack(){
-  window.location.href='index.html';
-}
+function goBack(){window.location.href='index.html';}
 
 init();
 

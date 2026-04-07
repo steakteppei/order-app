@@ -21,7 +21,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .deadline-alert{display:none;background:var(--orange);color:#fff;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;line-height:1.5;}
 .deadline-alert.show{display:block;}
 .card{background:var(--card);border:.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;}
-.slabel{font-size:10px;color:var(--text-hint);margin-bottom:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.slabel{font-size:11px;color:var(--text-sub);margin-bottom:9px;font-weight:600;}
 .vendor-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .vbtn{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-sm);padding:8px;cursor:pointer;text-align:left;}
 .vbtn:active{opacity:.72;}
@@ -31,12 +31,6 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .vm-line{color:var(--green-line);}
 .vm-sms{color:var(--green-sms);}
 .vm-email{color:var(--blue);}
-.deadline-box{border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:11px;font-size:11px;line-height:1.6;border:.5px solid var(--border);background:var(--bg);color:var(--text-sub);}
-.deadline-box strong{color:var(--text);font-weight:600;}
-.deadline-tbd{color:var(--text-hint);font-style:italic;}
-.flex-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;padding:9px 11px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);}
-.flex-toggle-label{font-size:11px;color:#92400e;line-height:1.5;}
-.flex-toggle-label strong{display:block;font-weight:600;font-size:11.5px;}
 .toggle-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:10px;}
 .toggle{position:relative;width:38px;height:22px;flex-shrink:0;}
 .toggle input{opacity:0;width:0;height:0;}
@@ -46,7 +40,14 @@ input:checked+.slider{background:var(--amber);}
 input:checked+.slider:before{transform:translateX(16px);}
 .toggle-txt{font-size:10px;font-weight:700;color:var(--text-hint);min-width:20px;}
 .toggle-txt.on{color:var(--amber);}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.flex-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 10px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);cursor:pointer;}
+.flex-row-label{font-size:11px;color:#92400e;font-weight:600;}
+.flex-expand{display:none;margin-top:8px;padding:8px 10px;background:var(--amber-light);border:.5px solid var(--amber-border);border-radius:var(--radius-sm);}
+.flex-expand.open{display:block;}
+.flex-expand-inner{display:flex;align-items:center;justify-content:space-between;}
+.flex-expand-txt{font-size:11px;color:#92400e;line-height:1.5;}
+.flex-expand-txt small{display:block;font-weight:400;font-size:10px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;margin-top:10px;}
 .cal-nav-btn{background:var(--bg);border:.5px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:18px;color:var(--text);display:flex;align-items:center;justify-content:center;}
 .cal-nav-btn:active{opacity:.6;}
 .cal-month-label{font-size:13px;font-weight:600;color:var(--text);}
@@ -63,7 +64,10 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-cell.flex-ok{background:#fef3c7;color:#92400e;}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
-.cal-deadline-warn{font-size:11px;margin-top:5px;color:var(--amber);font-weight:600;}
+.cal-deadline{font-size:11px;margin-top:4px;font-weight:600;}
+.dl-urgent{color:#dc2626;}
+.dl-soon{color:var(--amber);}
+.dl-ok{color:var(--text-hint);}
 .item-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:.5px solid var(--border);}
 .item-row:last-child{border-bottom:none;}
 .iname{flex:1;font-size:13px;color:var(--text);line-height:1.35;}
@@ -72,10 +76,12 @@ input:checked+.slider:before{transform:translateX(16px);}
 .qbtn{width:28px;height:28px;border:.5px solid var(--border-md);border-radius:8px;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);}
 .qbtn:active{opacity:.6;}
 .qnum{width:28px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
-.add-row{display:flex;gap:7px;margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
-.add-row input{flex:1;font-size:13px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;}
-.add-row input:focus{border-color:var(--orange);}
-.add-row button{font-size:12px;font-weight:600;padding:8px 12px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;color:var(--text);white-space:nowrap;}
+.custom-toggle{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:8px 0 2px;display:block;text-decoration:underline;}
+.custom-row{display:none;gap:7px;margin-top:6px;}
+.custom-row.open{display:flex;}
+.custom-row input{flex:1;font-size:13px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;}
+.custom-row input:focus{border-color:var(--orange);}
+.custom-row button{font-size:12px;font-weight:600;padding:8px 12px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);cursor:pointer;color:var(--text);white-space:nowrap;}
 .items-placeholder{font-size:13px;color:var(--text-hint);padding:12px 0;text-align:center;}
 .note-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
 .note-label{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
@@ -89,6 +95,9 @@ input:checked+.slider:before{transform:translateX(16px);}
 .update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
 .update-banner.show{display:block;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
+.dl-urgent{color:#dc2626;}
+.dl-soon{color:var(--amber);}
+.dl-ok{color:var(--text-hint);}
 
 </style>
 </head>
@@ -102,19 +111,11 @@ input:checked+.slider:before{transform:translateX(16px);}
   </div>
   <div class="deadline-alert" id="deadlineAlertBanner"></div>
   <div class="card">
-    <div class="slabel">1 &mdash; Select Supplier</div>
+    <div class="slabel">Supplier</div>
     <div class="vendor-grid" id="vendorGrid"></div>
   </div>
   <div class="card">
-    <div class="slabel">2 &mdash; Delivery Date</div>
-    <div id="deadlineInfo"></div>
-    <div class="flex-toggle-row">
-      <div class="flex-toggle-label"><strong>Holiday / Special Schedule</strong>Unlock all dates for irregular delivery</div>
-      <div class="toggle-wrap">
-        <label class="toggle"><input type="checkbox" id="flexToggle" onchange="toggleFlex()"><span class="slider"></span></label>
-        <span class="toggle-txt" id="flexTxt">OFF</span>
-      </div>
-    </div>
+    <div class="slabel">Delivery Date</div>
     <div class="cal-nav">
       <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
       <span class="cal-month-label" id="calLabel"></span>
@@ -123,18 +124,32 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="cal-grid" id="calHeaders"></div>
     <div class="cal-grid" id="calCells"></div>
     <div class="cal-selected" id="calDisplay">No date selected</div>
-    <div class="cal-deadline-warn" id="calDeadlineWarn"></div>
+    <div class="cal-deadline" id="calDeadline"></div>
+    <div class="flex-row" onclick="toggleFlexRow()">
+      <span class="flex-row-label">&#9881; Holiday / Special Schedule</span>
+      <span style="font-size:10px;color:#92400e;">tap to expand</span>
+    </div>
+    <div class="flex-expand" id="flexExpand">
+      <div class="flex-expand-inner">
+        <div class="flex-expand-txt">Unlock all dates<small>for irregular delivery requests</small></div>
+        <div class="toggle-wrap">
+          <label class="toggle"><input type="checkbox" id="flexToggle" onchange="toggleFlex()"><span class="slider"></span></label>
+          <span class="toggle-txt" id="flexTxt">OFF</span>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="card">
-    <div class="slabel">3 &mdash; Items &amp; Quantities</div>
+    <div class="slabel">Items &amp; Quantities</div>
     <div id="itemsList"><div class="items-placeholder">Select a supplier above to see items</div></div>
-    <div class="add-row">
-      <input type="text" id="newItemName" placeholder="Add custom item...">
-      <button onclick="addCustomItem()">+ Add</button>
+    <button class="custom-toggle" onclick="toggleCustom()">+ Add custom item</button>
+    <div class="custom-row" id="customRow">
+      <input type="text" id="newItemName" placeholder="Custom item name...">
+      <button onclick="addCustomItem()">Add</button>
     </div>
     <div class="note-wrap">
       <div class="note-label">Note (optional)</div>
-      <textarea id="orderNote" placeholder="e.g. Please call before delivery, smaller portions this week..."></textarea>
+      <textarea id="orderNote" placeholder="e.g. Please call before delivery..."></textarea>
     </div>
   </div>
   <div class="card">
@@ -171,7 +186,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'},{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'box'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'box'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'bag'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'carton'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'case'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'container'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'box'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -185,7 +200,7 @@ var V=[
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
    di:'Delivery & order deadline: TBD',tbd:true,
    ok:function(){return true;},dl:function(){return null;},
-   items:[{n:'Rice Sekka 40LB',u:'Ea'},{n:'Sukiyaki Sauce 5.4LB',u:'CS'},{n:'Soy Sauce Yamasa 5GAL',u:'Ea'},{n:'MSG Aji No Moto 1LB',u:'Ea'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Wasabi Nama Fresh FRZ 800G',u:'Ea'}]},
+   items:[{n:'MSG Aji No Moto 1LB',u:'Ea'},{n:'Rice Sekka 40LB',u:'Ea'},{n:'Soy Sauce Yamasa 5GAL',u:'Ea'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'CS'},{n:'Wasabi Nama Fresh FRZ 800G',u:'Ea'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -213,13 +228,19 @@ function checkBanner(){
   else b.classList.remove('show');
 }
 
+function toggleFlexRow(){
+  var ex=document.getElementById('flexExpand');
+  ex.classList.toggle('open');
+}
+
 function toggleFlex(){
   flex=document.getElementById('flexToggle').checked;
   var t=document.getElementById('flexTxt');
   t.textContent=flex?'ON':'OFF';t.className='toggle-txt'+(flex?' on':'');
   selDate=null;dateStr='';
   document.getElementById('calDisplay').textContent='No date selected';
-  document.getElementById('calDeadlineWarn').textContent='';
+  document.getElementById('calDeadline').textContent='';
+  document.getElementById('calDeadline').className='cal-deadline';
   renderCal();updateGoBtn();
 }
 
@@ -239,12 +260,9 @@ function selV(id){
   document.getElementById('vb'+id).classList.add('selected');
   qty={};custom=[];
   document.getElementById('orderNote').value='';
-  var v=gv(id);
-  document.getElementById('deadlineInfo').innerHTML=v.tbd
-    ?'<div class="deadline-box deadline-tbd">'+v.di+'</div>'
-    :'<div class="deadline-box"><strong>Schedule:</strong> '+v.di+'</div>';
   document.getElementById('calDisplay').textContent='No date selected';
-  document.getElementById('calDeadlineWarn').textContent='';
+  document.getElementById('calDeadline').textContent='';
+  document.getElementById('calDeadline').className='cal-deadline';
   renderCal();renderItems();updateGoBtn();
 }
 
@@ -277,14 +295,41 @@ function renderCal(){
 function calPrev(){cm--;if(cm<0){cm=11;cy--;}renderCal();}
 function calNext(){cm++;if(cm>11){cm=0;cy++;}renderCal();}
 
+function deadlineClass(v,dt){
+  if(!v||v.tbd)return 'dl-ok';
+  var dl=v.dl(dt);if(!dl)return 'dl-ok';
+  var now=new Date();
+  var dlTime=null;
+  var m=dl.match(/by (\d+):(\d+) (AM|PM)/);
+  if(m){
+    var h=parseInt(m[1]);var min=parseInt(m[2]);
+    if(m[3]==='PM'&&h!==12)h+=12;
+    if(m[3]==='AM'&&h===12)h=0;
+    var dlDate=new Date(dt);
+    var dlText=dl.match(/Order by: (.+?) by/);
+    if(dlText){
+      var parsed=new Date(dlText[1]+', '+dt.getFullYear());
+      if(!isNaN(parsed)){dlDate=parsed;}
+    }
+    dlDate.setHours(h,min,0,0);
+    var diff=(dlDate-now)/3600000;
+    if(diff<2)return 'dl-urgent';
+    if(diff<24)return 'dl-soon';
+  }
+  return 'dl-ok';
+}
+
 function pickD(y,m,d){
   selDate=new Date(y,m,d);selDate.setHours(0,0,0,0);
   dateStr=selDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>';
   var v=selId?gv(selId):null;
+  var dlEl=document.getElementById('calDeadline');
   var dl=v&&!v.tbd?v.dl(selDate):null;
   var ns=flex&&v&&!v.ok(selDate);
-  document.getElementById('calDeadlineWarn').textContent=(dl?dl:'')+(ns?(dl?' \xb7 ':'')+'\u26a0 Non-standard \u2014 confirm with supplier':'');
+  var txt=(dl?dl:'')+(ns?(dl?' \xb7 ':'')+'\u26a0 Non-standard \u2014 confirm with supplier':'');
+  dlEl.textContent=txt;
+  dlEl.className='cal-deadline '+(dl?deadlineClass(v,selDate):'dl-ok');
   renderCal();updateGoBtn();
 }
 
@@ -309,6 +354,10 @@ function renderItems(){
 
 function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();}
 
+function toggleCustom(){
+  document.getElementById('customRow').classList.toggle('open');
+}
+
 function addCustomItem(){
   if(!selId)return;
   var inp=document.getElementById('newItemName');
@@ -319,8 +368,7 @@ function addCustomItem(){
 function updateGoBtn(){
   var all=getItems();var hasQty=false;
   for(var i=0;i<all.length;i++)if(qty['i'+i]>0){hasQty=true;break;}
-  var ok=selId&&selDate&&hasQty;
-  document.getElementById('goBtn').disabled=!ok;
+  document.getElementById('goBtn').disabled=!(selId&&selDate&&hasQty);
 }
 
 function goToSend(){

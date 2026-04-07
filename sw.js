@@ -1,4 +1,4 @@
-const CACHE='st-order-v2';
+const CACHE='st-order-v3';
 const FILES=['./','./index.html','./send.html'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES);}));
