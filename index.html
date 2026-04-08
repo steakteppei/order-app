@@ -447,6 +447,19 @@ function closeChangelog(){
 
 renderVendors();renderCal();checkBanner();updateGoBtn();checkChangelog();
 
+// Auto-reload when app returns from background
+var lastHidden=null;
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){
+    lastHidden=Date.now();
+  } else {
+    // If was in background for more than 5 minutes, reload for latest version
+    if(lastHidden&&(Date.now()-lastHidden)>5*60*1000){
+      window.location.reload();
+    }
+  }
+});
+
 </script>
 
 <script>
