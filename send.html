@@ -352,6 +352,25 @@ function renderSend(v){
   document.getElementById('previewArea').innerHTML=area;
 }
 
+function showDone(){
+  var v=gv(data.vendorId);
+  document.querySelector('.app').innerHTML='<div class="done-wrap">'
+    +'<div class="done-icon">✅</div>'
+    +'<div class="done-vendor">'+v.name+'</div>'
+    +'<div class="done-date">'+data.dateStr+'</div>'
+    +'<div class="done-countdown" id="doneCountdown">Returning to order screen in 3 seconds...</div>'
+    +'<button class="done-btn" onclick="window.location.href='index.html'">New Order</button>'
+    +'</div>';
+  var sec=3;
+  var timer=setInterval(function(){
+    sec--;
+    var el=document.getElementById('doneCountdown');
+    if(!el){clearInterval(timer);return;}
+    if(sec<=0){clearInterval(timer);window.location.href='index.html';}
+    else el.textContent='Returning to order screen in '+sec+' second'+(sec>1?'s':'')+'...';
+  },1000);
+}
+
 function doSend(){
   if(!sender){alert('Please select your name first.');return;}
   var v=gv(data.vendorId);
@@ -367,13 +386,13 @@ function doSend(){
     var u='https://line.me/R/share?text='+encodeURIComponent(msg);
     window.open(u,'_blank');
   }
+  setTimeout(function(){showDone();},300);
 }
 
 function copyOrder(){
   if(!sender){alert('Please select your name first.');return;}
   navigator.clipboard.writeText(msg).then(function(){
-    var b=document.getElementById('copiedBadge');
-    if(b){b.style.display='block';setTimeout(function(){b.style.display='none';},2500);}
+    showDone();
   }).catch(function(){alert('Copy failed. Please copy manually.');});
 }
 
