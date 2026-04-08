@@ -195,11 +195,15 @@ var V=[
    ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 6:00 AM';},
    items:[{n:'Lemon 140s Choice',u:'CS'},{n:'Onion Jumbo 50# Sack',u:'BAG'},{n:'Spring Mix 3#',u:'CS'}]},
+  {id:'atm',name:'ATM International USA, Inc.',short:'ATM International',method:'line',
+   di:'Delivery & order deadline: TBD',tbd:true,
+   ok:function(){return true;},dl:function(){return null;},
+   items:[{n:'Wagyu Ribeye Lipon 30LB',u:'CS'}]},
   {id:'apax',name:'Apax Hawaii (CPH Holdings)',short:'Apax Hawaii',method:'line',
    di:'Delivery: Mon & Thu only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp Container (ML-83 Black)',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'}]},
+   items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp Container (ML-83 Black)',u:'CS'},{n:'12 oz Paper Container',u:'CS'},{n:'12 oz Lid YS-390',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Chopstick Wooden',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'},{n:'Spoon Compostable 6in CPLA',u:'CS'},{n:'Tbag Lrg (Produce Roll)',u:'CS'}]},
   {id:'cocacola',name:'Coca-Cola Bottling Co. of Hawaii',short:'Coca-Cola Hawaii',method:'sms',
    di:'Delivery: Tuesday only | Order deadline: Previous Friday by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===2;},
@@ -215,6 +219,10 @@ var V=[
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 3:00 PM';},
    items:[{n:'Shrimp 21-25 White P&D T-On',u:'CS'}]},
+  {id:'fukuoka',name:'Fukuoka Package USA, Inc.',short:'Fukuoka Package',method:'sms',
+   di:'Delivery & order deadline: TBD',tbd:true,
+   ok:function(){return true;},dl:function(){return null;},
+   items:[{n:'KM-57-T 8X8 3-COMP',u:'CS'}]},
   {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',method:'sms',
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
    ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
@@ -224,7 +232,7 @@ var V=[
    di:'Delivery: Friday only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===5;},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Hondashi',u:'BOX'},{n:'Miso Dispenser',u:'BAG'},{n:'Mizkan Rice Vinegar',u:'BTL'},{n:'MSG Aji No Moto 1LB',u:'BAG'},{n:'Rice Sekka 40LB',u:'BAG'},{n:'Soy Sauce Yamasa 5GAL',u:'CTN'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'BOX'},{n:'Wasabi Nama Fresh FRZ 800G',u:'BAG'}]},
+   items:[{n:'Hondashi',u:'BOX'},{n:'Miso Dispenser',u:'BAG'},{n:'Mizkan Rice Vinegar',u:'BTL'},{n:'MSG Aji No Moto 1LB',u:'BAG'},{n:'Rice Sekka 40LB',u:'BAG'},{n:'Soy Sauce Yamasa 5GAL',u:'CTN'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'BOX'},{n:'Wakame Seaweed 0.8 sm bag',u:'BAG'},{n:'Wasabi Nama Fresh FRZ 800G',u:'BAG'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -407,14 +415,13 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '1.5',
+  version: '1.6',
   date: 'April 8, 2026',
   items: [
-    'Apax, Ala Moana Produce, Wismettac schedules added',
-    'Unit display unified and plural forms added',
-    'Completion screen after sending',
-    'Sender name required before sending',
-    'Message format simplified'
+    'Apax: 5 new items added',
+    'Wismettac: Wakame Seaweed added',
+    'ATM International USA, Inc. added',
+    'Fukuoka Package USA, Inc. added'
   ]
 };
 
