@@ -183,9 +183,9 @@ input:checked+.slider:before{transform:translateX(16px);}
 
 // Hawaii State + US Federal Holidays (observed dates)
 var HI_NAMES={
-  '2026-01-01':'New Year's Day',
+  '2026-01-01':"New Year's Day",
   '2026-01-19':'MLK Day',
-  '2026-02-16':'Presidents' Day',
+  '2026-02-16':"Presidents Day",
   '2026-03-26':'Prince Kuhio Day',
   '2026-04-03':'Good Friday',
   '2026-05-25':'Memorial Day',
@@ -197,9 +197,9 @@ var HI_NAMES={
   '2026-11-11':'Veterans Day',
   '2026-11-26':'Thanksgiving',
   '2026-12-25':'Christmas',
-  '2027-01-01':'New Year's Day',
+  '2027-01-01':"New Year's Day",
   '2027-01-18':'MLK Day',
-  '2027-02-15':'Presidents' Day',
+  '2027-02-15':"Presidents Day",
   '2027-03-26':'Prince Kuhio Day / Good Friday',
   '2027-05-31':'Memorial Day',
   '2027-06-11':'King Kamehameha Day',
@@ -217,7 +217,8 @@ function dow(dt){return dt.getDay();}
 var EC={
   eskimo:{to:'oahuorders@eskimocandy.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
   alamoana:{to:'order@alamoanaproduce.com',cc:'todd@alamoanaproduce.com,aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
-  costco:{to:'w687mbd9@costco.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'}
+  costco:{to:'w687mbd9@costco.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
+  fukuoka:{to:'hi-sales@fukupa.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'}
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
@@ -237,7 +238,7 @@ var V=[
    items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp Container (ML-83 Black)',u:'CS'},{n:'12 oz Paper Container',u:'CS'},{n:'12 oz Lid YS-390',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Chopstick Wooden',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'},{n:'Spoon Compostable 6in CPLA',u:'CS'},{n:'Tbag Lrg (Produce Roll)',u:'CS'}]},
   {id:'cocacola',name:'Coca-Cola Bottling Co. of Hawaii',short:'Coca-Cola Hawaii',method:'sms',
    di:'Delivery: Tuesday only | Order deadline: Previous Friday by 2:00 PM',tbd:false,
-   ok:function(dt){return dow(dt)===2;},
+   ok:function(dt){return dow(dt)===2;},phone:'Coca Cola - Steak Teppei',
    dl:function(dt){var f=new Date(dt);f.setDate(f.getDate()-4);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 2:00 PM';},
    items:[{n:'Coca-Cola Original 20 fl oz',u:'CS'},{n:'Coca-Cola Zero 20 fl oz',u:'CS'},{n:'Dasani 16.9 fl oz',u:'CS'},{n:'Sprite 20 fl oz',u:'CS'}]},
   {id:'costco',name:'Costco Wholesale',short:'Costco',method:'email',
@@ -250,14 +251,14 @@ var V=[
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 3:00 PM';},
    items:[{n:'Shrimp 21-25 White P&D T-On',u:'CS'}]},
-  {id:'fukuoka',name:'Fukuoka Package USA, Inc.',short:'Fukuoka Package',method:'sms',
+  {id:'fukuoka',name:'Fukuoka Package USA, Inc.',short:'Fukuoka Package',method:'email',
    di:'Delivery: Mon, Wed & Fri only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
    items:[{n:'KM-57-T 8X8 3-COMP',u:'CS'}]},
   {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',method:'sms',
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
-   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
+   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},phone:'BPO not included Fresh Island Fish - Steak Teppei',
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
    items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
@@ -267,7 +268,7 @@ var V=[
    items:[{n:'Hondashi',u:'BOX'},{n:'Miso Dispenser',u:'BAG'},{n:'Mizkan Rice Vinegar',u:'BTL'},{n:'MSG Aji No Moto 1LB',u:'BAG'},{n:'Rice Sekka 40LB',u:'BAG'},{n:'Soy Sauce Yamasa 5GAL',u:'CTN'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'BOX'},{n:'Wakame Seaweed 0.8 sm bag',u:'BAG'},{n:'Wasabi Nama Fresh FRZ 800G',u:'BAG'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
-   ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
+   ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},phone:"Wong's - Steak Teppei",
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 2:00 PM';},
    items:[{n:'Beef Strip Steak 8oz',u:'CS'},{n:'Chicken Thighs Boneless Skinless 4x10LB',u:'CS'},{n:'Pork Back Fat Skinned 50LB',u:'CS'}]}
 ];
@@ -322,7 +323,10 @@ function selV(id){
   selId=id;selDate=null;dateStr='';
   document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
   document.getElementById('vb'+id).classList.add('selected');
-  qty={};custom=[];
+  qty={};custom=[];flex=false;
+  document.getElementById('flexToggle').checked=false;
+  document.getElementById('flexTxt').textContent='OFF';
+  document.getElementById('flexTxt').className='toggle-txt';
   document.getElementById('orderNote').value='';
   document.getElementById('calDisplay').textContent='No date selected';
   document.getElementById('calDeadline').textContent='';
@@ -441,8 +445,50 @@ function updateGoBtn(){
   document.getElementById('goBtn').disabled=!(selId&&selDate&&hasQty);
 }
 
+function saveState(){
+  try{
+    var state={selId:selId,dateStr:dateStr,flex:flex,qty:qty,custom:custom,
+      note:document.getElementById('orderNote').value.trim(),cy:cy,cm:cm};
+    localStorage.setItem('st_order_state',JSON.stringify(state));
+  }catch(e){}
+}
+function restoreState(){
+  try{
+    var raw=localStorage.getItem('st_order_state');
+    if(!raw)return;
+    var s=JSON.parse(raw);
+    if(!s.selId)return;
+    selId=s.selId;flex=s.flex||false;qty=s.qty||{};custom=s.custom||[];
+    cy=s.cy||today.getFullYear();cm=s.cm||today.getMonth();
+    document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
+    var vb=document.getElementById('vb'+selId);if(vb)vb.classList.add('selected');
+    var v=gv(selId);
+    if(v){
+      document.getElementById('deadlineInfo').innerHTML=v.tbd
+        ?'<div class="deadline-box deadline-tbd">'+v.di+'</div>'
+        :'<div class="deadline-box"><strong>Schedule:</strong> '+v.di+'</div>';
+    }
+    if(flex){
+      document.getElementById('flexToggle').checked=true;
+      var t=document.getElementById('flexTxt');t.textContent='ON';t.className='toggle-txt on';
+    }
+    if(s.dateStr){
+      dateStr=s.dateStr;
+      var parsed=new Date(s.dateStr);
+      if(!isNaN(parsed)){
+        selDate=parsed;selDate.setHours(0,0,0,0);
+        var hname=HI_NAMES[selDate.getFullYear()+'-'+pad(selDate.getMonth()+1)+'-'+pad(selDate.getDate())];
+        var holNote=hname?' <span style="color:var(--orange);font-size:10px;font-weight:600;">&#x26a0; '+hname+'</span>':'';
+        document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+holNote;
+      }
+    }
+    if(s.note)document.getElementById('orderNote').value=s.note;
+    renderItems();renderCal();updateGoBtn();
+  }catch(e){}
+}
 function goToSend(){
   if(!selId||!selDate)return;
+  saveState();
   var all=getItems();var items=[];
   for(var i=0;i<all.length;i++){var q=qty['i'+i]||0;if(q>0)items.push({n:all[i].n,u:all[i].u,q:q});}
   var note=document.getElementById('orderNote').value.trim();
@@ -482,7 +528,7 @@ function closeChangelog(){
   document.getElementById('changelogOverlay').classList.remove('open');
 }
 
-renderVendors();renderCal();checkBanner();updateGoBtn();checkChangelog();
+renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();
 
 // Auto-reload when app returns from background
 var lastHidden=null;
