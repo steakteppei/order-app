@@ -156,7 +156,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     <button class="go-btn" id="goBtn" onclick="goToSend()" disabled>Preview &amp; Send &rarr;</button>
   </div>
 </div>
-<div class="app-version">Last updated: April 07, 2026</div>
+<div class="app-version">Last updated: April 08, 2026</div>
 <script>
 
 var HI=['2026-01-01','2026-01-19','2026-02-16','2026-03-26','2026-05-25','2026-06-11','2026-07-04','2026-09-07','2026-10-12','2026-11-11','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-11','2027-07-04','2027-09-06','2027-11-11','2027-11-25','2027-12-25'];
@@ -170,12 +170,14 @@ var EC={
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
-   di:'Delivery & order deadline: TBD',tbd:true,
-   ok:function(){return true;},dl:function(){return null;},
+   di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM',tbd:false,
+   ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
+   dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 6:00 AM';},
    items:[{n:'Lemon 140s Choice',u:'CS'},{n:'Onion Jumbo 50# Sack',u:'BAG'},{n:'Spring Mix 3#',u:'CS'}]},
   {id:'apax',name:'Apax Hawaii (CPH Holdings)',short:'Apax Hawaii',method:'line',
-   di:'Delivery & order deadline: TBD',tbd:true,
-   ok:function(){return true;},dl:function(){return null;},
+   di:'Delivery: Mon & Thu only | Order deadline: Previous day by 12:00 PM',tbd:false,
+   ok:function(dt){return dow(dt)===1||dow(dt)===4;},
+   dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
    items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp Container (ML-83 Black)',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'}]},
   {id:'cocacola',name:'Coca-Cola Bottling Co. of Hawaii',short:'Coca-Cola Hawaii',method:'sms',
    di:'Delivery: Tuesday only | Order deadline: Previous Friday by 2:00 PM',tbd:false,
@@ -198,8 +200,9 @@ var V=[
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
    items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
-   di:'Delivery & order deadline: TBD',tbd:true,
-   ok:function(){return true;},dl:function(){return null;},
+   di:'Delivery: Friday only | Order deadline: Previous day by 12:00 PM',tbd:false,
+   ok:function(dt){return dow(dt)===5;},
+   dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
    items:[{n:'Hondashi',u:'BOX'},{n:'Miso Dispenser',u:'BAG'},{n:'Mizkan Rice Vinegar',u:'BTL'},{n:'MSG Aji No Moto 1LB',u:'BAG'},{n:'Rice Sekka 40LB',u:'BAG'},{n:'Soy Sauce Yamasa 5GAL',u:'CTN'},{n:'Starch Potato Katakuriko 5LB',u:'CS'},{n:'Sukiyaki Sauce 5.4LB',u:'BOX'},{n:'Wasabi Nama Fresh FRZ 800G',u:'BAG'}]},
   {id:'wongs',name:"Wong's Meat Market, Ltd.",short:"Wong's Meat Market",method:'sms',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 2:00 PM',tbd:false,
