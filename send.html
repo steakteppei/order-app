@@ -226,9 +226,10 @@ var SENDERS=[
 ];
 
 function init(){
-  var raw=sessionStorage.getItem('orderData');
+  var params=new URLSearchParams(window.location.search);
+  var raw=params.get('d');
   if(!raw){window.location.href='index.html';return;}
-  data=JSON.parse(raw);
+  try{data=JSON.parse(decodeURIComponent(raw));}catch(e){window.location.href='index.html';return;}
   var v=gv(data.vendorId);
   if(!v){window.location.href='index.html';return;}
 

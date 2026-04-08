@@ -380,8 +380,8 @@ function goToSend(){
   for(var i=0;i<all.length;i++){var q=qty['i'+i]||0;if(q>0)items.push({n:all[i].n,u:all[i].u,q:q});}
   var note=document.getElementById('orderNote').value.trim();
   var data={vendorId:selId,dateStr:dateStr,flex:flex,items:items,note:note};
-  sessionStorage.setItem('orderData',JSON.stringify(data));
-  window.location.href='send.html';
+  var encoded=encodeURIComponent(JSON.stringify(data));
+  window.location.href='send.html?d='+encoded;
 }
 
 renderVendors();renderCal();checkBanner();updateGoBtn();
