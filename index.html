@@ -62,6 +62,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-cell.today{color:var(--orange);font-weight:700;}
 .cal-cell.today.selected{color:#fff;}
 .cal-cell.flex-ok{background:#fef3c7;color:#92400e;}
+.hol-dot{display:block;width:4px;height:4px;background:var(--orange);border-radius:50%;margin:1px auto 0;}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
 .cal-deadline{font-size:11px;margin-top:4px;font-weight:600;}
@@ -180,7 +181,36 @@ input:checked+.slider:before{transform:translateX(16px);}
 <div class="app-version">Last updated: April 08, 2026</div>
 <script>
 
-var HI=['2026-01-01','2026-01-19','2026-02-16','2026-03-26','2026-05-25','2026-06-11','2026-07-04','2026-09-07','2026-10-12','2026-11-11','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-11','2027-07-04','2027-09-06','2027-11-11','2027-11-25','2027-12-25'];
+// Hawaii State + US Federal Holidays (observed dates)
+var HI_NAMES={
+  '2026-01-01':'New Year's Day',
+  '2026-01-19':'MLK Day',
+  '2026-02-16':'Presidents' Day',
+  '2026-03-26':'Prince Kuhio Day',
+  '2026-04-03':'Good Friday',
+  '2026-05-25':'Memorial Day',
+  '2026-06-11':'King Kamehameha Day',
+  '2026-07-03':'Independence Day (observed)',
+  '2026-08-21':'Statehood Day',
+  '2026-09-07':'Labor Day',
+  '2026-11-03':'General Election Day',
+  '2026-11-11':'Veterans Day',
+  '2026-11-26':'Thanksgiving',
+  '2026-12-25':'Christmas',
+  '2027-01-01':'New Year's Day',
+  '2027-01-18':'MLK Day',
+  '2027-02-15':'Presidents' Day',
+  '2027-03-26':'Prince Kuhio Day / Good Friday',
+  '2027-05-31':'Memorial Day',
+  '2027-06-11':'King Kamehameha Day',
+  '2027-07-05':'Independence Day (observed)',
+  '2027-08-20':'Statehood Day',
+  '2027-09-06':'Labor Day',
+  '2027-11-11':'Veterans Day',
+  '2027-11-25':'Thanksgiving',
+  '2027-12-27':'Christmas (observed)'
+};
+var HI=Object.keys(HI_NAMES);
 function isHoliday(dt){var s=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());return HI.indexOf(s)>=0;}
 function pad(n){return n<10?'0'+n:String(n);}
 function dow(dt){return dt.getDay();}
@@ -315,13 +345,17 @@ function renderCal(){
     var sel=selDate&&dt.getTime()===selDate.getTime();
     var tod=dt.getTime()===today.getTime();
     var c='cal-cell';
+    var hkey=cy+'-'+pad(cm+1)+'-'+pad(d);
+    var isHol=HI_NAMES[hkey]?true:false;
     if(sel)c+=' selected';
     else if(past)c+=' unavail';
     else if(!flex&&!ok)c+=' unavail';
     else if(flex&&!ok)c+=' flex-ok';
     else if(tod)c+=' today';
     var click=(!past&&(flex||ok))?' onclick="pickD('+cy+','+cm+','+d+')"':'';
-    cells+='<div class="'+c+'"'+click+'>'+d+'</div>';
+    var title=isHol?' title="'+HI_NAMES[hkey]+'"':'';
+    var dot=isHol&&!past?'<span class="hol-dot"></span>':'';
+    cells+='<div class="'+c+'"'+click+title+'>'+d+dot+'</div>';
   }
   document.getElementById('calCells').innerHTML=cells;
 }
@@ -356,7 +390,9 @@ function deadlineClass(v,dt){
 function pickD(y,m,d){
   selDate=new Date(y,m,d);selDate.setHours(0,0,0,0);
   dateStr=selDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-  document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>';
+  var hname=HI_NAMES[selDate.getFullYear()+'-'+pad(selDate.getMonth()+1)+'-'+pad(selDate.getDate())];
+  var holNote=hname?' <span style="color:var(--orange);font-size:10px;font-weight:600;">&#x26a0; '+hname+'</span>':'';
+  document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+holNote;
   var v=selId?gv(selId):null;
   var dlEl=document.getElementById('calDeadline');
   var dl=v&&!v.tbd?v.dl(selDate):null;
@@ -417,11 +453,12 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '1.7',
+  version: '1.8',
   date: 'April 8, 2026',
   items: [
-    'ATM International: delivery schedule added (Mon-Fri, deadline 7:00 AM)',
-    'Fukuoka Package: delivery schedule added (Mon/Wed/Fri, deadline prev day noon)'
+    'Holiday calendar updated with all Hawaii & US Federal holidays',
+    'Holiday names shown on calendar and when date is selected',
+    'ATM International & Fukuoka Package schedules added'
   ]
 };
 
