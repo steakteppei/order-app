@@ -229,7 +229,7 @@ function init(){
   var params=new URLSearchParams(window.location.search);
   var raw=params.get('d');
   if(!raw){window.location.href='index.html';return;}
-  try{data=JSON.parse(decodeURIComponent(raw));}catch(e){window.location.href='index.html';return;}
+  try{data=JSON.parse(raw);}catch(err){window.location.href='index.html';return;}
   var v=gv(data.vendorId);
   if(!v){window.location.href='index.html';return;}
 
@@ -355,13 +355,19 @@ function renderSend(v){
 
 function showDone(){
   var v=gv(data.vendorId);
-  document.querySelector('.app').innerHTML='<div class="done-wrap">'
-    +'<div class="done-icon">✅</div>'
+  var wrap=document.createElement('div');
+  wrap.className='done-wrap';
+  wrap.innerHTML='<div class="done-icon">\u2705</div>'
     +'<div class="done-vendor">'+v.name+'</div>'
     +'<div class="done-date">'+data.dateStr+'</div>'
-    +'<div class="done-countdown" id="doneCountdown">Returning to order screen in 3 seconds...</div>'
-    +'<button class="done-btn" onclick="window.location.href='index.html'">New Order</button>'
-    +'</div>';
+    +'<div class="done-countdown" id="doneCountdown">Returning to order screen in 3 seconds...</div>';
+  var btn=document.createElement('button');
+  btn.className='done-btn';
+  btn.textContent='New Order';
+  btn.onclick=function(){window.location.href='index.html';};
+  wrap.appendChild(btn);
+  document.querySelector('.app').innerHTML='';
+  document.querySelector('.app').appendChild(wrap);
   var sec=3;
   var timer=setInterval(function(){
     sec--;
