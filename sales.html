@@ -124,24 +124,50 @@ function showTab(name) {
   renderTab(name);
 }
 
-function renderTab(name) {
-  var el = document.getElementById('tab-'+name);
-  if (cache[name]) { renderContent(name, cache[name]); return; }
-  el.innerHTML = '<div class="loading">Loading...</div>';
-  var sheetName = {busy:'Busy Periods',daily:'Daily Sales',hourly:'Hourly Sales',items:'Item Sales'}[name];
+function parseGvizDate(val) {
+  if (!val) return '';
+  var s = val.toString();
+  var dm = s.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if (dm) {
+    var y=parseInt(dm[1]),mo=parseInt(dm[2])+1,d=parseInt(dm[3]);
+    return y+'-'+(mo<10?'0':'')+mo+'-'+(d<10?'0':'')+d;
+  }
+  return s.substring(0,10);
+}
+
+function loadSheet(sheetName, cb) {
+  if (cache[sheetName]) { cb(cache[sheetName]); return; }
   fetch(BASE + encodeURIComponent(sheetName))
     .then(function(r){ return r.text(); })
     .then(function(text) {
-      var json = JSON.parse(text.replace(/^[^\(]+\(/, '').replace(/\);?\s*$/, ''));
+      var s1=text.indexOf('('),s2=text.lastIndexOf(')');var json=JSON.parse(s1>=0?text.substring(s1+1,s2+1>s1+1?s2:text.length):text);
       var rows = json.table.rows.map(function(r) {
         return r.c.map(function(c){ return c ? (c.v !== null && c.v !== undefined ? c.v : '') : ''; });
       });
-      cache[name] = rows;
-      renderContent(name, rows);
+      cache[sheetName] = rows;
+      cb(rows);
     })
-    .catch(function(e) {
+    .catch(function(){ cb([]); });
+}
+
+function renderTab(name) {
+  var el = document.getElementById('tab-'+name);
+  if (name === 'busy') {
+    el.innerHTML = '<div class="loading">Loading...</div>';
+    loadSheet('Daily Sales', function(rows) { renderBusy(rows); });
+    return;
+  }
+  if (cache[name]) { renderContent(name, cache[name]); return; }
+  el.innerHTML = '<div class="loading">Loading...</div>';
+  var sheetName = {daily:'Daily Sales',hourly:'Hourly Sales',items:'Item Sales'}[name];
+  loadSheet(sheetName, function(rows) {
+    if (!rows.length) {
       el.innerHTML = '<div class="error">Failed to load data.<br>Make sure the spreadsheet is public.</div>';
-    });
+      return;
+    }
+    cache[name] = rows;
+    renderContent(name, rows);
+  });
 }
 
 function fmt$(n) {
@@ -164,54 +190,97 @@ function renderContent(name, rows) {
   else if (name === 'items') renderItems(rows);
 }
 
-function renderBusy(rows) {
+function renderBusy(dailyRows) {
   var el = document.getElementById('tab-busy');
-  // Group by period name
-  var periods = {};
-  var order = [];
-  rows.forEach(function(r) {
-    var name = r[0], year = r[1], start = r[2], end = r[3], rev = parseFloat(r[4])||0, orders = parseInt(r[5])||0, avg = parseFloat(r[6])||0;
-    if (!periods[name]) { periods[name] = []; order.push(name); }
-    periods[name].push({year:year, start:start, end:end, rev:rev, orders:orders, avg:avg});
+
+  var dayMap = {};
+  dailyRows.forEach(function(r) {
+    var key = parseGvizDate(r[0]);
+    if (!key) return;
+    dayMap[key] = { rev: parseFloat(r[1])||0, orders: parseInt(r[2])||0 };
   });
 
-  // Max revenue for bar scaling
+  var PERIODS = [
+    { name: 'Golden Week',       ranges: [['2024-04-29','2024-05-06'],['2025-04-29','2025-05-06'],['2026-04-29','2026-05-06']] },
+    { name: 'Obon',              ranges: [['2024-08-11','2024-08-16'],['2025-08-11','2025-08-16'],['2026-08-11','2026-08-16']] },
+    { name: 'Silver Week',       ranges: [['2024-09-19','2024-09-23'],['2025-09-19','2025-09-23']] },
+    { name: 'New Year Holiday',  ranges: [['2023-12-26','2024-01-04'],['2024-12-26','2025-01-04'],['2025-12-26','2026-01-04']] },
+    { name: 'Memorial Day',      ranges: [['2024-05-25','2024-05-27'],['2025-05-23','2025-05-26'],['2026-05-23','2026-05-25']] },
+    { name: 'Labor Day',         ranges: [['2024-08-31','2024-09-02'],['2025-08-30','2025-09-01'],['2026-09-05','2026-09-07']] },
+    { name: 'Thanksgiving',      ranges: [['2024-11-28','2024-12-01'],['2025-11-27','2025-11-30']] },
+    { name: 'Honolulu Marathon', ranges: [['2024-12-07','2024-12-09'],['2025-12-06','2025-12-08'],['2026-12-11','2026-12-13']] },
+    { name: 'Spring Break HI',   ranges: [['2024-03-18','2024-03-22'],['2025-03-17','2025-03-21'],['2026-03-23','2026-03-27']] },
+    { name: 'Independence Day',  ranges: [['2024-07-04','2024-07-07'],['2025-07-04','2025-07-07'],['2026-07-03','2026-07-06']] }
+  ];
+
+  function sumRange(start, end) {
+    var d = new Date(start+'T12:00:00'), endD = new Date(end+'T12:00:00');
+    var rev=0, orders=0, days=0;
+    while (d <= endD) {
+      var y=d.getFullYear(), mo=d.getMonth()+1, dd=d.getDate();
+      var key=y+'-'+(mo<10?'0':'')+mo+'-'+(dd<10?'0':'')+dd;
+      var v = dayMap[key];
+      if (v && v.orders > 0) { rev += v.rev; orders += v.orders; }
+      days++;
+      d.setDate(d.getDate()+1);
+    }
+    return { rev:rev, orders:orders, days:days, avg: days>0 ? rev/days : 0 };
+  }
+
+  var today = new Date();
+  var allEntries = [];
+  PERIODS.forEach(function(p) {
+    p.ranges.forEach(function(range) {
+      var isFuture = new Date(range[1]+'T12:00:00') > today;
+      var year = range[0].substring(0,4);
+      var data = isFuture ? null : sumRange(range[0], range[1]);
+      allEntries.push({ name:p.name, year:year, data:data, isFuture:isFuture });
+    });
+  });
+
   var maxRev = 0;
-  order.forEach(function(n) { periods[n].forEach(function(r){ if(r.rev>maxRev) maxRev=r.rev; }); });
+  allEntries.forEach(function(e){ if(e.data && e.data.rev > maxRev) maxRev = e.data.rev; });
+
+  var grouped = {}, groupOrder = [];
+  allEntries.forEach(function(e) {
+    if (!grouped[e.name]) { grouped[e.name] = []; groupOrder.push(e.name); }
+    grouped[e.name].push(e);
+  });
 
   var html = '<div class="section"><div class="section-title">繁忙期 売上比較 <span class="section-sub">Revenue by busy period</span></div>';
   html += '<div class="period-grid">';
-
-  order.forEach(function(name) {
-    var entries = periods[name];
+  groupOrder.forEach(function(name) {
+    var entries = grouped[name];
     html += '<div class="period-card"><div class="period-name">'+name+'</div><div class="period-years">';
     entries.forEach(function(e) {
-      var pct = maxRev > 0 ? Math.round(e.rev/maxRev*100) : 0;
-      html += '<div class="period-year-row"><span class="period-year">'+e.year+'</span><span class="period-rev">'+fmtK(e.rev)+'</span></div>';
+      if (e.isFuture) {
+        html += '<div class="period-year-row"><span class="period-year">'+e.year+'</span><span class="period-rev" style="color:var(--text-hint);font-size:10px;">Upcoming</span></div>';
+        return;
+      }
+      var pct = maxRev > 0 ? Math.round(e.data.rev/maxRev*100) : 0;
+      html += '<div class="period-year-row"><span class="period-year">'+e.year+'</span><span class="period-rev">'+fmtK(e.data.rev)+'</span></div>';
       html += '<div class="period-bar-wrap"><div class="period-bar"><div class="period-bar-fill" style="width:'+pct+'%"></div></div></div>';
-      html += '<div class="period-avg">'+fmt$(e.avg)+'/day · '+e.orders+' orders</div>';
+      html += '<div class="period-avg">'+fmt$(e.data.avg)+'/day &middot; '+e.data.orders+' orders</div>';
     });
     html += '</div></div>';
   });
-
   html += '</div></div>';
 
-  // Bar chart comparison
-  html += '<div class="section"><div class="section-title">Avg Revenue per Day</div><div class="bar-chart">';
-  var allAvg = [];
-  order.forEach(function(n){ periods[n].forEach(function(e){ allAvg.push({label:n+' '+e.year, val:e.avg}); }); });
-  allAvg.sort(function(a,b){ return b.val-a.val; });
-  var maxAvg = allAvg[0] ? allAvg[0].val : 1;
-  allAvg.forEach(function(item) {
-    var pct = Math.round(item.val/maxAvg*100);
+  var ranked = allEntries.filter(function(e){ return !e.isFuture && e.data && e.data.orders > 0; });
+  ranked.sort(function(a,b){ return b.data.avg - a.data.avg; });
+  ranked = ranked.slice(0,15);
+  var maxAvg = ranked[0] ? ranked[0].data.avg : 1;
+  html += '<div class="section"><div class="section-title">Avg Revenue per Day &mdash; Top 15</div><div class="bar-chart">';
+  ranked.forEach(function(e) {
+    var pct = Math.round(e.data.avg/maxAvg*100);
+    var label = e.name.replace('Holiday','Hol.').replace('Weekend','Wknd') + " '" + e.year.substring(2);
     html += '<div class="bar-row">'
-      + '<div class="bar-label">'+item.label+'</div>'
-      + '<div class="bar-track"><div class="bar-fill orange" style="width:'+pct+'%"><span class="bar-val">'+fmtK(item.val)+'</span></div></div>'
+      + '<div class="bar-label" style="width:110px;font-size:10px;">'+label+'</div>'
+      + '<div class="bar-track"><div class="bar-fill orange" style="width:'+pct+'%"><span class="bar-val">'+fmtK(e.data.avg)+'</span></div></div>'
       + '</div>';
   });
   html += '</div></div>';
-
-  document.getElementById('tab-busy').innerHTML = html;
+  el.innerHTML = html;
 }
 
 // ── DAILY SALES ──
@@ -235,7 +304,7 @@ function renderDaily(rows) {
   var maxRev = 0;
   last30.forEach(function(r){ var v=parseFloat(r[1])||0; if(v>maxRev) maxRev=v; });
   last30.forEach(function(r) {
-    var date = r[0] ? r[0].toString().substring(5) : '';
+    var date = r[0] ? parseGvizDate(r[0]).substring(5) : '';
     var rev = parseFloat(r[1])||0;
     var pct = maxRev > 0 ? Math.round(rev/maxRev*100) : 0;
     html += '<div class="bar-row">'
