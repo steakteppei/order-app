@@ -734,7 +734,19 @@ function loadLYData(cb){
     var json=JSON.parse(text.replace(/^[^\(]+\(/,'').replace(/\);?\s*$/,''));
     var rows=json.table.rows.map(function(r){return r.c.map(function(c){return c?c.v:'';}); });
     lyCache={};
-    rows.forEach(function(r){if(r[0])lyCache[r[0].toString().substring(0,10)]={rev:parseFloat(r[1])||0,orders:parseInt(r[2])||0};});
+    rows.forEach(function(r){
+      if(!r[0])return;
+      var raw=r[0].toString();
+      var key;
+      var dm=raw.match(/Date\((\d+),(\d+),(\d+)\)/);
+      if(dm){
+        var y=parseInt(dm[1]),mo=parseInt(dm[2])+1,d=parseInt(dm[3]);
+        key=y+'-'+(mo<10?'0':'')+mo+'-'+(d<10?'0':'')+d;
+      } else {
+        key=raw.substring(0,10);
+      }
+      lyCache[key]={rev:parseFloat(r[1])||0,orders:parseInt(r[2])||0};
+    });
     lyLoaded=true;
     cb(lyCache);
   }).catch(function(){lyLoaded=true;cb({});});
