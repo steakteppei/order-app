@@ -378,7 +378,10 @@ function renderUpcoming(){
   var el=document.getElementById('upcomingList');
   if(!el)return;
   var now=new Date();now.setHours(0,0,0,0);
-  var horizon=new Date(now);horizon.setDate(horizon.getDate()+90);
+  // Show current month + next month only
+  var endOfNextMonth=new Date(now.getFullYear(),now.getMonth()+2,0);
+  endOfNextMonth.setHours(23,59,59,0);
+  var horizon=endOfNextMonth;
   var items=[];
 
   // Collect all periods
