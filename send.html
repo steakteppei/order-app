@@ -177,9 +177,9 @@ input:checked+.slider:before{transform:translateX(16px);}
 
 // Hawaii State + US Federal Holidays (observed dates)
 var HI_NAMES={
-  '2026-01-01':'New Year's Day',
+  '2026-01-01':"New Year's Day",
   '2026-01-19':'MLK Day',
-  '2026-02-16':'Presidents' Day',
+  '2026-02-16':"Presidents Day",
   '2026-03-26':'Prince Kuhio Day',
   '2026-04-03':'Good Friday',
   '2026-05-25':'Memorial Day',
@@ -191,9 +191,9 @@ var HI_NAMES={
   '2026-11-11':'Veterans Day',
   '2026-11-26':'Thanksgiving',
   '2026-12-25':'Christmas',
-  '2027-01-01':'New Year's Day',
+  '2027-01-01':"New Year's Day",
   '2027-01-18':'MLK Day',
-  '2027-02-15':'Presidents' Day',
+  '2027-02-15':"Presidents Day",
   '2027-03-26':'Prince Kuhio Day / Good Friday',
   '2027-05-31':'Memorial Day',
   '2027-06-11':'King Kamehameha Day',
@@ -459,7 +459,19 @@ function copyOrder(){
 
 function goBack(){window.location.href='index.html';}
 
-init();
+window.onerror = function(msg, src, line, col, err) {
+  var d = document.querySelector('.app');
+  if(d) d.innerHTML = '<div style="padding:20px;color:#dc2626;font-size:12px;word-break:break-all;">'
+    + '<strong>Error:</strong> ' + msg + '<br>Line: ' + line + '<br>' + (err ? err.stack : '') + '</div>';
+  return false;
+};
+try {
+  init();
+} catch(e) {
+  var d = document.querySelector('.app');
+  if(d) d.innerHTML = '<div style="padding:20px;color:#dc2626;font-size:12px;word-break:break-all;">'
+    + '<strong>Init Error:</strong> ' + e.message + '<br>' + e.stack + '</div>';
+}
 
 </script>
 
