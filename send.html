@@ -459,19 +459,7 @@ function copyOrder(){
 
 function goBack(){window.location.href='index.html';}
 
-window.onerror = function(msg, src, line, col, err) {
-  var d = document.querySelector('.app');
-  if(d) d.innerHTML = '<div style="padding:20px;color:#dc2626;font-size:12px;word-break:break-all;">'
-    + '<strong>Error:</strong> ' + msg + '<br>Line: ' + line + '<br>' + (err ? err.stack : '') + '</div>';
-  return false;
-};
-try {
-  init();
-} catch(e) {
-  var d = document.querySelector('.app');
-  if(d) d.innerHTML = '<div style="padding:20px;color:#dc2626;font-size:12px;word-break:break-all;">'
-    + '<strong>Init Error:</strong> ' + e.message + '<br>' + e.stack + '</div>';
-}
+init();
 
 </script>
 

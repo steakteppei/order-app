@@ -91,7 +91,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .items-placeholder{font-size:13px;color:var(--text-hint);padding:12px 0;text-align:center;}
 .note-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
 .note-label{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
-.note-wrap textarea{width:100%;font-size:12px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;resize:none;height:60px;font-family:inherit;line-height:1.5;}
+.note-wrap textarea{width:100%;font-size:12px;padding:8px 10px;border:.5px solid var(--border-md);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;resize:none;min-height:60px;height:60px;font-family:inherit;line-height:1.5;overflow:hidden;}
 .note-wrap textarea:focus{border-color:var(--orange);}
 .go-btn{width:100%;padding:14px;border-radius:var(--radius-sm);cursor:pointer;font-size:15px;font-weight:700;border:none;background:var(--orange);color:#fff;margin-top:4px;letter-spacing:-.2px;}
 .go-btn:active{opacity:.85;}
@@ -176,7 +176,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     </div>
     <div class="note-wrap">
       <div class="note-label">Note (optional)</div>
-      <textarea id="orderNote" placeholder="e.g. Please call before delivery..."></textarea>
+      <textarea id="orderNote" placeholder="e.g. Please call before delivery..." oninput="autoResize(this)"></textarea>
     </div>
   </div>
   <div class="card">
@@ -247,7 +247,7 @@ var EC={
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
-   di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM',tbd:false,
+   di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM | Min. order: $100',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 6:00 AM';},
    items:[{n:'Lemon 140s Choice',u:'CS'},{n:'Onion Jumbo 50# Sack',u:'BAG'},{n:'Spring Mix 3#',u:'CS'}]},
@@ -334,6 +334,10 @@ function toggleFlex(){
   renderCal();updateGoBtn();
 }
 
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight)+'px';
+}
 function renderVendors(){
   var h='';
   for(var i=0;i<V.length;i++){
@@ -470,7 +474,7 @@ function addCustomItem(){
 
 function updateGoBtn(){
   var all=getItems();var hasQty=false;
-  for(var i=0;i<all.length;i++)if(qty['i'+i]>0){hasQty=true;break;}
+  for(var i=0;i<all.length;i++){if((qty['i'+i]||0)>0){hasQty=true;break;}}
   document.getElementById('goBtn').disabled=!(selId&&selDate&&hasQty);
 }
 
@@ -528,15 +532,13 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '1.9',
+  version: '2.0',
   date: 'April 8, 2026',
   items: [
-    'Hawaii DOE School Break periods added to calendar (blue)',
-    'Holidays shown in orange, School Breaks in blue, Sundays in red',
-    'Order inputs restored when returning from Preview page',
-    'Deadline banner now time-sensitive',
-    'Fukuoka Package changed to Gmail',
-    'SMS group names added for Coca-Cola, Fresh Island, Wong\'s'
+    'Summer Break added to school calendar',
+    'Note field auto-expands as you type',
+    'Preview & Send requires at least one item with quantity',
+    'Ala Moana Produce minimum order ($100) shown in schedule'
   ]
 };
 
