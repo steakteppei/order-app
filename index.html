@@ -73,6 +73,16 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
 .cal-deadline{font-size:11px;margin-top:4px;font-weight:600;}
+.cal-today-btn{background:none;border:.5px solid var(--border-md);border-radius:6px;font-size:11px;color:var(--text-hint);cursor:pointer;padding:3px 10px;margin-left:8px;}
+.cal-today-btn:active{opacity:.6;}
+.upcoming-wrap{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);}
+.upcoming-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.upcoming-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:11px;color:var(--text-sub);line-height:1.4;}
+.upcoming-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:2px;}
+.dot-hi{background:var(--orange);}
+.dot-school{background:#0369a1;}
+.dot-jp{background:#be185d;}
+.upcoming-dates{color:var(--text-hint);font-size:10px;}
 .dl-urgent{color:#dc2626;}
 .dl-soon{color:var(--amber);}
 .dl-ok{color:var(--text-hint);}
@@ -150,10 +160,17 @@ input:checked+.slider:before{transform:translateX(16px);}
       <span class="cal-month-label" id="calLabel"></span>
       <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
     </div>
+    <div style="text-align:right;margin-bottom:4px;">
+      <button class="cal-today-btn" onclick="goToday()">Today</button>
+    </div>
     <div class="cal-grid" id="calHeaders"></div>
     <div class="cal-grid" id="calCells"></div>
     <div class="cal-selected" id="calDisplay">No date selected</div>
     <div class="cal-deadline" id="calDeadline"></div>
+    <div class="upcoming-wrap">
+      <div class="upcoming-title">Upcoming busy periods</div>
+      <div id="upcomingList"></div>
+    </div>
     <div class="flex-row" onclick="toggleFlexRow()">
       <span class="flex-row-label">&#9881; Holiday / Special Schedule</span>
       <span style="font-size:10px;color:#92400e;">tap to expand</span>
@@ -357,6 +374,61 @@ function toggleFlex(){
   renderCal();updateGoBtn();
 }
 
+function renderUpcoming(){
+  var el=document.getElementById('upcomingList');
+  if(!el)return;
+  var now=new Date();now.setHours(0,0,0,0);
+  var horizon=new Date(now);horizon.setDate(horizon.getDate()+90);
+  var items=[];
+
+  // Collect all periods
+  var allPeriods=[];
+  // HI Holidays (single days)
+  Object.keys(HI_NAMES).forEach(function(d){
+    allPeriods.push({type:'hi',name:HI_NAMES[d],start:d,end:d});
+  });
+  // School breaks
+  SCHOOL_BREAKS.forEach(function(b){allPeriods.push({type:'school',name:b.name,start:b.start,end:b.end});});
+  // JP busy
+  JP_BUSY.forEach(function(b){allPeriods.push({type:'jp',name:b.name,start:b.start,end:b.end});});
+
+  // Filter: ends after today, starts before horizon
+  allPeriods.forEach(function(p){
+    var s=new Date(p.start);var e=new Date(p.end);
+    if(e>=now&&s<=horizon){
+      items.push({type:p.type,name:p.name,start:p.start,end:p.end,sortKey:p.start});
+    }
+  });
+
+  // Sort by start date
+  items.sort(function(a,b){return a.sortKey<b.sortKey?-1:a.sortKey>b.sortKey?1:0;});
+
+  // Remove duplicates (same name+start)
+  var seen={};var unique=[];
+  items.forEach(function(it){
+    var k=it.name+it.start;
+    if(!seen[k]){seen[k]=true;unique.push(it);}
+  });
+
+  if(!unique.length){el.innerHTML='<div style="font-size:11px;color:var(--text-hint);">None in the next 90 days</div>';return;}
+
+  var html='';
+  unique.forEach(function(it){
+    var dotClass=it.type==='hi'?'dot-hi':it.type==='school'?'dot-school':'dot-jp';
+    var dateLabel=it.start===it.end
+      ?fmtDate(it.start)
+      :fmtDate(it.start)+' – '+fmtDate(it.end);
+    html+='<div class="upcoming-item"><span class="upcoming-dot '+dotClass+'"></span>'
+      +'<span>'+it.name+'<br><span class="upcoming-dates">'+dateLabel+'</span></span></div>';
+  });
+  el.innerHTML=html;
+}
+
+function fmtDate(str){
+  var d=new Date(str+'T12:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
 function autoResize(el){
   el.style.height='auto';
   el.style.height=(el.scrollHeight)+'px';
@@ -416,6 +488,7 @@ function renderCal(){
   document.getElementById('calCells').innerHTML=cells;
 }
 
+function goToday(){cy=today.getFullYear();cm=today.getMonth();renderCal();}
 function calPrev(){cm--;if(cm<0){cm=11;cy--;}renderCal();}
 function calNext(){cm++;if(cm>11){cm=0;cy++;}renderCal();}
 
@@ -557,13 +630,13 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.1',
+  version: '2.2',
   date: 'April 8, 2026',
   items: [
-    'Japan holiday busy periods added to calendar (pink)',
-    'Golden Week, Obon, Silver Week, New Year Holiday shown',
-    'Note field auto-expands as you type',
-    'Preview & Send requires at least one item with quantity'
+    'Upcoming busy periods list added below calendar',
+    'Today button added to calendar navigation',
+    'Japan holiday busy periods added (pink)',
+    'Note field auto-expands as you type'
   ]
 };
 
@@ -587,7 +660,7 @@ function closeChangelog(){
   document.getElementById('changelogOverlay').classList.remove('open');
 }
 
-renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();
+renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();
 
 // Auto-reload when app returns from background
 var lastHidden=null;
