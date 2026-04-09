@@ -80,6 +80,16 @@ input:checked+.slider:before{transform:translateX(16px);}
 .upcoming-wrap{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);}
 .upcoming-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
 .upcoming-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:11px;color:var(--text-sub);line-height:1.4;}
+.ly-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
+.ly-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.ly-row{display:flex;align-items:center;gap:6px;padding:3px 0;}
+.ly-day{font-size:11px;color:var(--text-hint);width:28px;flex-shrink:0;}
+.ly-date{font-size:11px;color:var(--text-sub);width:52px;flex-shrink:0;}
+.ly-bar-wrap{flex:1;background:var(--bg);border-radius:3px;height:16px;position:relative;overflow:hidden;}
+.ly-bar{height:100%;background:var(--orange);opacity:.7;border-radius:3px;}
+.ly-rev{font-size:11px;color:var(--text);font-weight:600;width:52px;text-align:right;flex-shrink:0;}
+.ly-orders{font-size:10px;color:var(--text-hint);width:30px;text-align:right;flex-shrink:0;}
+.ly-loading{font-size:11px;color:var(--text-hint);padding:6px 0;}
 .upcoming-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:2px;}
 .dot-hi{background:var(--orange);}
 .dot-school{background:#0369a1;}
@@ -179,6 +189,10 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="upcoming-wrap">
       <div class="upcoming-title">Upcoming busy periods</div>
       <div id="upcomingList"></div>
+    </div>
+    <div class="ly-wrap" id="lyWrap" style="display:none">
+      <div class="ly-title">Last Year — Same Week</div>
+      <div id="lyList"><div class="ly-loading">Select a delivery date to see last year's sales</div></div>
     </div>
     <div class="flex-row" onclick="toggleFlexRow()">
       <span class="flex-row-label">&#9881; Holiday / Special Schedule</span>
@@ -575,6 +589,7 @@ function pickD(y,m,d){
   var evname=getEvent(hkey2);
   if(evname)noteHtml+=' <span style="color:#166534;font-size:10px;font-weight:600;">&#x1f4cd; '+evname+'</span>';
   document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+noteHtml;
+  renderLY(selDate);
   var v=selId?gv(selId):null;
   var dlEl=document.getElementById('calDeadline');
   var dl=v&&!v.tbd?v.dl(selDate):null;
@@ -677,10 +692,11 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.6',
+  version: '2.7',
   date: 'April 8, 2026',
   items: [
-    'Sales Data button added — links to Clover sales spreadsheet'
+    'Last year same-week sales added to calendar section',
+    'Select a delivery date to see last year revenue by day'
   ]
 };
 
@@ -705,6 +721,65 @@ function closeChangelog(){
 }
 
 renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();
+
+// Last Year Sales
+var LY_SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';
+var lyCache=null;
+var lyLoaded=false;
+
+function loadLYData(cb){
+  if(lyCache){cb(lyCache);return;}
+  var url='https://docs.google.com/spreadsheets/d/'+LY_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent('Daily Sales');
+  fetch(url).then(function(r){return r.text();}).then(function(text){
+    var json=JSON.parse(text.replace(/^[^\(]+\(/,'').replace(/\);?\s*$/,''));
+    var rows=json.table.rows.map(function(r){return r.c.map(function(c){return c?c.v:'';}); });
+    lyCache={};
+    rows.forEach(function(r){if(r[0])lyCache[r[0].toString().substring(0,10)]={rev:parseFloat(r[1])||0,orders:parseInt(r[2])||0};});
+    lyLoaded=true;
+    cb(lyCache);
+  }).catch(function(){lyLoaded=true;cb({});});
+}
+
+function renderLY(deliveryDate){
+  if(!deliveryDate)return;
+  document.getElementById('lyWrap').style.display='';
+  var el=document.getElementById('lyList');
+  el.innerHTML='<div class="ly-loading">Loading...</div>';
+
+  // Last year same week: delivery date last year + 1 to + 7
+  var lyBase=new Date(deliveryDate);
+  lyBase.setFullYear(lyBase.getFullYear()-1);
+
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var dates=[];
+  for(var i=1;i<=7;i++){
+    var d=new Date(lyBase);
+    d.setDate(d.getDate()+i);
+    var key=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    dates.push({key:key,dow:days[d.getDay()],label:pad(d.getMonth()+1)+'/'+pad(d.getDate())});
+  }
+
+  loadLYData(function(cache){
+    var maxRev=0;
+    dates.forEach(function(d){var v=cache[d.key];if(v&&v.rev>maxRev)maxRev=v.rev;});
+    var html='';
+    dates.forEach(function(d){
+      var v=cache[d.key];
+      var rev=v?v.rev:0;var orders=v?v.orders:0;
+      var pct=maxRev>0?Math.round(rev/maxRev*100):0;
+      var revStr=rev>0?'$'+Math.round(rev).toLocaleString():'—';
+      var ordStr=orders>0?orders+'':'—';
+      html+='<div class="ly-row">'
+        +'<span class="ly-day">'+d.dow+'</span>'
+        +'<span class="ly-date">'+d.label+'</span>'
+        +'<div class="ly-bar-wrap"><div class="ly-bar" style="width:'+pct+'%"></div></div>'
+        +'<span class="ly-rev">'+revStr+'</span>'
+        +'<span class="ly-orders">'+ordStr+'</span>'
+        +'</div>';
+    });
+    el.innerHTML=html||'<div class="ly-loading">No data for this period</div>';
+  });
+}
 
 // Auto-reload when app returns from background
 var lastHidden=null;
