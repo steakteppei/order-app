@@ -112,10 +112,16 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:active{opacity:.85;}
 .go-btn:disabled{background:#ccc;cursor:not-allowed;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
+.sales-btn{display:block;width:100%;padding:13px;background:var(--card);border:.5px solid var(--border-md);border-radius:var(--radius);font-size:14px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:none;}
+.sales-btn:active{opacity:.7;}
+.sales-btn-icon{margin-right:6px;}
 
 .update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
 .update-banner.show{display:block;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
+.sales-btn{display:block;width:100%;padding:13px;background:var(--card);border:.5px solid var(--border-md);border-radius:var(--radius);font-size:14px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:none;}
+.sales-btn:active{opacity:.7;}
+.sales-btn-icon{margin-right:6px;}
 .dl-urgent{color:#dc2626;}
 .dl-soon{color:var(--amber);}
 .dl-ok{color:var(--text-hint);}
@@ -205,7 +211,8 @@ input:checked+.slider:before{transform:translateX(16px);}
     <button class="go-btn" id="goBtn" onclick="goToSend()" disabled>Preview &amp; Send &rarr;</button>
   </div>
 </div>
-<div class="app-version">Last updated: April 08, 2026</div>
+<a class="sales-btn" href="https://docs.google.com/spreadsheets/d/1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ/edit?usp=sharing" target="_blank"><span class="sales-btn-icon">📊</span>Sales Data (Clover)</a>
+  <div class="app-version">Last updated: April 08, 2026</div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -670,12 +677,10 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.5',
+  version: '2.6',
   date: 'April 8, 2026',
   items: [
-    'Tourist events added to calendar (green)',
-    'Japan school breaks, US long weekends, Honolulu Marathon',
-    'Costco: Kirkland Plastic Food Wrap added'
+    'Sales Data button added — links to Clover sales spreadsheet'
   ]
 };
 
