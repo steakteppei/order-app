@@ -190,6 +190,15 @@ function renderContent(name, rows) {
   else if (name === 'items') renderItems(rows);
 }
 
+function fmtDateRange(start, end) {
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var s = new Date(start+'T12:00:00'), e = new Date(end+'T12:00:00');
+  var sm = months[s.getMonth()], sd = s.getDate();
+  var em = months[e.getMonth()], ed = e.getDate();
+  if (sm === em) return sm+' '+sd+'–'+ed;
+  return sm+' '+sd+' – '+em+' '+ed;
+}
+
 function renderBusy(dailyRows) {
   var el = document.getElementById('tab-busy');
 
@@ -234,7 +243,7 @@ function renderBusy(dailyRows) {
       var isFuture = new Date(range[1]+'T12:00:00') > today;
       var year = range[0].substring(0,4);
       var data = isFuture ? null : sumRange(range[0], range[1]);
-      allEntries.push({ name:p.name, year:year, data:data, isFuture:isFuture });
+      allEntries.push({ name:p.name, year:year, start:range[0], end:range[1], data:data, isFuture:isFuture });
     });
   });
 
@@ -255,10 +264,12 @@ function renderBusy(dailyRows) {
     entries.forEach(function(e) {
       if (e.isFuture) {
         html += '<div class="period-year-row"><span class="period-year">'+e.year+'</span><span class="period-rev" style="color:var(--text-hint);font-size:10px;">Upcoming</span></div>';
+      html += '<div class="period-avg" style="color:var(--text-hint);">'+fmtDateRange(e.start, e.end)+'</div>';
         return;
       }
       var pct = maxRev > 0 ? Math.round(e.data.rev/maxRev*100) : 0;
       html += '<div class="period-year-row"><span class="period-year">'+e.year+'</span><span class="period-rev">'+fmtK(e.data.rev)+'</span></div>';
+      html += '<div class="period-avg" style="color:var(--text-hint);margin-bottom:2px;">'+fmtDateRange(e.start, e.end)+'</div>';
       html += '<div class="period-bar-wrap"><div class="period-bar"><div class="period-bar-fill" style="width:'+pct+'%"></div></div></div>';
       html += '<div class="period-avg">'+fmt$(e.data.avg)+'/day &middot; '+e.data.orders+' orders</div>';
     });
