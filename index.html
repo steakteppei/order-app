@@ -421,8 +421,10 @@ function renderUpcoming(){
     var dateLabel=it.start===it.end
       ?fmtDate(it.start)
       :fmtDate(it.start)+' – '+fmtDate(it.end);
+    var isNow=(new Date(it.start)<=now&&new Date(it.end)>=now);
+    var nowBadge=isNow?' <span style="background:#dc2626;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;vertical-align:middle;">NOW</span>':'';
     html+='<div class="upcoming-item"><span class="upcoming-dot '+dotClass+'"></span>'
-      +'<span>'+it.name+'<br><span class="upcoming-dates">'+dateLabel+'</span></span></div>';
+      +'<span>'+it.name+nowBadge+'<br><span class="upcoming-dates">'+dateLabel+'</span></span></div>';
   });
   el.innerHTML=html;
 }
@@ -633,13 +635,11 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.2',
+  version: '2.3',
   date: 'April 8, 2026',
   items: [
-    'Upcoming busy periods list added below calendar',
-    'Today button added to calendar navigation',
-    'Japan holiday busy periods added (pink)',
-    'Note field auto-expands as you type'
+    'Upcoming busy periods now shows NOW badge for active periods',
+    'Version auto-increments on each update'
   ]
 };
 
