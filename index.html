@@ -69,6 +69,8 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-cell.school-break.sunday{color:#dc2626;}
 .cal-cell.jp-busy{background:#fce7f3;color:#be185d;}
 .cal-cell.jp-busy.sunday{color:#dc2626;}
+.cal-cell.event{background:#f0fdf4;color:#166534;}
+.cal-cell.event.sunday{color:#dc2626;}
 .hol-dot{display:block;width:4px;height:4px;background:var(--orange);border-radius:50%;margin:1px auto 0;}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
@@ -82,6 +84,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .dot-hi{background:var(--orange);}
 .dot-school{background:#0369a1;}
 .dot-jp{background:#be185d;}
+.dot-event{background:#166534;}
 .upcoming-dates{color:var(--text-hint);font-size:10px;}
 .dl-urgent{color:#dc2626;}
 .dl-soon{color:var(--amber);}
@@ -261,6 +264,34 @@ var JP_BUSY=[
   {name:'Japan Golden Week',       start:'2027-04-29',end:'2027-05-05'},
   {name:'Japan Obon',              start:'2027-08-11',end:'2027-08-16'}
 ];
+// Hawaii/US/Japan tourist events (non-holiday busy periods)
+var EVENTS=[
+  // Japan school breaks (tourist influx)
+  {name:'Japan Spring Break',   start:'2026-03-20',end:'2026-04-05'},
+  {name:'Japan Summer Break',   start:'2026-07-18',end:'2026-08-31'},
+  {name:'Japan Winter Break',   start:'2026-12-24',end:'2027-01-06'},
+  {name:'Japan Spring Break',   start:'2027-03-20',end:'2027-04-05'},
+  {name:'Japan Summer Break',   start:'2027-07-18',end:'2027-08-31'},
+  // US long weekends
+  {name:'Memorial Day Weekend', start:'2026-05-23',end:'2026-05-25'},
+  {name:'Independence Day Week',start:'2026-07-03',end:'2026-07-05'},
+  {name:'Labor Day Weekend',    start:'2026-09-05',end:'2026-09-07'},
+  {name:'Thanksgiving Week',    start:'2026-11-23',end:'2026-11-29'},
+  {name:'Memorial Day Weekend', start:'2027-05-29',end:'2027-05-31'},
+  {name:'Independence Day Week',start:'2027-07-04',end:'2027-07-05'},
+  {name:'Labor Day Weekend',    start:'2027-09-04',end:'2027-09-06'},
+  {name:'Thanksgiving Week',    start:'2027-11-22',end:'2027-11-28'},
+  // Hawaii events
+  {name:'Honolulu Marathon Weekend',start:'2026-12-11',end:'2026-12-13'}
+];
+function getEvent(dateStr){
+  for(var i=0;i<EVENTS.length;i++){
+    var b=EVENTS[i];
+    if(dateStr>=b.start&&dateStr<=b.end)return b.name;
+  }
+  return null;
+}
+
 function getJpBusy(dateStr){
   for(var i=0;i<JP_BUSY.length;i++){
     var b=JP_BUSY[i];
@@ -310,7 +341,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -394,6 +425,8 @@ function renderUpcoming(){
   SCHOOL_BREAKS.forEach(function(b){allPeriods.push({type:'school',name:b.name,start:b.start,end:b.end});});
   // JP busy
   JP_BUSY.forEach(function(b){allPeriods.push({type:'jp',name:b.name,start:b.start,end:b.end});});
+  // Events
+  EVENTS.forEach(function(b){allPeriods.push({type:'event',name:b.name,start:b.start,end:b.end});});
 
   // Filter: ends after today, starts before horizon
   allPeriods.forEach(function(p){
@@ -417,7 +450,7 @@ function renderUpcoming(){
 
   var html='';
   unique.forEach(function(it){
-    var dotClass=it.type==='hi'?'dot-hi':it.type==='school'?'dot-school':'dot-jp';
+    var dotClass=it.type==='hi'?'dot-hi':it.type==='school'?'dot-school':it.type==='event'?'dot-event':'dot-jp';
     var dateLabel=it.start===it.end
       ?fmtDate(it.start)
       :fmtDate(it.start)+' – '+fmtDate(it.end);
@@ -532,6 +565,8 @@ function pickD(y,m,d){
   if(sbname)noteHtml+=' <span style="color:#0369a1;font-size:10px;font-weight:600;">&#x1f4da; '+sbname+'</span>';
   var jpname=getJpBusy(hkey2);
   if(jpname)noteHtml+=' <span style="color:#be185d;font-size:10px;font-weight:600;">&#x1f1ef;&#x1f1f5; '+jpname+'</span>';
+  var evname=getEvent(hkey2);
+  if(evname)noteHtml+=' <span style="color:#166534;font-size:10px;font-weight:600;">&#x1f4cd; '+evname+'</span>';
   document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+noteHtml;
   var v=selId?gv(selId):null;
   var dlEl=document.getElementById('calDeadline');
@@ -635,11 +670,12 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.3',
+  version: '2.5',
   date: 'April 8, 2026',
   items: [
-    'Upcoming busy periods now shows NOW badge for active periods',
-    'Version auto-increments on each update'
+    'Tourist events added to calendar (green)',
+    'Japan school breaks, US long weekends, Honolulu Marathon',
+    'Costco: Kirkland Plastic Food Wrap added'
   ]
 };
 
