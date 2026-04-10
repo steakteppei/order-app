@@ -465,25 +465,25 @@ init();
 
 <script>
 if('serviceWorker' in navigator){
-  var refreshing=false;
-  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
-    function applyUpdate(worker){worker.postMessage({type:'SKIP_WAITING'});}
-    if(reg.waiting){applyUpdate(reg.waiting);}
-    reg.addEventListener('updatefound',function(){
-      var nw=reg.installing;
-      nw.addEventListener('statechange',function(){
-        if(nw.state==='installed'){applyUpdate(nw);}
+  var refreshing = false;
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
+    function applyUpdate(w){ w.postMessage({type:'SKIP_WAITING'}); }
+    if(reg.waiting){ applyUpdate(reg.waiting); }
+    reg.addEventListener('updatefound', function(){
+      var nw = reg.installing;
+      nw.addEventListener('statechange', function(){
+        if(nw.state === 'installed'){ applyUpdate(nw); }
       });
     });
-    setInterval(function(){reg.update();},30000);
-  }).catch(function(err){console.warn('SW registration failed:',err);});
-  navigator.serviceWorker.addEventListener('controllerchange',function(){
-    if(!refreshing){refreshing=true;window.location.reload(true);}
+    setInterval(function(){ reg.update(); }, 30000);
+  }).catch(function(err){ console.warn('SW registration failed:', err); });
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if(!refreshing){ refreshing = true; window.location.reload(true); }
   });
 }
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+    if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
     else window.location.reload(true);
   });
 }
