@@ -831,65 +831,62 @@ function renderLY(deliveryDate){
 }
 
 // Auto-reload when app returns from background
+// バックグラウンドから復帰時に強制リロード（iPhoneで確実に最新を表示）
 var lastHidden=null;
 document.addEventListener('visibilitychange',function(){
   if(document.hidden){
     lastHidden=Date.now();
   } else {
-    // If was in background for more than 5 minutes, reload for latest version
-    if(lastHidden&&(Date.now()-lastHidden)>5*60*1000){
-      window.location.reload();
+    if(lastHidden&&(Date.now()-lastHidden)>60*1000){
+      // 1分以上バックグラウンドにいたら強制リロード
+      window.location.reload(true);
     }
   }
 });
-
 </script>
 
 <script>
+// ── Service Worker ──
+// updateViaCache:'none' が重要：sw.js自体をキャッシュせずに毎回サーバーから取得する
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(function(reg){
+  var refreshing=false;
 
-    // 新しいSWが見つかったら即座にskipWaiting → 自動リロード
+  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
+
+    function applyUpdate(worker){
+      worker.postMessage({type:'SKIP_WAITING'});
+    }
+
+    // 既に待機中のSWがあれば即適用
+    if(reg.waiting){
+      applyUpdate(reg.waiting);
+    }
+
+    // 新しいSWが見つかったら即適用
     reg.addEventListener('updatefound',function(){
       var nw=reg.installing;
       nw.addEventListener('statechange',function(){
         if(nw.state==='installed'){
-          // 初回インストールではなく、既存SWからの更新の場合のみ
-          if(navigator.serviceWorker.controller){
-            nw.postMessage({type:'SKIP_WAITING'});
-          }
+          applyUpdate(nw);
         }
       });
     });
 
-    // 起動時に待機中のSWがあれば即座に適用
-    if(reg.waiting){
-      reg.waiting.postMessage({type:'SKIP_WAITING'});
-    }
-
-    // 定期チェック：アプリを開いている間も30秒ごとに新バージョンを確認
+    // 30秒ごとにサーバーへ新バージョン確認
     setInterval(function(){reg.update();},30000);
 
-  });
+  }).catch(function(err){console.warn('SW registration failed:',err);});
 
-  // SWが切り替わったら自動リロード
-  var refreshing=false;
+  // SWが切り替わったら即リロード
   navigator.serviceWorker.addEventListener('controllerchange',function(){
-    if(!refreshing){refreshing=true;window.location.reload();}
-  });
-
-  // SWからのメッセージで更新通知（activateから送信）
-  navigator.serviceWorker.addEventListener('message',function(e){
-    if(e.data&&e.data.type==='SW_UPDATED'){
-      if(!refreshing){refreshing=true;window.location.reload();}
-    }
+    if(!refreshing){refreshing=true;window.location.reload(true);}
   });
 }
-// バナーは念のため残す（手動でも使えるように）
+
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
     if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload();
+    else window.location.reload(true);
   });
 }
 </script>
