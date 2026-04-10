@@ -419,10 +419,15 @@ var EVENTS=[
 
 // ── Slow seasons（閑散期：発注を控えめに）──
 var SLOW_SEASONS=[
-  {name:'Slow Season',start:'2026-04-15',end:'2026-05-22'},
+  // Spring lull: スプリングブレーク後〜GW前（GW期間4/29-5/6は除外）
+  {name:'Slow Season',start:'2026-04-15',end:'2026-04-28'},
+  // GW後〜Memorial Day前（5/7〜5/22）
+  {name:'Slow Season',start:'2026-05-07',end:'2026-05-22'},
   {name:'Slow Season',start:'2026-09-08',end:'2026-09-18'},
   {name:'Slow Season',start:'2026-10-08',end:'2026-11-19'},
-  {name:'Slow Season',start:'2027-04-15',end:'2027-05-22'},
+  // 2027
+  {name:'Slow Season',start:'2027-04-15',end:'2027-04-28'},
+  {name:'Slow Season',start:'2027-05-07',end:'2027-05-22'},
   {name:'Slow Season',start:'2027-09-07',end:'2027-09-12'},
   {name:'Slow Season',start:'2027-10-07',end:'2027-11-18'}
 ];
@@ -920,12 +925,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '3.8',
+  version: '3.9',
   date: 'April 10, 2026',
   items: [
-    { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' },
-    { icon: '🌧️', text: 'Rainy / stormy days highlighted — more customers come to Ala Moana!' },
-    { icon: '🗓️', text: 'Calendar: plain dates now transparent — badges only on special dates' }
+    { icon: '🎏', text: 'Fixed: Golden Week (Apr 29 - May 6) no longer shown as slow season' },
+    { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' }
   ]
 };
 
