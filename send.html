@@ -442,7 +442,7 @@ function doSend(){
     window.location.href='mailto:'+encodeURIComponent(ec.to)+'?cc='+encodeURIComponent(cc)+'&subject='+s+'&body='+encodeURIComponent(body);
   }else if(v.method==='sms'){
     var smsTo=v.phone?encodeURIComponent(v.phone):'';
-    window.location.href='sms:'+smsTo+'?body='+encodeURIComponent(msg);
+    window.location.href='sms:?body='+encodeURIComponent(msg);
   }else{
     var u='https://line.me/R/share?text='+encodeURIComponent(msg);
     window.open(u,'_blank');
