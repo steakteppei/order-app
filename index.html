@@ -103,10 +103,26 @@ input:checked+.slider:before{transform:translateX(16px);}
 .item-row:last-child{border-bottom:none;}
 .iname{flex:1;font-size:13px;color:var(--text);line-height:1.35;}.iprice{font-size:10px;color:var(--text-hint);margin-left:3px;}.itotal{font-size:11px;font-weight:700;color:var(--orange);padding:8px 0 4px;border-top:.5px solid var(--border);margin-top:4px;text-align:right;}
 .iunit{font-size:10px;color:var(--text-hint);min-width:28px;}
+.iline-total{font-size:10px;color:var(--orange);font-weight:600;min-width:44px;text-align:right;flex-shrink:0;}
 .qc{display:flex;align-items:center;gap:5px;}
 .qbtn{width:28px;height:28px;border:.5px solid var(--border-md);border-radius:8px;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);}
 .qbtn:active{opacity:.6;}
-.qnum{width:28px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
+.qnum{width:28px;text-align:center;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;border-radius:6px;transition:background .15s;}
+.qnum:active{background:var(--bg);}
+.qnum-input{width:44px;text-align:center;font-size:14px;font-weight:700;color:var(--text);border:.5px solid var(--orange);border-radius:6px;background:var(--bg);padding:2px 0;outline:none;}
+.costco-progress-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
+.costco-progress-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;}
+.costco-progress-left{color:var(--text-sub);font-weight:600;}
+.costco-progress-right{color:var(--text-hint);}
+.costco-progress-bar{height:8px;background:var(--bg);border-radius:20px;overflow:hidden;border:.5px solid var(--border);}
+.costco-progress-fill{height:100%;border-radius:20px;background:var(--orange);transition:width .3s ease;}
+.costco-progress-fill.done{background:#16a34a;}
+.costco-progress-status{font-size:11px;margin-top:5px;text-align:right;font-weight:600;}
+.cal-cell.slow{background:#f1f5f9;color:#64748b;}
+.cal-cell.marathon{background:#fef9c3;color:#854d0e;}
+.dot-slow{background:#64748b;}
+.dot-marathon{background:#854d0e;}
+.dot-canada{background:#c0392b;}
 .custom-toggle{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:8px 0 2px;display:block;text-decoration:underline;}
 .custom-row{display:none;gap:7px;margin-top:6px;}
 .custom-row.open{display:flex;}
@@ -316,43 +332,69 @@ var JP_BUSY=[
 // ── US & Japan tourist busy periods ──
 var EVENTS=[
   // ── Winter Peak Season（12月中旬〜3月末：ハワイ最繁忙期）──
-  {name:'Winter Peak Season',      start:'2025-12-15',end:'2026-01-04'},
-  {name:'Valentine\'s & Presidents Day',start:'2026-02-12',end:'2026-02-16'},
-  {name:'US Spring Break',         start:'2026-03-14',end:'2026-04-12'},
-  {name:'Japan Spring Break',      start:'2026-03-20',end:'2026-04-05'},
+  {name:'Winter Peak Season',           start:'2025-12-15',end:'2026-01-04'},
+  {name:'Canada Snowbird Season',        start:'2026-01-05',end:'2026-03-31'},
+  {name:'Valentine\'s & Presidents Day', start:'2026-02-12',end:'2026-02-16'},
+  {name:'US Spring Break',              start:'2026-03-14',end:'2026-04-12'},
+  {name:'Japan Spring Break',           start:'2026-03-20',end:'2026-04-05'},
 
-  // ── Summer Season（6月〜8月：年間で最も訪問者が多い月）──
-  {name:'US Summer Break',         start:'2026-06-06',end:'2026-08-20'},
-  {name:'Japan Summer Break',      start:'2026-07-18',end:'2026-08-31'},
-
-  // ── September Silver Week（2024・2025は3連休×2回も繁忙期）──
-  {name:'September Holidays',      start:'2026-09-19',end:'2026-09-23'}, // 2026は5連休
+  // ── Summer Season（6〜8月：年間最多訪問者）──
+  {name:'US Summer Break',              start:'2026-06-06',end:'2026-08-20'},
+  {name:'Japan Summer Break',           start:'2026-07-18',end:'2026-08-31'},
 
   // ── Fall / Holiday Season ──
-  {name:'Labor Day Weekend',       start:'2026-09-05',end:'2026-09-07'},
-  {name:'Thanksgiving Week',       start:'2026-11-25',end:'2026-11-29'},
-  {name:'Honolulu Marathon Weekend',start:'2026-12-11',end:'2026-12-13'},
-  {name:'Christmas Week',          start:'2026-12-22',end:'2026-12-26'},
+  {name:'Labor Day Weekend',            start:'2026-09-05',end:'2026-09-07'},
+  {name:'September Holidays',           start:'2026-09-13',end:'2026-09-23'},
+  {name:'Thanksgiving Week',            start:'2026-11-25',end:'2026-11-29'},
+  {name:'Honolulu Marathon 🏃',         start:'2026-12-11',end:'2026-12-13'},
+  {name:'Christmas Week',               start:'2026-12-22',end:'2026-12-26'},
 
   // ── Memorial Day ──
-  {name:'Memorial Day Weekend',    start:'2026-05-23',end:'2026-05-25'},
+  {name:'Memorial Day Weekend',         start:'2026-05-23',end:'2026-05-25'},
   // ── Independence Day ──
-  {name:'Independence Day',        start:'2026-07-03',end:'2026-07-06'},
+  {name:'Independence Day',             start:'2026-07-03',end:'2026-07-06'},
 
   // ── 2027 ──
-  {name:'Winter Peak Season',      start:'2026-12-15',end:'2027-01-03'},
-  {name:'Valentine\'s & Presidents Day',start:'2027-02-11',end:'2027-02-15'},
-  {name:'US Spring Break',         start:'2027-03-13',end:'2027-04-11'},
-  {name:'Japan Spring Break',      start:'2027-03-20',end:'2027-04-05'},
-  {name:'Memorial Day Weekend',    start:'2027-05-29',end:'2027-05-31'},
-  {name:'US Summer Break',         start:'2027-06-05',end:'2027-08-20'},
-  {name:'Japan Summer Break',      start:'2027-07-18',end:'2027-08-31'},
-  {name:'Independence Day',        start:'2027-07-04',end:'2027-07-06'},
-  {name:'Labor Day Weekend',       start:'2027-09-04',end:'2027-09-06'},
-  {name:'Thanksgiving Week',       start:'2027-11-24',end:'2027-11-28'},
-  {name:'Honolulu Marathon Weekend',start:'2027-12-11',end:'2027-12-13'},
-  {name:'Christmas Week',          start:'2027-12-22',end:'2027-12-27'}
+  {name:'Winter Peak Season',           start:'2026-12-15',end:'2027-01-03'},
+  {name:'Canada Snowbird Season',        start:'2027-01-04',end:'2027-03-31'},
+  {name:'Valentine\'s & Presidents Day', start:'2027-02-11',end:'2027-02-15'},
+  {name:'US Spring Break',              start:'2027-03-13',end:'2027-04-11'},
+  {name:'Japan Spring Break',           start:'2027-03-20',end:'2027-04-05'},
+  {name:'Memorial Day Weekend',         start:'2027-05-29',end:'2027-05-31'},
+  {name:'US Summer Break',              start:'2027-06-05',end:'2027-08-20'},
+  {name:'Japan Summer Break',           start:'2027-07-18',end:'2027-08-31'},
+  {name:'Independence Day',             start:'2027-07-04',end:'2027-07-06'},
+  {name:'Labor Day Weekend',            start:'2027-09-04',end:'2027-09-06'},
+  {name:'September Holidays',           start:'2027-09-13',end:'2027-09-23'},
+  {name:'Thanksgiving Week',            start:'2027-11-24',end:'2027-11-28'},
+  {name:'Honolulu Marathon 🏃',         start:'2027-12-11',end:'2027-12-13'},
+  {name:'Christmas Week',               start:'2027-12-22',end:'2027-12-27'}
 ];
+
+// ── Slow seasons（閑散期：発注を控えめに）──
+var SLOW_SEASONS=[
+  {name:'Slow Season',start:'2026-04-15',end:'2026-05-22'},
+  {name:'Slow Season',start:'2026-09-08',end:'2026-09-18'},
+  {name:'Slow Season',start:'2026-10-08',end:'2026-11-19'},
+  {name:'Slow Season',start:'2027-04-15',end:'2027-05-22'},
+  {name:'Slow Season',start:'2027-09-07',end:'2027-09-12'},
+  {name:'Slow Season',start:'2027-10-07',end:'2027-11-18'}
+];
+// ── Honolulu Marathon dates（強調表示用）──
+var MARATHON_DATES=[
+  {start:'2026-12-04',end:'2026-12-13'},
+  {start:'2027-12-03',end:'2027-12-13'}
+];
+function getSlowSeason(dateStr){
+  for(var i=0;i<SLOW_SEASONS.length;i++){
+    var b=SLOW_SEASONS[i];if(dateStr>=b.start&&dateStr<=b.end)return b.name;
+  }return null;
+}
+function getMarathon(dateStr){
+  for(var i=0;i<MARATHON_DATES.length;i++){
+    var b=MARATHON_DATES[i];if(dateStr>=b.start&&dateStr<=b.end)return true;
+  }return false;
+}
 function getEvent(dateStr){
   for(var i=0;i<EVENTS.length;i++){
     var b=EVENTS[i];
@@ -478,26 +520,23 @@ function renderUpcoming(){
   var el=document.getElementById('upcomingList');
   if(!el)return;
   var now=new Date();now.setHours(0,0,0,0);
-  // Show current month + next month only
   var endOfNextMonth=new Date(now.getFullYear(),now.getMonth()+2,0);
   endOfNextMonth.setHours(23,59,59,0);
   var horizon=endOfNextMonth;
   var items=[];
 
-  // Collect all periods
   var allPeriods=[];
-  // HI Holidays (single days)
-  Object.keys(HI_NAMES).forEach(function(d){
-    allPeriods.push({type:'hi',name:HI_NAMES[d],start:d,end:d});
-  });
-  // School breaks
+  Object.keys(HI_NAMES).forEach(function(d){allPeriods.push({type:'hi',name:HI_NAMES[d],start:d,end:d});});
   SCHOOL_BREAKS.forEach(function(b){allPeriods.push({type:'school',name:b.name,start:b.start,end:b.end});});
-  // JP busy
   JP_BUSY.forEach(function(b){allPeriods.push({type:'jp',name:b.name,start:b.start,end:b.end});});
-  // Events
-  EVENTS.forEach(function(b){allPeriods.push({type:'event',name:b.name,start:b.start,end:b.end});});
+  EVENTS.forEach(function(b){
+    var type='event';
+    if(b.name.indexOf('Canada')>=0)type='canada';
+    else if(b.name.indexOf('Marathon')>=0)type='marathon';
+    allPeriods.push({type:type,name:b.name,start:b.start,end:b.end});
+  });
+  SLOW_SEASONS.forEach(function(b){allPeriods.push({type:'slow',name:'⚠ Slow Season — order conservatively',start:b.start,end:b.end});});
 
-  // Filter: ends after today, starts before horizon
   allPeriods.forEach(function(p){
     var s=new Date(p.start);var e=new Date(p.end);
     if(e>=now&&s<=horizon){
@@ -505,10 +544,7 @@ function renderUpcoming(){
     }
   });
 
-  // Sort by start date
   items.sort(function(a,b){return a.sortKey<b.sortKey?-1:a.sortKey>b.sortKey?1:0;});
-
-  // Remove duplicates (same name+start)
   var seen={};var unique=[];
   items.forEach(function(it){
     var k=it.name+it.start;
@@ -519,10 +555,14 @@ function renderUpcoming(){
 
   var html='';
   unique.forEach(function(it){
-    var dotClass=it.type==='hi'?'dot-hi':it.type==='school'?'dot-school':it.type==='event'?'dot-event':'dot-jp';
-    var dateLabel=it.start===it.end
-      ?fmtDate(it.start)
-      :fmtDate(it.start)+' – '+fmtDate(it.end);
+    var dotClass=it.type==='hi'?'dot-hi'
+      :it.type==='school'?'dot-school'
+      :it.type==='jp'?'dot-jp'
+      :it.type==='canada'?'dot-canada'
+      :it.type==='marathon'?'dot-marathon'
+      :it.type==='slow'?'dot-slow'
+      :'dot-event';
+    var dateLabel=it.start===it.end?fmtDate(it.start):fmtDate(it.start)+' – '+fmtDate(it.end);
     var isNow=(new Date(it.start)<=now&&new Date(it.end)>=now);
     var nowBadge=isNow?' <span style="background:#dc2626;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;vertical-align:middle;">NOW</span>':'';
     html+='<div class="upcoming-item"><span class="upcoming-dot '+dotClass+'"></span>'
@@ -582,10 +622,14 @@ function renderCal(){
     var c='cal-cell';
     var hkey=cy+'-'+pad(cm+1)+'-'+pad(d);
     var isHol=HI_NAMES[hkey]?true:false;
+    var isSlow=!past&&getSlowSeason(hkey);
+    var isMarathon=!past&&getMarathon(hkey);
     if(sel)c+=' selected';
     else if(past)c+=' unavail';
     else if(!flex&&!ok)c+=' unavail';
     else if(flex&&!ok)c+=' flex-ok';
+    else if(isMarathon)c+=' marathon';
+    else if(isSlow)c+=' slow';
     else if(tod)c+=' today';
     var click=(!past&&(flex||ok))?' onclick="pickD('+cy+','+cm+','+d+')"':'';
     var title=isHol?' title="'+HI_NAMES[hkey]+'"':'';
@@ -661,26 +705,76 @@ function renderItems(){
   var showPrice=!!(v&&v.minOrder);
   for(var i=0;i<all.length;i++){
     var k='i'+i;if(qty[k]===undefined)qty[k]=0;
-    var priceHtml=showPrice&&all[i].p?'<span class="iprice">$'+all[i].p.toFixed(2)+'</span>':'';
+    var lineTotal=showPrice&&all[i].p?(all[i].p*qty[k]) :null;
+    var priceHtml=showPrice&&all[i].p?'<span class="iprice">$'+all[i].p.toFixed(2)+'/ea</span>':'';
+    var lineTotalHtml=lineTotal!==null?'<span class="iline-total" id="lt'+k+'">'+(lineTotal>0?'$'+lineTotal.toFixed(2):'')+'</span>':'';
     h+='<div class="item-row"><span class="iname">'+all[i].n+priceHtml+'</span><span class="iunit">'+all[i].u+'</span>';
+    if(lineTotalHtml)h+=lineTotalHtml;
     h+='<div class="qc"><button class="qbtn" onclick="cq(\''+k+'\',-1)">\u2212</button>';
-    h+='<span class="qnum" id="q'+k+'">'+qty[k]+'</span>';
+    h+='<span class="qnum" id="q'+k+'" onclick="startEdit(\''+k+'\')" title="Tap to type">'+qty[k]+'</span>';
     h+='<button class="qbtn" onclick="cq(\''+k+'\',1)">+</button></div></div>';
   }
   if(showPrice){
     var total=0;
     for(var i=0;i<all.length;i++){total+=(all[i].p||0)*(qty['i'+i]||0);}
     var minOrd=v.minOrder||0;
+    var pct=Math.min(100,Math.round(total/minOrd*100));
+    var done=total>=minOrd;
     var remaining=Math.max(0,minOrd-total);
-    h+='<div class="itotal">Subtotal: $'+total.toFixed(2);
-    if(remaining>0)h+=' <span style="color:var(--text-hint);font-weight:400;">($'+remaining.toFixed(2)+' more to reach $'+minOrd+' min)</span>';
-    else h+=' <span style="color:#16a34a;font-weight:400;">✓ Min. order met</span>';
-    h+='</div>';
+    h+='<div class="costco-progress-wrap">'
+      +'<div class="costco-progress-label">'
+      +'<span class="costco-progress-left">Subtotal: $<span id="cp-total">'+total.toFixed(2)+'</span></span>'
+      +'<span class="costco-progress-right">Min. $'+minOrd+' &nbsp; <span id="cp-pct">'+pct+'</span>%</span>'
+      +'</div>'
+      +'<div class="costco-progress-bar"><div class="costco-progress-fill'+(done?' done':'')+'" id="cp-bar" style="width:'+pct+'%"></div></div>'
+      +'<div class="costco-progress-status" id="cp-status" style="color:'+(done?'#16a34a':'var(--text-hint)')+';">'
+      +(done?'✓ Minimum order met':'$'+remaining.toFixed(2)+' more to reach minimum')
+      +'</div></div>';
   }
   document.getElementById('itemsList').innerHTML=h;
 }
 
-function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();updateCostcoTotal();}
+// 数量直接入力
+function startEdit(k){
+  var el=document.getElementById('q'+k);
+  if(!el)return;
+  var cur=qty[k]||0;
+  var input=document.createElement('input');
+  input.type='number';input.min='0';input.value=cur;
+  input.className='qnum-input';
+  input.onblur=function(){finishEdit(k,input);};
+  input.onkeydown=function(e){if(e.key==='Enter'||e.key==='Tab')input.blur();};
+  el.replaceWith(input);
+  input.focus();input.select();
+}
+function finishEdit(k,input){
+  var val=parseInt(input.value)||0;
+  if(val<0)val=0;
+  qty[k]=val;
+  var span=document.createElement('span');
+  span.className='qnum';span.id='q'+k;span.textContent=val;
+  span.setAttribute('onclick','startEdit(\''+k+'\')');
+  span.setAttribute('title','Tap to type');
+  input.replaceWith(span);
+  updateGoBtn();updateCostcoTotal();
+}
+
+function cq(k,d){
+  qty[k]=Math.max(0,(qty[k]||0)+d);
+  var e=document.getElementById('q'+k);
+  if(e&&e.tagName==='SPAN')e.textContent=qty[k];
+  // 商品別合計更新
+  var ltEl=document.getElementById('lt'+k);
+  if(ltEl){
+    var v=gv(selId);var all=getItems();
+    var idx=parseInt(k.substring(1));
+    var price=all[idx]&&all[idx].p?all[idx].p:0;
+    var lt=price*qty[k];
+    ltEl.textContent=lt>0?'$'+lt.toFixed(2):'';
+  }
+  updateGoBtn();updateCostcoTotal();
+}
+
 function updateCostcoTotal(){
   var v=gv(selId);
   if(!v||!v.minOrder)return;
@@ -688,12 +782,23 @@ function updateCostcoTotal(){
   var total=0;
   for(var i=0;i<all.length;i++){total+=(all[i].p||0)*(qty['i'+i]||0);}
   var minOrd=v.minOrder;
+  var pct=Math.min(100,Math.round(total/minOrd*100));
+  var done=total>=minOrd;
   var remaining=Math.max(0,minOrd-total);
-  var el=document.querySelector('.itotal');
-  if(!el)return;
-  el.innerHTML='Subtotal: $'+total.toFixed(2)
-    +(remaining>0?' <span style="color:var(--text-hint);font-weight:400;">($'+remaining.toFixed(2)+' more to reach $'+minOrd+' min)</span>'
-                 :' <span style="color:#16a34a;font-weight:400;">✓ Min. order met</span>');
+  var tEl=document.getElementById('cp-total');
+  var pEl=document.getElementById('cp-pct');
+  var bEl=document.getElementById('cp-bar');
+  var sEl=document.getElementById('cp-status');
+  if(tEl)tEl.textContent=total.toFixed(2);
+  if(pEl)pEl.textContent=pct;
+  if(bEl){bEl.style.width=pct+'%';bEl.className='costco-progress-fill'+(done?' done':'');}
+  if(sEl){sEl.style.color=done?'#16a34a':'var(--text-hint)';sEl.textContent=done?'✓ Minimum order met':'$'+remaining.toFixed(2)+' more to reach minimum';}
+  // 各商品行の合計も更新
+  for(var i=0;i<all.length;i++){
+    var k='i'+i;
+    var ltEl=document.getElementById('lt'+k);
+    if(ltEl){var price=all[i].p||0;var lt=price*(qty[k]||0);ltEl.textContent=lt>0?'$'+lt.toFixed(2):'';}
+  }
 }
 
 
@@ -766,32 +871,71 @@ function goToSend(){
   window.location.href='send.html?d='+encoded;
 }
 
-// ── CHANGELOG ──
-var CHANGELOG = {
-  version: '3.1',
-  date: 'April 10, 2026',
-  items: [
-    { icon: '📊', text: 'Busy periods expanded — Winter Peak, US Summer, Spring Break, Valentine\'s & Presidents Day added' },
-    { icon: '🎄', text: 'Christmas Week added to Sales Data & calendar' },
-    { icon: '🗓️', text: 'Silver Week: all years included (2024/2025 = 3-day weekends, 2026 = 5-day)' },
-    { icon: '🔧', text: 'All busy period dates corrected for 2024/2025/2026' }
-  ]
-};
+// ── CHANGELOG（Googleスプレッドシートから取得）──
+var SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';
+var CURRENT_VERSION='3.2'; // ← アップデートのたびにここを上げる
 
 function checkChangelog(){
   var seen=localStorage.getItem('st_seen_version');
-  if(seen===CHANGELOG.version)return;
-  document.getElementById('cl-version').textContent='Version '+CHANGELOG.version;
-  document.getElementById('cl-date').textContent=CHANGELOG.date;
-  var ul=document.getElementById('cl-items');
-  ul.innerHTML='';
-  for(var i=0;i<CHANGELOG.items.length;i++){
+  // スプシからchangelogを取得
+  var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent('Changelog');
+  fetch(url).then(function(r){return r.text();}).then(function(text){
+    try{
+      var json=JSON.parse(text.replace(/^[^\(]+\(/,'').replace(/\);?\s*$/,''));
+      var rows=json.table.rows.map(function(r){return r.c.map(function(c){return c&&c.v!=null?c.v:'';});});
+      // 最新バージョン行 = rows[0]: [version, date, icon, text, icon2, text2, ...]
+      if(!rows.length)return;
+      var latest=rows[0];
+      var version=latest[0]?String(latest[0]):'';
+      var date=latest[1]?String(latest[1]):'';
+      // itemsは col2,3 / col4,5 / col6,7 ...
+      var items=[];
+      for(var c=2;c<latest.length-1;c+=2){
+        if(latest[c]&&latest[c+1])items.push({icon:String(latest[c]),text:String(latest[c+1])});
+      }
+      // バージョンが変わっていたら表示
+      if(seen===version)return;
+      document.getElementById('cl-version').textContent='Version '+version;
+      document.getElementById('cl-date').textContent=date;
+      var ul=document.getElementById('cl-items');ul.innerHTML='';
+      items.forEach(function(item){
+        var li=document.createElement('li');
+        li.innerHTML='<span class="changelog-item-dot">'+(item.icon||'✦')+'</span><span>'+item.text+'</span>';
+        ul.appendChild(li);
+      });
+      if(items.length>0)document.getElementById('changelogOverlay').classList.add('open');
+      // seen更新はGot it!ボタンで行う
+      window._clVersion=version;
+    }catch(e){
+      // スプシ読み込み失敗時はフォールバック
+      showFallbackChangelog(seen);
+    }
+  }).catch(function(){showFallbackChangelog(seen);});
+}
+
+function showFallbackChangelog(seen){
+  var fallback={
+    version:CURRENT_VERSION,
+    date:'April 10, 2026',
+    items:[
+      {icon:'📊',text:'Busy periods expanded with seasonal data'},
+      {icon:'🔢',text:'Tap quantity to type directly'},
+      {icon:'📈',text:'Costco progress bar added'},
+      {icon:'🏃',text:'Honolulu Marathon highlighted on calendar'},
+      {icon:'🍁',text:'Canada Snowbird season added'}
+    ]
+  };
+  if(seen===fallback.version)return;
+  document.getElementById('cl-version').textContent='Version '+fallback.version;
+  document.getElementById('cl-date').textContent=fallback.date;
+  var ul=document.getElementById('cl-items');ul.innerHTML='';
+  fallback.items.forEach(function(item){
     var li=document.createElement('li');
-    var item=CHANGELOG.items[i];
-    li.innerHTML='<span class="changelog-item-dot">'+(item.icon||'✦')+'</span><span>'+item.text+'</span>';
+    li.innerHTML='<span class="changelog-item-dot">'+item.icon+'</span><span>'+item.text+'</span>';
     ul.appendChild(li);
-  }
+  });
   document.getElementById('changelogOverlay').classList.add('open');
+  window._clVersion=fallback.version;
 }
 
 function handleOverlayClick(e){
@@ -799,11 +943,47 @@ function handleOverlayClick(e){
 }
 
 function closeChangelog(){
-  localStorage.setItem('st_seen_version',CHANGELOG.version);
+  var v=window._clVersion||CURRENT_VERSION;
+  localStorage.setItem('st_seen_version',v);
   document.getElementById('changelogOverlay').classList.remove('open');
 }
 
-renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();
+// ── Push通知（⑭：締め切りリマインダー）──
+function requestPushPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+function schedulePushReminders(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  var now=new Date();
+  var dow=now.getDay();
+  var h=now.getHours();
+  var reminders=[];
+  // 毎日チェック：今日が締め切り日かどうか
+  if(dow===5){ // 金曜
+    if(h<14)reminders.push({msg:'⏰ Coca-Cola order deadline TODAY by 2:00 PM',tag:'cocacola-deadline'});
+    if(h<12)reminders.push({msg:'⏰ Costco order deadline TODAY by 12:00 PM (Mon delivery)',tag:'costco-mon-deadline'});
+  }
+  if(dow===3&&h<12)reminders.push({msg:'⏰ Costco order deadline TODAY by 12:00 PM (Thu delivery)',tag:'costco-thu-deadline'});
+  if(h<7&&dow!==0)reminders.push({msg:'⏰ Fresh Island Fish deadline TODAY by 7:00 AM',tag:'fish-deadline'});
+  var tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  var tdow=tmr.getDay();
+  if(tdow>=1&&tdow<=5){
+    if(h<15)reminders.push({msg:'⏰ Eskimo Candy deadline TODAY by 3:00 PM',tag:'eskimo-deadline'});
+    if(h<14)reminders.push({msg:"⏰ Wong's deadline TODAY by 2:00 PM",tag:'wongs-deadline'});
+  }
+  reminders.forEach(function(r){
+    new Notification('Steak Teppei Orders',{body:r.msg,tag:r.tag,icon:'./icon-192.png'});
+  });
+}
+
+// Push通知許可をリクエスト（初回起動時）
+requestPushPermission();
+
+renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();schedulePushReminders();
 
 // Last Year Sales
 var LY_SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';

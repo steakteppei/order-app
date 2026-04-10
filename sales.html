@@ -92,6 +92,7 @@ canvas{width:100%!important;}
   </div>
   <div class="tabs">
     <div class="tab active" onclick="showTab('busy')">Busy Periods</div>
+    <div class="tab" onclick="showTab('seasonal')">Seasonal</div>
     <div class="tab" onclick="showTab('daily')">Daily Sales</div>
     <div class="tab" onclick="showTab('monthly')">Monthly</div>
     <div class="tab" onclick="showTab('yearly')">Yearly</div>
@@ -102,6 +103,7 @@ canvas{width:100%!important;}
 
 <div class="content">
   <div id="tab-busy"></div>
+  <div id="tab-seasonal" style="display:none"></div>
   <div id="tab-daily" style="display:none"></div>
   <div id="tab-monthly" style="display:none"></div>
   <div id="tab-yearly" style="display:none"></div>
@@ -119,10 +121,10 @@ var activeTab = 'busy';
 
 function showTab(name) {
   activeTab = name;
-  ['busy','daily','monthly','yearly','hourly','items'].forEach(function(t) {
+  ['busy','seasonal','daily','monthly','yearly','hourly','items'].forEach(function(t) {
     document.getElementById('tab-'+t).style.display = t===name ? '' : 'none';
     document.querySelectorAll('.tab').forEach(function(el,i) {
-      el.classList.toggle('active', ['busy','daily','monthly','yearly','hourly','items'][i]===name);
+      el.classList.toggle('active', ['busy','seasonal','daily','monthly','yearly','hourly','items'][i]===name);
     });
   });
   renderTab(name);
@@ -159,6 +161,11 @@ function renderTab(name) {
   if (name === 'busy') {
     el.innerHTML = '<div class="loading">Loading...</div>';
     loadSheet('Daily Sales', function(rows) { renderBusy(rows); });
+    return;
+  }
+  if (name === 'seasonal') {
+    el.innerHTML = '<div class="loading">Loading...</div>';
+    loadSheet('Daily Sales', function(rows) { renderSeasonal(rows); });
     return;
   }
   if (cache[name]) { renderContent(name, cache[name]); return; }
@@ -380,6 +387,162 @@ function renderBusy(dailyRows) {
       + '</div>';
   });
   html += '</div></div>';
+
+  // ── ① 期待売上予測（今後のUpcoming期間に対して過去2年平均を表示）──
+  var upcoming = allEntries.filter(function(e){ return e.isFuture; });
+  if (upcoming.length > 0) {
+    // 過去データから同名期間の平均を計算
+    var forecast = {};
+    allEntries.filter(function(e){ return !e.isFuture && e.data && e.data.orders > 0; })
+      .forEach(function(e){
+        if (!forecast[e.name]) forecast[e.name] = {revs:[], avgs:[]};
+        forecast[e.name].revs.push(e.data.rev);
+        forecast[e.name].avgs.push(e.data.avg);
+      });
+
+    html += '<div class="section"><div class="section-title">📈 Upcoming Period Forecast <span class="section-sub">Based on past years avg</span></div><div class="bar-chart">';
+    var maxForecast = 0;
+    upcoming.forEach(function(e){
+      var f = forecast[e.name];
+      if (f && f.revs.length) {
+        var avg = f.revs.reduce(function(a,b){return a+b;},0)/f.revs.length;
+        if (avg > maxForecast) maxForecast = avg;
+      }
+    });
+    // 重複排除
+    var seenFc = {};
+    upcoming.forEach(function(e) {
+      if (seenFc[e.name]) return;
+      seenFc[e.name] = true;
+      var f = forecast[e.name];
+      var avgRev = f && f.revs.length ? f.revs.reduce(function(a,b){return a+b;},0)/f.revs.length : 0;
+      var avgDay = f && f.avgs.length ? f.avgs.reduce(function(a,b){return a+b;},0)/f.avgs.length : 0;
+      var pct = maxForecast > 0 && avgRev > 0 ? Math.round(avgRev/maxForecast*100) : 0;
+      var label = e.name.length > 18 ? e.name.substring(0,17)+'…' : e.name;
+      var noData = avgRev === 0;
+      html += '<div class="bar-row">'
+        + '<div class="bar-label" style="width:130px;font-size:10px;text-align:right;">'+label+'<br><span style="color:var(--text-hint);font-size:9px;">'+fmtDateRange(e.start,e.end)+'</span></div>'
+        + '<div class="bar-track">'
+        + (noData
+            ? '<div style="font-size:10px;color:var(--text-hint);padding:4px 6px;">No past data</div>'
+            : '<div class="bar-fill blue" style="width:'+pct+'%"><span class="bar-val">'+fmtK(avgRev)+'</span></div>')
+        + '</div>'
+        + (noData ? '' : '<div class="bar-val-out" style="font-size:9px;color:var(--text-hint);">'+fmtK(avgDay)+'/day</div>')
+        + '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ── ⑦ SEASONAL — 月別訪問者グラフ & ⑨ 閑散期アラート ──
+function renderSeasonal(dailyRows) {
+  var el = document.getElementById('tab-seasonal');
+
+  // 月別集計（売上）
+  var monthMap = {};
+  dailyRows.forEach(function(r) {
+    var key = parseGvizDate(r[0]);
+    if (!key) return;
+    var m = key.substring(0,7);
+    if (!monthMap[m]) monthMap[m] = { rev:0, orders:0 };
+    monthMap[m].rev += parseFloat(r[1])||0;
+    monthMap[m].orders += parseInt(r[2])||0;
+  });
+
+  // 月番号(1-12)ごとの平均売上を計算（全年分）
+  var monthAvg = {}; // {1: {rev:[], orders:[]}, ...}
+  Object.keys(monthMap).forEach(function(mk) {
+    var mo = parseInt(mk.substring(5,7));
+    if (!monthAvg[mo]) monthAvg[mo] = {revs:[], orders:[]};
+    monthAvg[mo].revs.push(monthMap[mk].rev);
+    monthAvg[mo].orders.push(monthMap[mk].orders);
+  });
+
+  var MON_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // HTA 2024年月別訪問者数データ（実測値）
+  var HTA_VISITORS = {
+    1:750000, 2:745000, 3:855537, 4:800000, 5:760000, 6:872620,
+    7:925935, 8:819152, 9:680000, 10:780000, 11:750000, 12:910055
+  };
+
+  var maxVisitors = 925935;
+
+  // ── 月別訪問者グラフ ──
+  var html = '<div class="section"><div class="section-title">📊 Monthly Visitor Index <span class="section-sub">Hawaii 2024 actual data (HTA)</span></div><div class="bar-chart">';
+  for (var mo = 1; mo <= 12; mo++) {
+    var vis = HTA_VISITORS[mo];
+    var pct = Math.round(vis / maxVisitors * 100);
+    var avgRev = monthAvg[mo] && monthAvg[mo].revs.length
+      ? monthAvg[mo].revs.reduce(function(a,b){return a+b;},0)/monthAvg[mo].revs.length : 0;
+
+    // 繁忙期・閑散期の色分け
+    var isBusy = (mo===12||mo===1||mo===2||mo===3||mo===6||mo===7||mo===8);
+    var isSlow = (mo===9||mo===10||mo===11||mo===4||mo===5);
+    var color = isBusy ? 'orange' : (isSlow ? 'blue' : 'green');
+    var label = MON_NAMES[mo-1] + (isBusy ? ' 🔥' : (mo===9?' 📉':''));
+
+    html += '<div class="bar-row">'
+      + '<div class="bar-label">'+label+'</div>'
+      + '<div class="bar-track"><div class="bar-fill '+color+'" style="width:'+pct+'%">'
+      + '<span class="bar-val">'+(vis/1000).toFixed(0)+'K</span>'
+      + '</div></div>'
+      + (avgRev > 0 ? '<div class="bar-val-out">'+fmtK(avgRev)+'</div>' : '')
+      + '</div>';
+  }
+  html += '</div><div style="font-size:10px;color:var(--text-hint);margin-top:8px;">🔥 Peak season &nbsp;|&nbsp; Blue = shoulder/slow &nbsp;|&nbsp; Right = your avg revenue that month</div></div>';
+
+  // ── ⑨ 閑散期アラート ──
+  var now = new Date();
+  var SLOW = [
+    {name:'Post-Spring Break Lull',  start:'2026-04-15',end:'2026-05-22',tip:'Order conservatively. Fewest mainland tourists.'},
+    {name:'Post-Labor Day Lull',     start:'2026-09-08',end:'2026-09-18',tip:'Slowest month of year. School back in session.'},
+    {name:'Fall Slow Season',        start:'2026-10-08',end:'2026-11-19',tip:'Low traffic. Picks up at Thanksgiving.'},
+    {name:'Post-Spring Break Lull',  start:'2027-04-15',end:'2027-05-22',tip:'Order conservatively.'},
+    {name:'Fall Slow Season',        start:'2027-09-07',end:'2027-11-18',tip:'Low traffic until Thanksgiving.'}
+  ];
+
+  html += '<div class="section"><div class="section-title">⚠️ Slow Season Calendar <span class="section-sub">Order conservatively during these periods</span></div>';
+  SLOW.forEach(function(s) {
+    var startD = new Date(s.start+'T12:00:00');
+    var endD   = new Date(s.end+'T12:00:00');
+    var isNow  = now >= startD && now <= endD;
+    var isSoon = !isNow && startD > now && (startD - now) < 30*24*3600*1000;
+    var badge  = isNow  ? '<span style="background:#dc2626;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:6px;">NOW</span>'
+               : isSoon ? '<span style="background:#d97706;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:6px;">SOON</span>' : '';
+    html += '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:.5px solid var(--border);">'
+      + '<div style="width:8px;height:8px;border-radius:50%;background:#64748b;flex-shrink:0;margin-top:4px;"></div>'
+      + '<div><div style="font-size:13px;font-weight:600;color:var(--text);">'+s.name+badge+'</div>'
+      + '<div style="font-size:11px;color:var(--text-hint);margin-top:2px;">'+fmtDateRange(s.start,s.end)+'</div>'
+      + '<div style="font-size:11px;color:#64748b;margin-top:3px;">💡 '+s.tip+'</div>'
+      + '</div></div>';
+  });
+  html += '</div>';
+
+  // ── 国別訪問者の割合 ──
+  html += '<div class="section"><div class="section-title">🌏 Visitor Market Mix <span class="section-sub">2024 actual (HTA)</span></div>';
+  var markets = [
+    {name:'US West (CA, WA...)',  pct:52.4, color:'orange'},
+    {name:'US East (NY, TX...)',  pct:24.9, color:'blue'},
+    {name:'Japan',                pct:7.4,  color:'purple'},
+    {name:'Canada',               pct:4.7,  color:'green'},
+    {name:'Australia',            pct:1.7,  color:'blue'},
+    {name:'Korea',                pct:1.6,  color:'blue'},
+    {name:'Europe',               pct:1.2,  color:'green'},
+    {name:'Other',                pct:6.1,  color:'blue'}
+  ];
+  html += '<div class="bar-chart">';
+  markets.forEach(function(m) {
+    html += '<div class="bar-row">'
+      + '<div class="bar-label">'+m.name+'</div>'
+      + '<div class="bar-track"><div class="bar-fill '+m.color+'" style="width:'+m.pct+'%">'
+      + '<span class="bar-val">'+m.pct+'%</span>'
+      + '</div></div></div>';
+  });
+  html += '</div><div style="font-size:10px;color:var(--text-hint);margin-top:8px;">77%+ from US mainland &nbsp;|&nbsp; Japan = largest intl market</div></div>';
+
   el.innerHTML = html;
 }
 
