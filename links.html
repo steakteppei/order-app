@@ -94,64 +94,69 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 
 <script>
 var ITEMS = [
-  // ── Amazon ──
-  { store:'amazon', name:'Ito En Oi Ocha Green Tea, Unsweetened, 16.9 oz 12-pk',              url:'https://www.amazon.com/dp/B0017T2MWW' },
-  { store:'amazon', name:'Scotch-Brite Quick Clean Griddle Liquid Packets 3.2 oz',             url:'https://www.amazon.com/dp/B0070MSX6Y' },
-  { store:'amazon', name:'Pine-Sol Multi-Surface CloroxPro Concentrated Cleaner',              url:'https://www.amazon.com/dp/B0CQKPR756' },
-  { store:'amazon', name:'Schneider Nitrile Exam Gloves, Extended 12" Cuff, Large, 4mil 50-ct',  url:'https://www.amazon.com/dp/B0DC5YXP7C' },
-  { store:'amazon', name:'Schneider Nitrile Exam Gloves, Extended 12" Cuff, Medium, 4mil 100-ct',url:'https://www.amazon.com/dp/B0DC5ZS5Y5' },
-  { store:'amazon', name:'3000W Japan Voltage Converter Transformer',                          url:'https://www.amazon.com/dp/B0DH9SCTLD' },
-  { store:'amazon', name:'Thermal Paper Rolls for Kitchen / Register Printers',                url:'https://www.amazon.com/dp/B0B2KV7Y39' },
-  { store:'amazon', name:'Amazon Basics Disinfecting Wipes, Lemon & Fresh Scent, 340-ct',     url:'https://www.amazon.com/dp/B08R17N9VV' },
-  { store:'amazon', name:'Rubber Cleaning Gloves, Waterproof Dishwashing Gloves',             url:'https://www.amazon.com/dp/B07GTVYXB7' },
-  { store:'amazon', name:'VCT VT-3000J Japanese Voltage Transformer Converter',               url:'https://www.amazon.com/dp/B0056BC7FE' },
-  { store:'amazon', name:'Tamper Evident Security Sticker Labels 250-ct',                     url:'https://www.amazon.com/dp/B08X21LQRC' },
-  { store:'amazon', name:'Combat 12-Month Roach Killing Bait Station',                        url:'https://www.amazon.com/dp/B000KL1LDE' },
-  { store:'amazon', name:'Instant Premium Vietnamese Coffee Sticks',                          url:'https://www.amazon.com/dp/B00WJ5T2RQ' },
-  { store:'amazon', name:'Compatible Thermal Paper Rolls for POS Printers',                   url:'https://www.amazon.com/dp/B0DDPWW98H' },
-  { store:'amazon', name:'Scotch-Brite #82 Fiberglass Griddle Screen',                        url:'https://www.amazon.com/dp/B008PTZNI2' },
-  { store:'amazon', name:'Tramontina Professional Restaurant Fry Pan',                        url:'https://www.amazon.com/dp/B009HBKPD0' },
-  { store:'amazon', name:'Compatible Ink Ribbon for Star SP700 / SP700BR Printer',            url:'https://www.amazon.com/dp/B0BZVHNGN1' },
-  { store:'amazon', name:'Bamboo Wooden Toothpicks, Single-Point',                            url:'https://www.amazon.com/dp/B094PFJ5TF' },
-  { store:'amazon', name:'Stainless Steel Dishwashing Scrubbers',                             url:'https://www.amazon.com/dp/B0BLGW58T6' },
-  { store:'amazon', name:"Mrs. Anderson's Baking Professional Cooling Rack",                  url:'https://www.amazon.com/dp/B000I1WZM2' },
-  { store:'amazon', name:'Handwash w/ Cranberry, Push-Style Dispenser',                       url:'https://www.amazon.com/dp/B087RSYRW1' },
-  { store:'amazon', name:'BIGHAS Adjustable Kitchen Cooking Apron',                           url:'https://www.amazon.com/dp/B07Z36NGQH' },
-  { store:'amazon', name:'Kikkoman Soy Sauce Packets 200-count',                              url:'https://www.amazon.com/dp/B0046HC63M' },
-  { store:'amazon', name:'Sonilco Replacement Ink Ribbon for Star Drive Printer',             url:'https://www.amazon.com/dp/B08ZB1J44V' },
-  { store:'amazon', name:'Mercer Culinary Square-End Spatula',                                url:'https://www.amazon.com/dp/B001E1DOOS' },
-  { store:'amazon', name:'Sriracha Sauce Packets, Individual',                                url:'https://www.amazon.com/dp/B0BZRYP37H' },
-
-  // ── Sam's Club ──
-  { store:'sams', name:"Oi Ocha Green Tea 16.9 fl oz 12-pk",                                  url:'https://www.samsclub.com/ip/Oi-Ocha-Green-Tea-16-9-fl-oz-12-pk/13606514831' },
-  { store:'sams', name:'Organic Spring Mix 16 oz',                                            url:'https://www.samsclub.com/ip/Organic-Spring-Mix-16-oz/13577923433' },
-  { store:'sams', name:'Chinet Classic Lunch Paper Plate 8.75" 225-ct',                       url:'https://www.samsclub.com/ip/Chinet-Classic-Lunch-Paper-Plate-8-75-225-ct/3770032707' },
-  { store:'sams', name:"Member's Mark Restaurant Coarse Black Pepper 18 oz",                 url:'https://www.samsclub.com/ip/Member-s-Mark-Restaurant-Coarse-Black-Pepper-18-oz/13613903437' },
-  { store:'sams', name:"Member's Mark Sea Salt 36 oz",                                       url:'https://www.samsclub.com/ip/Member-s-Mark-Sea-Salt-36-oz/13576072865' },
-  { store:'sams', name:'Whirl Butter Alternative 128 oz',                                    url:'https://www.samsclub.com/ip/Whirl-Butter-Alternative-128-oz/13725451500' },
-  { store:'sams', name:'Best Foods Real Mayonnaise 64 fl oz',                                url:'https://www.samsclub.com/ip/Best-Foods-Real-Mayonnaise-64-fl-oz/4800126584' },
-  { store:'sams', name:"Member's Mark Power Flex 33 Gallon Trash Bags 90-ct",                url:'https://www.samsclub.com/ip/Member-s-Mark-Power-Flex-33-Gallon-Large-Trash-Bags-90-ct/7874226057' },
-  { store:'sams', name:'Reynolds Wrap Everyday Aluminum Foil 12" x 250 sq ft 2-pk',          url:'https://www.samsclub.com/ip/Reynolds-Wrap-Everyday-12-Aluminum-Foil-250-sq-ft-2-pk/1090006052' },
-  { store:'sams', name:"Member's Mark Granulated Garlic 26 oz",                              url:'https://www.samsclub.com/ip/Member-s-Mark-Granulated-Garlic-26-oz/13576272578' },
-  { store:'sams', name:'Scott Shop Towels Original 55 sheets/roll 12-rolls',                 url:'https://www.samsclub.com/ip/Scott-Shop-Towels-Original-55-sheets-roll-12-rolls/13579474298' },
-  { store:'sams', name:'Dawn Professional Pot & Pan Dish Soap 1 gal',                        url:'https://www.samsclub.com/ip/Dawn-Professional-Manual-Pot-Pan-Dish-Soap-1-gal-Choose-Scent/3700008309' },
-  { store:'sams', name:"Member's Mark Parsley Flakes 3.2 oz",                                url:'https://www.samsclub.com/ip/Member-s-Mark-Parsley-Flakes-3-2-oz/13585173500' },
-  { store:'sams', name:'Scotch Magic Tape 3/4" x 1296" 12-Pack',                             url:'https://www.samsclub.com/ip/Scotch-Magic-Tape-3-4-in-x-1296-in-12-Pack/13951311732' },
-  { store:'sams', name:'Spice World Fresh and Peeled Garlic 3 lbs',                          url:'https://www.samsclub.com/ip/Spice-World-Fresh-and-Peeled-Garlic-3-lbs/13870600578' },
-  { store:'sams', name:"French's 100% Natural Classic Yellow Mustard 30 oz 2-pk",            url:'https://www.samsclub.com/ip/French-s-100-Natural-Classic-Yellow-Mustard-30-oz-2-pk/4150081071' },
-  { store:'sams', name:"Member's Mark Spanish Style Paprika 18 oz",                          url:'https://www.samsclub.com/ip/Member-s-Mark-Spanish-Style-Paprika-18-oz/13594550259' },
-  { store:'sams', name:'Franzia Chardonnay White Wine 5L',                                   url:'https://www.samsclub.com/ip/Franzia-Chardonnay-White-Wine-5-L/15392212413' },
-  { store:'sams', name:'Tide Ultra Oxi Powder Laundry Detergent 143 loads 225 oz',           url:'https://www.samsclub.com/ip/Tide-Ultra-Oxi-Powder-Laundry-Detergent-Original-143-loads-225-oz/15236570939' },
-  { store:'sams', name:'C&H Pure Cane Granulated White Sugar 10 lb',                         url:'https://www.samsclub.com/ip/C-H-Pure-Cane-Granulated-White-Sugar-10-lb/13596302092' },
-  { store:'sams', name:"Member's Mark Thermal Receipt Paper Rolls 3-1/8\" x 190' 18-Rolls", url:'https://www.samsclub.com/ip/Member-s-Mark-Thermal-Receipt-Paper-Rolls-3-1-8-X-190-18-Rolls/7874224714' },
-  { store:'sams', name:"Member's Mark Unsalted Sweet Cream Butter Block 1 lb 4-ct",          url:'https://www.samsclub.com/ip/Member-s-Mark-Unsalted-Sweet-Cream-Butter-Block-1-lb-4-ct/13863073873' },
-  { store:'sams', name:"Member's Mark Microfiber Towels 16x16 36-ct",                        url:'https://www.samsclub.com/ip/Member-s-Mark-Microfiber-Towels-16-x-16-36-ct-Choose-Color/19667518674' },
-  { store:'sams', name:"Member's Mark Antimicrobial Diamond Scraper Entrance Mat",           url:'https://www.samsclub.com/ip/Member-s-Mark-Antimicrobial-Diamond-Scraper-Entrance-Mat-Choose-Size-and-Color/13901807516' }
-  // ── Webstaurant ──
+  // Amazon
+  { store:'amazon', name:'Ito En Oi Ocha Green Tea, Unsweetened, 16.9 oz 12-pk', url:'https://www.amazon.com/dp/B0017T2MWW' },
+  { store:'amazon', name:'Scotch-Brite Quick Clean Griddle Liquid Packets 3.2 oz', url:'https://www.amazon.com/dp/B0070MSX6Y' },
+  { store:'amazon', name:'Pine-Sol Multi-Surface CloroxPro Concentrated Cleaner', url:'https://www.amazon.com/dp/B0CQKPR756' },
+  { store:'amazon', name:'Schneider Nitrile Exam Gloves Extended Cuff Large 4mil 50-ct', url:'https://www.amazon.com/dp/B0DC5YXP7C' },
+  { store:'amazon', name:'Schneider Nitrile Exam Gloves Extended Cuff Medium 4mil 100-ct', url:'https://www.amazon.com/dp/B0DC5ZS5Y5' },
+  { store:'amazon', name:'3000W Japan Voltage Converter Transformer', url:'https://www.amazon.com/dp/B0DH9SCTLD' },
+  { store:'amazon', name:'Thermal Paper Rolls for Kitchen / Register Printers', url:'https://www.amazon.com/dp/B0B2KV7Y39' },
+  { store:'amazon', name:'Amazon Basics Disinfecting Wipes Lemon & Fresh Scent 340-ct', url:'https://www.amazon.com/dp/B08R17N9VV' },
+  { store:'amazon', name:'Rubber Cleaning Gloves Waterproof Dishwashing Gloves', url:'https://www.amazon.com/dp/B07GTVYXB7' },
+  { store:'amazon', name:'VCT VT-3000J Japanese Voltage Transformer Converter', url:'https://www.amazon.com/dp/B0056BC7FE' },
+  { store:'amazon', name:'Tamper Evident Security Sticker Labels 250-ct', url:'https://www.amazon.com/dp/B08X21LQRC' },
+  { store:'amazon', name:'Combat 12-Month Roach Killing Bait Station', url:'https://www.amazon.com/dp/B000KL1LDE' },
+  { store:'amazon', name:'Instant Premium Vietnamese Coffee Sticks', url:'https://www.amazon.com/dp/B00WJ5T2RQ' },
+  { store:'amazon', name:'Compatible Thermal Paper Rolls for POS Printers', url:'https://www.amazon.com/dp/B0DDPWW98H' },
+  { store:'amazon', name:'Scotch-Brite #82 Fiberglass Griddle Screen', url:'https://www.amazon.com/dp/B008PTZNI2' },
+  { store:'amazon', name:'Tramontina Professional Restaurant Fry Pan', url:'https://www.amazon.com/dp/B009HBKPD0' },
+  { store:'amazon', name:'Compatible Ink Ribbon for Star SP700 / SP700BR Printer', url:'https://www.amazon.com/dp/B0BZVHNGN1' },
+  { store:'amazon', name:'Bamboo Wooden Toothpicks Single-Point', url:'https://www.amazon.com/dp/B094PFJ5TF' },
+  { store:'amazon', name:'Stainless Steel Dishwashing Scrubbers', url:'https://www.amazon.com/dp/B0BLGW58T6' },
+  { store:'amazon', name:"Mrs. Anderson's Baking Professional Cooling Rack", url:'https://www.amazon.com/dp/B000I1WZM2' },
+  { store:'amazon', name:'Handwash Cranberry Push-Style Dispenser', url:'https://www.amazon.com/dp/B087RSYRW1' },
+  { store:'amazon', name:'BIGHAS Adjustable Kitchen Cooking Apron', url:'https://www.amazon.com/dp/B07Z36NGQH' },
+  { store:'amazon', name:'Kikkoman Soy Sauce Packets 200-count', url:'https://www.amazon.com/dp/B0046HC63M' },
+  { store:'amazon', name:'Sonilco Replacement Ink Ribbon for Star Drive Printer', url:'https://www.amazon.com/dp/B08ZB1J44V' },
+  { store:'amazon', name:'Mercer Culinary Square-End Spatula', url:'https://www.amazon.com/dp/B001E1DOOS' },
+  { store:'amazon', name:'Sriracha Sauce Packets Individual', url:'https://www.amazon.com/dp/B0BZRYP37H' },
+  // Sams Club
+  { store:'sams', name:'Oi Ocha Green Tea 16.9 fl oz 12-pk', url:'https://www.samsclub.com/ip/Oi-Ocha-Green-Tea-16-9-fl-oz-12-pk/13606514831' },
+  { store:'sams', name:'Organic Spring Mix 16 oz', url:'https://www.samsclub.com/ip/Organic-Spring-Mix-16-oz/13577923433' },
+  { store:'sams', name:'Chinet Classic Lunch Paper Plate 8.75in 225-ct', url:'https://www.samsclub.com/ip/Chinet-Classic-Lunch-Paper-Plate-8-75-225-ct/3770032707' },
+  { store:'sams', name:"Member's Mark Restaurant Coarse Black Pepper 18 oz", url:'https://www.samsclub.com/ip/Member-s-Mark-Restaurant-Coarse-Black-Pepper-18-oz/13613903437' },
+  { store:'sams', name:"Member's Mark Sea Salt 36 oz", url:'https://www.samsclub.com/ip/Member-s-Mark-Sea-Salt-36-oz/13576072865' },
+  { store:'sams', name:'Whirl Butter Alternative 128 oz', url:'https://www.samsclub.com/ip/Whirl-Butter-Alternative-128-oz/13725451500' },
+  { store:'sams', name:'Best Foods Real Mayonnaise 64 fl oz', url:'https://www.samsclub.com/ip/Best-Foods-Real-Mayonnaise-64-fl-oz/4800126584' },
+  { store:'sams', name:"Member's Mark Power Flex 33 Gallon Trash Bags 90-ct", url:'https://www.samsclub.com/ip/Member-s-Mark-Power-Flex-33-Gallon-Large-Trash-Bags-90-ct/7874226057' },
+  { store:'sams', name:'Reynolds Wrap Everyday Aluminum Foil 12in x 250 sq ft 2-pk', url:'https://www.samsclub.com/ip/Reynolds-Wrap-Everyday-12-Aluminum-Foil-250-sq-ft-2-pk/1090006052' },
+  { store:'sams', name:"Member's Mark Granulated Garlic 26 oz", url:'https://www.samsclub.com/ip/Member-s-Mark-Granulated-Garlic-26-oz/13576272578' },
+  { store:'sams', name:'Scott Shop Towels Original 55 sheets/roll 12-rolls', url:'https://www.samsclub.com/ip/Scott-Shop-Towels-Original-55-sheets-roll-12-rolls/13579474298' },
+  { store:'sams', name:'Dawn Professional Pot & Pan Dish Soap 1 gal', url:'https://www.samsclub.com/ip/Dawn-Professional-Manual-Pot-Pan-Dish-Soap-1-gal-Choose-Scent/3700008309' },
+  { store:'sams', name:"Member's Mark Parsley Flakes 3.2 oz", url:'https://www.samsclub.com/ip/Member-s-Mark-Parsley-Flakes-3-2-oz/13585173500' },
+  { store:'sams', name:'Scotch Magic Tape 3/4in x 1296in 12-Pack', url:'https://www.samsclub.com/ip/Scotch-Magic-Tape-3-4-in-x-1296-in-12-Pack/13951311732' },
+  { store:'sams', name:'Spice World Fresh and Peeled Garlic 3 lbs', url:'https://www.samsclub.com/ip/Spice-World-Fresh-and-Peeled-Garlic-3-lbs/13870600578' },
+  { store:'sams', name:"French's 100% Natural Classic Yellow Mustard 30 oz 2-pk", url:'https://www.samsclub.com/ip/French-s-100-Natural-Classic-Yellow-Mustard-30-oz-2-pk/4150081071' },
+  { store:'sams', name:"Member's Mark Spanish Style Paprika 18 oz", url:'https://www.samsclub.com/ip/Member-s-Mark-Spanish-Style-Paprika-18-oz/13594550259' },
+  { store:'sams', name:'Franzia Chardonnay White Wine 5L', url:'https://www.samsclub.com/ip/Franzia-Chardonnay-White-Wine-5-L/15392212413' },
+  { store:'sams', name:'Tide Ultra Oxi Powder Laundry Detergent 143 loads 225 oz', url:'https://www.samsclub.com/ip/Tide-Ultra-Oxi-Powder-Laundry-Detergent-Original-143-loads-225-oz/15236570939' },
+  { store:'sams', name:'C&H Pure Cane Granulated White Sugar 10 lb', url:'https://www.samsclub.com/ip/C-H-Pure-Cane-Granulated-White-Sugar-10-lb/13596302092' },
+  { store:'sams', name:"Member's Mark Thermal Receipt Paper Rolls 3-1/8in x 190ft 18-Rolls", url:'https://www.samsclub.com/ip/Member-s-Mark-Thermal-Receipt-Paper-Rolls-3-1-8-X-190-18-Rolls/7874224714' },
+  { store:'sams', name:"Member's Mark Unsalted Sweet Cream Butter Block 1 lb 4-ct", url:'https://www.samsclub.com/ip/Member-s-Mark-Unsalted-Sweet-Cream-Butter-Block-1-lb-4-ct/13863073873' },
+  { store:'sams', name:"Member's Mark Microfiber Towels 16x16 36-ct", url:'https://www.samsclub.com/ip/Member-s-Mark-Microfiber-Towels-16-x-16-36-ct-Choose-Color/19667518674' },
+  { store:'sams', name:"Member's Mark Antimicrobial Diamond Scraper Entrance Mat", url:'https://www.samsclub.com/ip/Member-s-Mark-Antimicrobial-Diamond-Scraper-Entrance-Mat-Choose-Size-and-Color/13901807516' },
+  // Webstaurant
   { store:'webr', name:'LRS Connect Pro Guest Paging System 30 Pager Kit with Connect Transmitter', url:'https://www.webstaurantstore.com/lrs-connect-pro-guest-paging-system-30-pager-kit-with-connect-transmitter/290GSTPRO30.html' },
-  { store:'webr', name:'LRS Guest Transmitter',   url:'https://www.webstaurantstore.com/lrs-guest-transmitter/290TRNSMTGST.html' },
-  { store:'webr', name:'LRS Guest Pager Pro',     url:'https://www.webstaurantstore.com/lrs-guest-pager-pro/290GSTCSTR.html' }
+  { store:'webr', name:'LRS Guest Transmitter', url:'https://www.webstaurantstore.com/lrs-guest-transmitter/290TRNSMTGST.html' },
+  { store:'webr', name:'LRS Guest Pager Pro', url:'https://www.webstaurantstore.com/lrs-guest-pager-pro/290GSTCSTR.html' }
 ];
+
+var STORE_INFO = {
+  amazon: { label: 'Amazon',      badge: 'AMZ',   icon: 'amazon' },
+  sams:   { label: "Sam's Club",  badge: "SAM'S", icon: 'sams'   },
+  webr:   { label: 'Webstaurant', badge: 'WEBR',  icon: 'webr'   }
+};
 
 var currentTab = 'all';
 var currentQuery = '';
@@ -160,7 +165,7 @@ function setTab(tab) {
   currentTab = tab;
   ['all','amazon','sams','webr'].forEach(function(t) {
     var btn = document.getElementById('tab-'+t);
-    btn.className = 'tab-btn' + (t === tab ? ' active-'+t : '');
+    if(btn) btn.className = 'tab-btn' + (t === tab ? ' active-'+t : '');
   });
   render();
 }
@@ -184,29 +189,27 @@ function render() {
     return;
   }
 
-  // グループ化（allタブのときはストア別セクション表示）
   var html = '';
   if (currentTab === 'all' && !currentQuery) {
     var amazon = filtered.filter(function(i){ return i.store === 'amazon'; });
     var sams   = filtered.filter(function(i){ return i.store === 'sams'; });
     var webr   = filtered.filter(function(i){ return i.store === 'webr'; });
-    html += renderSection('🛒', 'Amazon', amazon);
-    html += renderSection('🏬', "Sam's Club", sams);
-    html += renderSection('🍽️', 'Webstaurant', webr);
+    if(amazon.length) html += renderSection('amazon', amazon);
+    if(sams.length)   html += renderSection('sams',   sams);
+    if(webr.length)   html += renderSection('webr',   webr);
   } else {
-    filtered.forEach(function(item) {
-      html += renderCard(item);
-    });
+    filtered.forEach(function(item) { html += renderCard(item); });
   }
 
   document.getElementById('itemList').innerHTML = html;
 }
 
-function renderSection(icon, title, items) {
-  if (!items.length) return '';
+function renderSection(store, items) {
+  var info = STORE_INFO[store];
+  var icons = { amazon: '&#128722;', sams: '&#127978;', webr: '&#127869;' };
   var html = '<div class="section-head">'
-    + '<span class="section-icon">'+icon+'</span>'
-    + '<span class="section-title">'+title+'</span>'
+    + '<span class="section-icon">'+icons[store]+'</span>'
+    + '<span class="section-title">'+info.label+'</span>'
     + '<span class="section-count">'+items.length+' items</span>'
     + '</div>';
   items.forEach(function(item) { html += renderCard(item); });
@@ -214,12 +217,11 @@ function renderSection(icon, title, items) {
 }
 
 function renderCard(item) {
-  var badgeClass = item.store === 'amazon' ? 'badge-amazon' : item.store === 'sams' ? 'badge-sams' : 'badge-webr';
-  var badgeText  = item.store === 'amazon' ? 'AMZ' : item.store === 'sams' ? "SAM'S" : 'WEBR';
+  var info = STORE_INFO[item.store];
   return '<a class="item-card" href="'+item.url+'" target="_blank" rel="noopener">'
-    + '<div class="item-store-badge '+badgeClass+'">'+badgeText+'</div>'
+    + '<div class="item-store-badge badge-'+item.store+'">'+info.badge+'</div>'
     + '<div class="item-body"><div class="item-name">'+item.name+'</div></div>'
-    + '<div class="item-arrow">›</div>'
+    + '<div class="item-arrow">&#8250;</div>'
     + '</a>';
 }
 
