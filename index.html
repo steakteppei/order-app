@@ -137,17 +137,25 @@ input:checked+.slider:before{transform:translateX(16px);}
 .dl-urgent{color:#dc2626;}
 .dl-soon{color:var(--amber);}
 .dl-ok{color:var(--text-hint);}
-.changelog-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:400;align-items:center;justify-content:center;padding:20px;}
-.changelog-overlay.open{display:flex;}
-.changelog-box{background:var(--card);border-radius:var(--radius);padding:22px 20px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;}
-.changelog-tag{display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:10px;letter-spacing:.04em;}
-.changelog-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:2px;}
-.changelog-date{font-size:11px;color:var(--text-hint);margin-bottom:14px;}
-.changelog-items{list-style:none;padding:0;margin:0 0 18px;}
-.changelog-items li{font-size:13px;color:var(--text-sub);padding:5px 0;border-bottom:.5px solid var(--border);line-height:1.5;}
+.changelog-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:400;align-items:flex-end;justify-content:center;padding:0;}
+.changelog-overlay.open{display:flex;animation:cl-fade-in .2s ease;}
+@keyframes cl-fade-in{from{opacity:0;}to{opacity:1;}}
+.changelog-box{background:var(--card);border-radius:24px 24px 0 0;padding:0;width:100%;max-width:480px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;animation:cl-slide-up .3s cubic-bezier(.32,.72,0,1);}
+@keyframes cl-slide-up{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.changelog-hero{background:linear-gradient(135deg,#E8440A 0%,#ff6b35 100%);padding:28px 24px 22px;position:relative;overflow:hidden;flex-shrink:0;}
+.changelog-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,.1);border-radius:50%;}
+.changelog-hero::after{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;background:rgba(255,255,255,.08);border-radius:50%;}
+.changelog-hero-icon{font-size:36px;margin-bottom:8px;display:block;position:relative;z-index:1;}
+.changelog-hero-version{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;position:relative;z-index:1;}
+.changelog-hero-date{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px;position:relative;z-index:1;}
+.changelog-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.changelog-body-title{font-size:13px;font-weight:700;color:var(--text-hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;}
+.changelog-items{list-style:none;padding:0;margin:0 0 16px;}
+.changelog-items li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text);padding:10px 0;border-bottom:.5px solid var(--border);line-height:1.5;}
 .changelog-items li:last-child{border-bottom:none;}
-.changelog-items li::before{content:"✦ ";color:var(--orange);font-size:10px;}
-.changelog-ok{width:100%;padding:13px;background:var(--orange);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;}
+.changelog-item-dot{width:26px;height:26px;background:var(--orange-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:13px;}
+.changelog-history-link{display:block;text-align:center;font-size:12px;color:var(--text-hint);margin-bottom:14px;text-decoration:underline;cursor:pointer;}
+.changelog-ok{width:100%;padding:15px;background:var(--orange);color:#fff;border:none;border-radius:var(--radius-sm);font-size:16px;font-weight:700;cursor:pointer;letter-spacing:-.2px;}
 .changelog-ok:active{opacity:.85;}
 
 </style>
@@ -161,13 +169,19 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="header-sub">Makai Market Food Court &middot; Ala Moana Center</div>
   </div>
   <div class="deadline-alert" id="deadlineAlertBanner"></div>
-  <div class="changelog-overlay" id="changelogOverlay">
+  <div class="changelog-overlay" id="changelogOverlay" onclick="handleOverlayClick(event)">
     <div class="changelog-box">
-      <div class="changelog-tag">&#x1f195; APP UPDATED</div>
-      <div class="changelog-title" id="cl-version"></div>
-      <div class="changelog-date" id="cl-date"></div>
-      <ul class="changelog-items" id="cl-items"></ul>
-      <button class="changelog-ok" onclick="closeChangelog()">Got it!</button>
+      <div class="changelog-hero">
+        <span class="changelog-hero-icon">🚀</span>
+        <div class="changelog-hero-version" id="cl-version"></div>
+        <div class="changelog-hero-date" id="cl-date"></div>
+      </div>
+      <div class="changelog-body">
+        <div class="changelog-body-title">What's new</div>
+        <ul class="changelog-items" id="cl-items"></ul>
+        <a class="changelog-history-link" href="changelog.html">View full version history →</a>
+        <button class="changelog-ok" onclick="closeChangelog()">Got it! 👍</button>
+      </div>
     </div>
   </div>
   <div class="card">
@@ -235,7 +249,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: April 08, 2026</div>
+  <div class="app-version">Last updated: April 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -729,11 +743,14 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '2.7',
-  date: 'April 8, 2026',
+  version: '3.0',
+  date: 'April 10, 2026',
   items: [
-    'Last year same-week sales added to calendar section',
-    'Select a delivery date to see last year revenue by day'
+    { icon: '🔄', text: 'App now updates automatically — no manual refresh needed' },
+    { icon: '💤', text: 'Auto-reload after 5 minutes of no activity' },
+    { icon: '📋', text: 'Version History page added' },
+    { icon: '🔔', text: 'Changelog popup redesigned with new slide-up style' },
+    { icon: '🔧', text: 'Fixed changelog not reappearing on new versions' }
   ]
 };
 
@@ -746,10 +763,15 @@ function checkChangelog(){
   ul.innerHTML='';
   for(var i=0;i<CHANGELOG.items.length;i++){
     var li=document.createElement('li');
-    li.textContent=CHANGELOG.items[i];
+    var item=CHANGELOG.items[i];
+    li.innerHTML='<span class="changelog-item-dot">'+(item.icon||'✦')+'</span><span>'+item.text+'</span>';
     ul.appendChild(li);
   }
   document.getElementById('changelogOverlay').classList.add('open');
+}
+
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('changelogOverlay'))closeChangelog();
 }
 
 function closeChangelog(){
@@ -830,41 +852,15 @@ function renderLY(deliveryDate){
   });
 }
 
-// ── 自動更新ロジック ──
-var IDLE_TIMEOUT = 5 * 60 * 1000; // 操作なし5分でリロード
-var idleTimer = null;
-var lastHidden = null;
-
-function resetIdleTimer(){
-  clearTimeout(idleTimer);
-  idleTimer = setTimeout(function(){
-    // 操作なしで5分経過 → SW更新チェックしてリロード
-    navigator.serviceWorker.getRegistration().then(function(reg){
-      if(reg) reg.update();
-    }).catch(function(){});
-    window.location.reload(true);
-  }, IDLE_TIMEOUT);
-}
-
-// タッチ・クリック・スクロール・キー操作でタイマーリセット
-['touchstart','touchmove','click','keydown','scroll'].forEach(function(ev){
-  document.addEventListener(ev, resetIdleTimer, {passive:true});
-});
-resetIdleTimer(); // ページ読み込み時にスタート
-
-// バックグラウンドから復帰したときも即チェック
-document.addEventListener('visibilitychange', function(){
+// Auto-reload when app returns from background
+var lastHidden=null;
+document.addEventListener('visibilitychange',function(){
   if(document.hidden){
-    lastHidden = Date.now();
+    lastHidden=Date.now();
   } else {
-    // 1分以上バックグラウンドにいたら強制リロード
-    if(lastHidden && (Date.now() - lastHidden) > 60 * 1000){
-      window.location.reload(true);
-    } else {
-      // 短時間の復帰でもSW更新チェックだけ走らせる
-      navigator.serviceWorker.getRegistration().then(function(reg){
-        if(reg) reg.update();
-      }).catch(function(){});
+    // If was in background for more than 5 minutes, reload for latest version
+    if(lastHidden&&(Date.now()-lastHidden)>5*60*1000){
+      window.location.reload();
     }
   }
 });
@@ -872,40 +868,31 @@ document.addEventListener('visibilitychange', function(){
 </script>
 
 <script>
-// ── Service Worker ──
 if('serviceWorker' in navigator){
-  var refreshing = false;
-
-  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
-
-    function applyUpdate(worker){
-      worker.postMessage({type:'SKIP_WAITING'});
-    }
-
-    if(reg.waiting){ applyUpdate(reg.waiting); }
-
-    reg.addEventListener('updatefound', function(){
-      var nw = reg.installing;
-      nw.addEventListener('statechange', function(){
-        if(nw.state === 'installed'){ applyUpdate(nw); }
+  navigator.serviceWorker.register('./sw.js').then(function(reg){
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='installed'&&navigator.serviceWorker.controller){
+          document.getElementById('updateBanner').classList.add('show');
+        }
       });
     });
-
-    // 30秒ごとにサーバーへ新バージョン確認
-    setInterval(function(){ reg.update(); }, 30000);
-
-  }).catch(function(err){ console.warn('SW registration failed:', err); });
-
-  // SWが切り替わったら即リロード
-  navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(!refreshing){ refreshing = true; window.location.reload(true); }
+  });
+  var refreshing=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(!refreshing){refreshing=true;window.location.reload();}
+  });
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    if(reg&&reg.waiting){
+      document.getElementById('updateBanner').classList.add('show');
+    }
   });
 }
-
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload(true);
+    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+    else window.location.reload();
   });
 }
 </script>
