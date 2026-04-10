@@ -60,16 +60,17 @@ input:checked+.slider:before{transform:translateX(16px);}
 .cal-cell.unavail:active{opacity:.4;}
 /* 各セルの背景はセル全体ではなく数字を囲む小さい正方形で表現 */
 .cal-cell.selected{background:none;color:var(--text);}
-.cal-cell.selected .cal-num{background:var(--orange);color:#fff;font-weight:600;}
+.cal-cell.selected .cal-num{background:var(--orange);color:#fff;font-weight:600;width:26px;height:26px;}
 .cal-cell.today .cal-num{color:var(--orange);font-weight:700;}
-.cal-cell.today.selected .cal-num{background:var(--orange);color:#fff;}
-.cal-cell.flex-ok .cal-num{background:#fef3c7;color:#92400e;}
-.cal-cell.slow .cal-num{background:#f1f5f9;color:#64748b;}
-.cal-cell.marathon .cal-num{background:#fef9c3;color:#854d0e;}
-.cal-cell.holiday .cal-num{background:#fff2ed;color:var(--orange);}
+.cal-cell.today.selected .cal-num{background:var(--orange);color:#fff;width:26px;height:26px;}
+.cal-cell.flex-ok .cal-num{background:#fef3c7;color:#92400e;width:26px;height:26px;}
+.cal-cell.slow .cal-num{background:#f1f5f9;color:#64748b;width:26px;height:26px;}
+.cal-cell.marathon .cal-num{background:#fef9c3;color:#854d0e;width:26px;height:26px;}
+.cal-cell.holiday .cal-num{background:#fff2ed;color:var(--orange);width:26px;height:26px;}
 .cal-cell.sunday{color:#dc2626;}
-.cal-cell.sunday.selected .cal-num{background:var(--orange);color:#fff;}
-.cal-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;position:relative;}
+.cal-cell.sunday.selected .cal-num{background:var(--orange);color:#fff;width:26px;height:26px;}
+/* デフォルトのcal-num：サイズなし・背景なし・透明 */
+.cal-num{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
 .hol-dot{display:block;width:4px;height:4px;background:var(--orange);border-radius:50%;margin:1px auto 0;}
 .cal-selected{font-size:11.5px;margin-top:7px;color:var(--text-hint);}
 .cal-selected span{color:var(--orange);font-weight:600;}
@@ -117,8 +118,8 @@ input:checked+.slider:before{transform:translateX(16px);}
 .costco-progress-fill{height:100%;border-radius:20px;background:var(--orange);transition:width .3s ease;}
 .costco-progress-fill.done{background:#16a34a;}
 .costco-progress-status{font-size:11px;margin-top:5px;text-align:right;font-weight:600;}
-.cal-cell.slow:hover .cal-num{background:#e2e8f0;}
-.cal-cell.marathon:hover .cal-num{background:#fef08a;}
+.cal-cell.slow:hover .cal-num{background:#e2e8f0;width:26px;height:26px;}
+.cal-cell.marathon:hover .cal-num{background:#fef08a;width:26px;height:26px;}
 .dot-slow{background:#64748b;}
 .dot-marathon{background:#854d0e;}
 .dot-canada{background:#c0392b;}
@@ -880,10 +881,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '3.5',
+  version: '3.6',
   date: 'April 10, 2026',
   items: [
-    { icon: '🗓️', text: 'Calendar date badges now uniform size — all same as selected date square' }
+    { icon: '🗓️', text: 'Calendar: plain dates now show no background — colored square only on special dates' }
   ]
 };
 
