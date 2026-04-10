@@ -93,6 +93,8 @@ canvas{width:100%!important;}
   <div class="tabs">
     <div class="tab active" onclick="showTab('busy')">Busy Periods</div>
     <div class="tab" onclick="showTab('daily')">Daily Sales</div>
+    <div class="tab" onclick="showTab('monthly')">Monthly</div>
+    <div class="tab" onclick="showTab('yearly')">Yearly</div>
     <div class="tab" onclick="showTab('hourly')">By Hour</div>
     <div class="tab" onclick="showTab('items')">Items</div>
   </div>
@@ -101,6 +103,8 @@ canvas{width:100%!important;}
 <div class="content">
   <div id="tab-busy"></div>
   <div id="tab-daily" style="display:none"></div>
+  <div id="tab-monthly" style="display:none"></div>
+  <div id="tab-yearly" style="display:none"></div>
   <div id="tab-hourly" style="display:none"></div>
   <div id="tab-items" style="display:none"></div>
   <div class="updated" id="updatedLabel"></div>
@@ -115,10 +119,10 @@ var activeTab = 'busy';
 
 function showTab(name) {
   activeTab = name;
-  ['busy','daily','hourly','items'].forEach(function(t) {
+  ['busy','daily','monthly','yearly','hourly','items'].forEach(function(t) {
     document.getElementById('tab-'+t).style.display = t===name ? '' : 'none';
     document.querySelectorAll('.tab').forEach(function(el,i) {
-      el.classList.toggle('active', ['busy','daily','hourly','items'][i]===name);
+      el.classList.toggle('active', ['busy','daily','monthly','yearly','hourly','items'][i]===name);
     });
   });
   renderTab(name);
@@ -159,6 +163,14 @@ function renderTab(name) {
   }
   if (cache[name]) { renderContent(name, cache[name]); return; }
   el.innerHTML = '<div class="loading">Loading...</div>';
+  if (name === 'monthly' || name === 'yearly') {
+    el.innerHTML = '<div class="loading">Loading...</div>';
+    loadSheet('Daily Sales', function(rows) {
+      if (name === 'monthly') renderMonthly(rows);
+      else renderYearly(rows);
+    });
+    return;
+  }
   var sheetName = {daily:'Daily Sales',hourly:'Hourly Sales',items:'Item Sales'}[name];
   loadSheet(sheetName, function(rows) {
     if (!rows.length) {
@@ -329,10 +341,209 @@ function renderDaily(rows) {
   html += '</div></div>';
 
   // Table
+  // Build dayMap for YoY lookups
+  var dayMap2 = {};
+  rows.forEach(function(r) {
+    var k = parseGvizDate(r[0]);
+    if (k) dayMap2[k] = { rev: parseFloat(r[1])||0, orders: parseInt(r[2])||0 };
+  });
+  function lyDate(k) {
+    var d = new Date(k+'T12:00:00'); d.setFullYear(d.getFullYear()-1);
+    var y=d.getFullYear(),m=d.getMonth()+1,dd=d.getDate();
+    return y+'-'+(m<10?'0':'')+m+'-'+(dd<10?'0':'')+dd;
+  }
+  function lyWeekAvg(k) {
+    var total=0,count=0;
+    for(var i=-3;i<=3;i++){
+      var d=new Date(k+'T12:00:00'); d.setFullYear(d.getFullYear()-1); d.setDate(d.getDate()+i);
+      var y=d.getFullYear(),mo=d.getMonth()+1,dd=d.getDate();
+      var wk=y+'-'+(mo<10?'0':'')+mo+'-'+(dd<10?'0':'')+dd;
+      if(dayMap2[wk]){total+=dayMap2[wk].rev;count++;}
+    }
+    return count>0?total/count:null;
+  }
+  function lyMonthTotal(k) {
+    var mo=k.substring(0,4-1-1,7); // wrong, use substring
+    var mo=k.substring(0,7);
+    var lyMo=(parseInt(mo.substring(0,4))-1)+'-'+mo.substring(5);
+    var total=0,found=false;
+    Object.keys(dayMap2).forEach(function(d){ if(d.startsWith(lyMo)){total+=dayMap2[d].rev;found=true;} });
+    return found?total:null;
+  }
+
   html += '<div class="section"><div class="section-title">All Data</div>'
-    + '<table class="data-table"><tr><th>Date</th><th class="num">Revenue</th><th class="num">Orders</th><th class="num">Avg</th></tr>';
+    + '<table class="data-table"><tr><th>Date</th><th class="num">Revenue</th><th class="num">Orders</th><th class="num">Avg Ticket</th><th class="num">vs LY Day</th><th class="num">vs LY Week</th></tr>';
   rows.slice().reverse().forEach(function(r) {
-    html += '<tr><td>'+r[0]+'</td><td class="num rev">'+fmt$(r[1])+'</td><td class="num">'+r[2]+'</td><td class="num">'+fmt$(r[3])+'</td></tr>';
+    var k = parseGvizDate(r[0]);
+    var rev = parseFloat(r[1])||0;
+    var ly = k ? dayMap2[lyDate(k)] : null;
+    var lyW = k ? lyWeekAvg(k) : null;
+    var yoyD = ly&&ly.rev>0 ? ((rev-ly.rev)/ly.rev*100) : null;
+    var yoyW = lyW&&lyW>0 ? ((rev-lyW)/lyW*100) : null;
+    function yoyCell(v){ return v===null?'<td class="num" style="color:var(--text-hint);">—</td>'
+      :'<td class="num" style="color:'+(v>=0?'#16a34a':'#dc2626')+';">'+(v>=0?'▲':'▼')+Math.abs(v).toFixed(0)+'%</td>'; }
+    html += '<tr><td>'+k+'</td><td class="num rev">'+fmt$(rev)+'</td><td class="num">'+r[2]+'</td><td class="num">'+fmt$(r[3])+'</td>'
+      +yoyCell(yoyD)+yoyCell(yoyW)+'</tr>';
+  });
+  html += '</table></div>';
+
+  el.innerHTML = html;
+}
+
+
+// ── MONTHLY SALES ──
+function renderMonthly(dailyRows) {
+  var el = document.getElementById('tab-monthly');
+
+  // Build dayMap
+  var dayMap = {};
+  dailyRows.forEach(function(r) {
+    var key = parseGvizDate(r[0]);
+    if (!key) return;
+    dayMap[key] = { rev: parseFloat(r[1])||0, orders: parseInt(r[2])||0 };
+  });
+
+  // Aggregate by month
+  var monthMap = {};
+  Object.keys(dayMap).forEach(function(k) {
+    var m = k.substring(0,7);
+    if (!monthMap[m]) monthMap[m] = { rev:0, orders:0 };
+    monthMap[m].rev += dayMap[k].rev;
+    monthMap[m].orders += dayMap[k].orders;
+  });
+
+  var months = Object.keys(monthMap).sort();
+  if (!months.length) { el.innerHTML = '<div class="loading">No data</div>'; return; }
+
+  // YoY comparison helpers
+  function lyKey(m) {
+    var parts = m.split('-');
+    return (parseInt(parts[0])-1)+'-'+parts[1];
+  }
+
+  // Summary cards - current year
+  var curYear = new Date().getFullYear().toString();
+  var prevYear = (new Date().getFullYear()-1).toString();
+  var cyMonths = months.filter(function(m){ return m.startsWith(curYear); });
+  var pyMonths = months.filter(function(m){ return m.startsWith(prevYear); });
+  var cyRev = cyMonths.reduce(function(s,m){ return s+monthMap[m].rev; },0);
+  var pyRev = pyMonths.reduce(function(s,m){ return s+monthMap[m].rev; },0);
+  var yoyPct = pyRev>0 ? ((cyRev-pyRev)/pyRev*100) : null;
+
+  var html = '<div class="summary-row">'
+    + '<div class="summary-card"><div class="summary-label">'+curYear+' Revenue</div><div class="summary-val orange">'+fmt$(cyRev)+'</div></div>'
+    + '<div class="summary-card"><div class="summary-label">vs '+prevYear+'</div><div class="summary-val '+(yoyPct===null?'':yoyPct>=0?'':'')+(yoyPct!==null?(yoyPct>=0?'orange':''):'')+'">'+
+      (yoyPct===null?'—':(yoyPct>=0?'▲':'▼')+Math.abs(yoyPct).toFixed(1)+'%')+'</div></div>'
+    + '<div class="summary-card"><div class="summary-label">'+curYear+' Orders</div><div class="summary-val">'
+    + cyMonths.reduce(function(s,m){ return s+monthMap[m].orders; },0).toLocaleString()+'</div></div>'
+    + '</div>';
+
+  // Bar chart - last 24 months
+  var last24 = months.slice(-24);
+  var maxRev = last24.reduce(function(mx,m){ return Math.max(mx,monthMap[m].rev); },0);
+
+  html += '<div class="section"><div class="section-title">Monthly Revenue — Last 24 Months</div><div class="bar-chart">';
+  last24.forEach(function(m) {
+    var v = monthMap[m];
+    var ly = monthMap[lyKey(m)];
+    var pct = maxRev>0 ? Math.round(v.rev/maxRev*100) : 0;
+    var yoy = ly ? ((v.rev-ly.rev)/ly.rev*100) : null;
+    var yoyStr = yoy!==null ? ' <span style="font-size:9px;color:'+(yoy>=0?'#16a34a':'#dc2626')+';">'+(yoy>=0?'▲':'▼')+Math.abs(yoy).toFixed(0)+'%</span>' : '';
+    html += '<div class="bar-row">'
+      + '<div class="bar-label">'+m.substring(2)+'</div>'
+      + '<div class="bar-track"><div class="bar-fill orange" style="width:'+pct+'%">'
+      + (pct>15?'<span class="bar-val">'+fmtK(v.rev)+'</span>':'')
+      + '</div>'
+      + (pct<=15?'<span class="bar-val-out">'+fmtK(v.rev)+'</span>':'')
+      + yoyStr
+      + '</div></div>';
+  });
+  html += '</div></div>';
+
+  // Table - all months
+  html += '<div class="section"><div class="section-title">All Months</div>'
+    + '<table class="data-table"><tr><th>Month</th><th class="num">Revenue</th><th class="num">Orders</th><th class="num">Avg</th><th class="num">vs LY</th></tr>';
+  months.slice().reverse().forEach(function(m) {
+    var v = monthMap[m];
+    var ly = monthMap[lyKey(m)];
+    var yoy = ly ? ((v.rev-ly.rev)/ly.rev*100) : null;
+    var avg = v.orders>0 ? v.rev/v.orders : 0;
+    html += '<tr><td>'+m+'</td><td class="num rev">'+fmt$(v.rev)+'</td><td class="num">'+v.orders+'</td><td class="num">'+fmt$(avg)+'</td>'
+      + '<td class="num" style="color:'+(yoy===null?'var(--text-hint)':yoy>=0?'#16a34a':'#dc2626')+';">'
+      + (yoy===null?'—':(yoy>=0?'▲':'▼')+Math.abs(yoy).toFixed(1)+'%')+'</td></tr>';
+  });
+  html += '</table></div>';
+
+  el.innerHTML = html;
+}
+
+// ── YEARLY SALES ──
+function renderYearly(dailyRows) {
+  var el = document.getElementById('tab-yearly');
+
+  var dayMap = {};
+  dailyRows.forEach(function(r) {
+    var key = parseGvizDate(r[0]);
+    if (!key) return;
+    dayMap[key] = { rev: parseFloat(r[1])||0, orders: parseInt(r[2])||0 };
+  });
+
+  var yearMap = {};
+  Object.keys(dayMap).forEach(function(k) {
+    var y = k.substring(0,4);
+    if (!yearMap[y]) yearMap[y] = { rev:0, orders:0 };
+    yearMap[y].rev += dayMap[k].rev;
+    yearMap[y].orders += dayMap[k].orders;
+  });
+
+  var years = Object.keys(yearMap).sort();
+  if (!years.length) { el.innerHTML = '<div class="loading">No data</div>'; return; }
+
+  var maxRev = years.reduce(function(mx,y){ return Math.max(mx,yearMap[y].rev); },0);
+
+  // Summary
+  var curY = new Date().getFullYear().toString();
+  var prevY = (new Date().getFullYear()-1).toString();
+  var cy = yearMap[curY]||{rev:0,orders:0};
+  var py = yearMap[prevY]||{rev:0,orders:0};
+  var yoy = py.rev>0 ? ((cy.rev-py.rev)/py.rev*100) : null;
+
+  var html = '<div class="summary-row">'
+    + '<div class="summary-card"><div class="summary-label">'+curY+' Revenue</div><div class="summary-val orange">'+fmt$(cy.rev)+'</div></div>'
+    + '<div class="summary-card"><div class="summary-label">vs '+prevY+'</div><div class="summary-val">'+
+      (yoy===null?'—':(yoy>=0?'▲':'▼')+Math.abs(yoy).toFixed(1)+'%')+'</div></div>'
+    + '<div class="summary-card"><div class="summary-label">Best Year</div><div class="summary-val">'
+    + years.reduce(function(best,y){ return yearMap[y].rev>yearMap[best].rev?y:best; },years[0])
+    + '</div></div>'
+    + '</div>';
+
+  // Bar chart
+  html += '<div class="section"><div class="section-title">Annual Revenue</div><div class="bar-chart">';
+  years.forEach(function(y) {
+    var v = yearMap[y];
+    var py2 = yearMap[(parseInt(y)-1).toString()];
+    var pct = maxRev>0 ? Math.round(v.rev/maxRev*100) : 0;
+    var yoy2 = py2 ? ((v.rev-py2.rev)/py2.rev*100) : null;
+    var yoyStr = yoy2!==null ? ' <span style="font-size:9px;color:'+(yoy2>=0?'#16a34a':'#dc2626')+';">'+(yoy2>=0?'▲':'▼')+Math.abs(yoy2).toFixed(1)+'%</span>' : '';
+    html += '<div class="bar-row">'
+      + '<div class="bar-label">'+y+'</div>'
+      + '<div class="bar-track"><div class="bar-fill orange" style="width:'+pct+'%">'
+      + '<span class="bar-val">'+fmtK(v.rev)+'</span>'
+      + '</div>'+yoyStr+'</div></div>';
+  });
+  html += '</div></div>';
+
+  // Table
+  html += '<div class="section"><div class="section-title">Year by Year</div>'
+    + '<table class="data-table"><tr><th>Year</th><th class="num">Revenue</th><th class="num">Orders</th><th class="num">Avg Ticket</th><th class="num">vs Prior Year</th></tr>';
+  years.slice().reverse().forEach(function(y) {
+    var v = yearMap[y];
+    var py2 = yearMap[(parseInt(y)-1).toString()];
+    var yoy2 = py2 ? ((v.rev-py2.rev)/py2.rev*100) : null;
+    var avg = v.orders>0 ? v.rev/v.orders : 0;
+    html += '<tr><td>'+y+'</td><td class="num rev">'+fmt$(v.rev)+'</td><td class="num">'+v.orders.toLocaleString()+'</td><td class="num">'+fmt$(avg)+'</td>'
+      + '<td class="num" style="color:'+(yoy2===null?'var(--text-hint)':yoy2>=0?'#16a34a':'#dc2626')+';">'
+      + (yoy2===null?'—':(yoy2>=0?'▲':'▼')+Math.abs(yoy2).toFixed(1)+'%')+'</td></tr>';
   });
   html += '</table></div>';
 

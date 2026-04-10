@@ -101,7 +101,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .dl-ok{color:var(--text-hint);}
 .item-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:.5px solid var(--border);}
 .item-row:last-child{border-bottom:none;}
-.iname{flex:1;font-size:13px;color:var(--text);line-height:1.35;}
+.iname{flex:1;font-size:13px;color:var(--text);line-height:1.35;}.iprice{font-size:10px;color:var(--text-hint);margin-left:3px;}.itotal{font-size:11px;font-weight:700;color:var(--orange);padding:8px 0 4px;border-top:.5px solid var(--border);margin-top:4px;text-align:right;}
 .iunit{font-size:10px;color:var(--text-hint);min-width:28px;}
 .qc{display:flex;align-items:center;gap:5px;}
 .qbtn{width:28px;height:28px;border:.5px solid var(--border-md);border-radius:8px;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);}
@@ -362,7 +362,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
+   minOrder:1000,items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS',p:16.49},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG',p:14.49},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN',p:18.19},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS',p:13.79},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX',p:39.59},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN',p:39.59},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX',p:13.72}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -608,18 +608,46 @@ function getItems(){
 
 function renderItems(){
   if(!selId){document.getElementById('itemsList').innerHTML='<div class="items-placeholder">Select a supplier above to see items</div>';return;}
+  var v=VENDORS.find(function(x){return x.id===selId;});
   var all=getItems();var h='';
+  var showPrice=!!(v&&v.minOrder);
   for(var i=0;i<all.length;i++){
     var k='i'+i;if(qty[k]===undefined)qty[k]=0;
-    h+='<div class="item-row"><span class="iname">'+all[i].n+'</span><span class="iunit">'+all[i].u+'</span>';
+    var priceHtml=showPrice&&all[i].p?'<span class="iprice">$'+all[i].p.toFixed(2)+'</span>':'';
+    h+='<div class="item-row"><span class="iname">'+all[i].n+priceHtml+'</span><span class="iunit">'+all[i].u+'</span>';
     h+='<div class="qc"><button class="qbtn" onclick="cq(\''+k+'\',-1)">\u2212</button>';
     h+='<span class="qnum" id="q'+k+'">'+qty[k]+'</span>';
     h+='<button class="qbtn" onclick="cq(\''+k+'\',1)">+</button></div></div>';
   }
+  if(showPrice){
+    var total=0;
+    for(var i=0;i<all.length;i++){total+=(all[i].p||0)*(qty['i'+i]||0);}
+    var minOrd=v.minOrder||0;
+    var remaining=Math.max(0,minOrd-total);
+    h+='<div class="itotal">Subtotal: $'+total.toFixed(2);
+    if(remaining>0)h+=' <span style="color:var(--text-hint);font-weight:400;">($'+remaining.toFixed(2)+' more to reach $'+minOrd+' min)</span>';
+    else h+=' <span style="color:#16a34a;font-weight:400;">✓ Min. order met</span>';
+    h+='</div>';
+  }
   document.getElementById('itemsList').innerHTML=h;
 }
 
-function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();}
+function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();updateCostcoTotal();}
+function updateCostcoTotal(){
+  var v=VENDORS.find(function(x){return x.id===selId;});
+  if(!v||!v.minOrder)return;
+  var all=getItems();
+  var total=0;
+  for(var i=0;i<all.length;i++){total+=(all[i].p||0)*(qty['i'+i]||0);}
+  var minOrd=v.minOrder;
+  var remaining=Math.max(0,minOrd-total);
+  var el=document.querySelector('.itotal');
+  if(!el)return;
+  el.innerHTML='Subtotal: $'+total.toFixed(2)
+    +(remaining>0?' <span style="color:var(--text-hint);font-weight:400;">($'+remaining.toFixed(2)+' more to reach $'+minOrd+' min)</span>'
+                 :' <span style="color:#16a34a;font-weight:400;">✓ Min. order met</span>');
+}
+
 
 function toggleCustom(){
   document.getElementById('customRow').classList.toggle('open');
