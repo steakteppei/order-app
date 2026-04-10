@@ -52,19 +52,38 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 <script>
 var VERSIONS = [
   {
+    version: '4.3',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '👤', text: 'Sender name remembered — no need to select Aki/Kacee/Shaine every time' },
+      { icon: '✍️', text: 'Sender name now included in order message signature' },
+      { icon: '🗑️', text: 'Fixed: Fresh Island Fish BPO phone string removed' },
+      { icon: '⚡', text: 'Weather forecast cached — loads instantly on revisit' },
+      { icon: '💬', text: 'Preview & Send button shows what\'s missing if tapped early' },
+      { icon: '☁️', text: 'New: Weather tab in Sales — rainy/stormy days vs revenue (90-day actual data)' }
+    ]
+  },
+  {
+    version: '4.2',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '🔄', text: 'After sending, home screen resets to blank — no supplier highlighted' }
+    ]
+  },
+  {
     version: '4.1',
     date: 'April 10, 2026',
     items: [
       { icon: '🐛', text: 'Fixed: deadlineInfo DOM error in restoreState removed' },
-      { icon: '🎌', text: 'Fixed: all supplier deadlines skip on Hawaii holidays — previous business day rule applied' },
-      { icon: '🌡️', text: 'Weather now shows °F + °C side by side' },
-      { icon: '↩️', text: 'Back from send screen now restores your order without resetting' },
-      { icon: '👆', text: 'Calendar shows guidance when no supplier is selected' },
-      { icon: '📅', text: 'Next available delivery date shown after selecting a supplier' },
-      { icon: '⚠️', text: 'Costco prices marked as estimates — actual invoice may differ' },
-      { icon: '🌧️', text: 'Rain / storm days show 👥↑ — more customers expected at Ala Moana' },
-      { icon: '🔁', text: 'Recent orders saved — tap to reuse a previous order in one tap' },
-      { icon: '📋', text: 'Version History page redesigned to match app style' }
+      { icon: '🎌', text: 'Fixed: all deadlines skip on Hawaii holidays — previous business day rule' },
+      { icon: '🌡️', text: 'Weather shows °F + °C side by side' },
+      { icon: '↩️', text: 'Back from send screen restores your order' },
+      { icon: '👆', text: 'Calendar guidance shown when no supplier is selected' },
+      { icon: '📅', text: 'Next available delivery date shown after selecting supplier' },
+      { icon: '⚠️', text: 'Costco prices marked as estimates' },
+      { icon: '🌧️', text: 'Rain / storm days show 👥↑ badge' },
+      { icon: '🔁', text: 'Recent orders saved — tap to reuse in one tap' },
+      { icon: '📋', text: 'Version History page redesigned' }
     ]
   },
   {
@@ -74,7 +93,7 @@ var VERSIONS = [
       { icon: '🎏', text: 'Fixed: Golden Week no longer shown as slow season' },
       { icon: '🗓️', text: 'Fixed: Sep slow season overlap with September Holidays corrected' },
       { icon: '✅', text: 'All busy/slow periods verified — zero overlaps' },
-      { icon: '🌤️', text: 'Honolulu 7-day weather forecast added' }
+      { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' }
     ]
   },
   {
@@ -86,14 +105,6 @@ var VERSIONS = [
     ]
   },
   {
-    version: '3.3',
-    date: 'April 10, 2026',
-    items: [
-      { icon: '🐛', text: 'Fixed: Costco subtotal now updates correctly' },
-      { icon: '🗓️', text: 'Calendar legend added — color guide for slow season & marathon week' }
-    ]
-  },
-  {
     version: '3.2',
     date: 'April 10, 2026',
     items: [
@@ -102,7 +113,7 @@ var VERSIONS = [
       { icon: '🏃', text: 'Honolulu Marathon highlighted in yellow on calendar' },
       { icon: '📉', text: 'Slow seasons shown in gray on calendar' },
       { icon: '🍁', text: 'Canada Snowbird season added' },
-      { icon: '📊', text: 'Seasonal tab in Sales Data — visitor index & market mix' },
+      { icon: '📊', text: 'Seasonal tab in Sales — visitor index & market mix' },
       { icon: '🔮', text: 'Upcoming period forecast based on past years avg' }
     ]
   },
@@ -111,8 +122,7 @@ var VERSIONS = [
     date: 'April 10, 2026',
     items: [
       { icon: '📊', text: 'Busy periods expanded — Winter Peak, US Summer, Spring Break added' },
-      { icon: '🎄', text: 'Christmas Week added' },
-      { icon: '🗓️', text: 'Silver Week all years included (2026 = 5-day)' }
+      { icon: '🎄', text: 'Christmas Week, Silver Week (2026 = 5-day) added' }
     ]
   },
   {
@@ -128,49 +138,114 @@ var VERSIONS = [
     version: '2.7',
     date: 'April 8, 2026',
     items: [
-      { icon: '📅', text: 'Last year same-week sales added to calendar' }
+      { icon: '📅', text: 'Last year same-week sales added to calendar section' },
+      { icon: '📊', text: 'Select a delivery date to see last year revenue by day' }
     ]
   },
   {
     version: '2.6',
-    date: 'March 2026',
+    date: 'April 8, 2026',
     items: [
-      { icon: '🗓️', text: 'Upcoming busy periods list added to calendar' },
-      { icon: '🇯🇵', text: 'Japan Golden Week, Obon, Silver Week added' },
-      { icon: '🏫', text: 'Hawaii DOE school breaks added' }
+      { icon: '📊', text: 'Sales Data button added — link to Google Spreadsheet' }
+    ]
+  },
+  {
+    version: '2.5',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '🌏', text: 'Tourist event periods added (green) — Japan school breaks, US holidays, Honolulu Marathon' }
     ]
   },
   {
     version: '2.4',
-    date: 'January 2026',
+    date: 'April 8, 2026',
     items: [
-      { icon: '📊', text: 'Sales Data page launched' },
-      { icon: '📈', text: 'Busy Periods, Daily, Monthly, Yearly, Hourly, Items tabs' }
+      { icon: '🛒', text: 'Costco: Kirkland Plastic Food Wrap added to item list' }
+    ]
+  },
+  {
+    version: '2.3',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '🔴', text: 'NOW badge added — shows on currently active busy periods' },
+      { icon: '🔢', text: 'Version auto-increment system added' }
     ]
   },
   {
     version: '2.2',
-    date: 'November 2025',
+    date: 'April 8, 2026',
     items: [
-      { icon: '💰', text: 'Costco item prices and subtotal added' },
-      { icon: '✅', text: 'Minimum order tracker ($1,000)' },
-      { icon: '✏️', text: 'Custom item add feature' }
+      { icon: '📋', text: 'Upcoming Busy Periods list added to calendar' },
+      { icon: '📅', text: 'Today button added to calendar navigation' }
+    ]
+  },
+  {
+    version: '2.1',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '🇯🇵', text: 'Japan holiday busy periods added to calendar (pink) — Golden Week, Obon, Silver Week, New Year' }
     ]
   },
   {
     version: '2.0',
-    date: 'September 2025',
+    date: 'April 8, 2026',
     items: [
-      { icon: '🎨', text: 'Full UI redesign — card layout, dark mode support' },
-      { icon: '📅', text: 'Interactive calendar with delivery day highlighting' },
-      { icon: '🏝️', text: 'Hawaii state holidays integrated' }
+      { icon: '📝', text: 'Note field auto-resize added' },
+      { icon: '✅', text: 'Quantity required check before send' },
+      { icon: '💰', text: 'Ala Moana Produce minimum order amount display' }
+    ]
+  },
+  {
+    version: '1.9',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '↩️', text: 'Back to Order restores input state' },
+      { icon: '⏰', text: 'Deadline banner time-based urgency coloring' },
+      { icon: '🔴', text: 'Holidays in orange, Sundays in red on calendar' },
+      { icon: '💬', text: 'SMS group names added for suppliers' },
+      { icon: '📧', text: 'Fukuoka Package changed to Gmail' }
+    ]
+  },
+  {
+    version: '1.8',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '🏝️', text: 'Hawaii state & US federal holidays added to calendar (orange)' },
+      { icon: '💬', text: 'Holiday name tooltips on calendar dates' }
+    ]
+  },
+  {
+    version: '1.7',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '🕖', text: 'ATM International schedule added — Mon–Fri, same day by 7:00 AM' },
+      { icon: '🕧', text: 'Fukuoka Package schedule added — Mon/Wed/Fri, previous day by noon' }
+    ]
+  },
+  {
+    version: '1.6',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '📦', text: 'Apax Hawaii: 5 new items added' },
+      { icon: '🌿', text: 'Wismettac: Wakame Seaweed added' },
+      { icon: '🥩', text: 'ATM International USA, Inc. added as supplier' },
+      { icon: '📦', text: 'Fukuoka Package USA, Inc. added as supplier' }
+    ]
+  },
+  {
+    version: '1.5',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '📅', text: 'Apax Hawaii, Ala Moana Produce, Wismettac schedules added' },
+      { icon: '👤', text: 'Sender selection made mandatory before sending' },
+      { icon: '✅', text: 'Order completion screen added' }
     ]
   },
   {
     version: '1.0',
-    date: 'July 2019',
+    date: 'April 8, 2026',
     items: [
-      { icon: '🚀', text: 'Initial launch — basic order form for suppliers' }
+      { icon: '🚀', text: 'Initial launch — basic order form for Steak Teppei suppliers' }
     ]
   }
 ];
