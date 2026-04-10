@@ -638,7 +638,8 @@ function renderUpcoming(){
 
   var allPeriods=[];
   Object.keys(HI_NAMES).forEach(function(d){allPeriods.push({type:'hi',name:HI_NAMES[d],start:d,end:d});});
-  SCHOOL_BREAKS.forEach(function(b){allPeriods.push({type:'school',name:b.name,start:b.start,end:b.end});});
+  // SCHOOL_BREAKSはカレンダー色分けのみ使用（Upcomingリストには表示しない）
+  // Summer BreakはEVENTSのUS Summer Breakと期間が重なるため除外
   JP_BUSY.forEach(function(b){allPeriods.push({type:'jp',name:b.name,start:b.start,end:b.end});});
   EVENTS.forEach(function(b){
     var type='event';
@@ -1108,11 +1109,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.9',
+  version: '5.0',
   date: 'April 10, 2026',
   items: [
-    { icon: '📱', text: 'Fixed: iPhone home screen app now auto-updates when new version is released' },
-    { icon: '🔄', text: 'All pages (order, send, sales, links) now force-refresh on version change' }
+    { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
   ]
 };
 
@@ -1373,7 +1373,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '4.9'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.0'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
