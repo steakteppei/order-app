@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Steak Teppei — Product Links</title>
 <style>
-:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--amazon:#FF9900;--amazon-light:#fff8ee;--sams:#0067A0;--sams-light:#e8f3fb;}
-@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;--amazon-light:#2a1e00;--sams-light:#001d2e;}}
+:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--amazon:#FF9900;--amazon-light:#fff8ee;--sams:#0067A0;--sams-light:#e8f3fb;--webr:#d32f2f;--webr-light:#fff0f0;}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;--amazon-light:#2a1e00;--sams-light:#001d2e;--webr-light:#2a0000;}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{background:var(--bg);font-family:-apple-system,'SF Pro Text',sans-serif;color:var(--text);}
 body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);}
@@ -33,6 +33,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .tab-btn.active-amazon{background:var(--amazon-light);color:var(--amazon);border-color:var(--amazon);}
 .tab-btn.active-sams{background:var(--sams-light);color:var(--sams);border-color:var(--sams);}
 .tab-btn.active-all{background:var(--orange-light);color:var(--orange);border-color:var(--orange);}
+.tab-btn.active-webr{background:var(--webr-light);color:var(--webr);border-color:var(--webr);}
 
 /* Count badge */
 .count-wrap{padding:8px 13px 2px;display:flex;align-items:center;justify-content:space-between;}
@@ -53,6 +54,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .item-store-badge{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.04em;padding:0 4px;text-align:center;align-self:stretch;}
 .badge-amazon{background:var(--amazon-light);color:var(--amazon);}
 .badge-sams{background:var(--sams-light);color:var(--sams);}
+.badge-webr{background:var(--webr-light);color:var(--webr);}
 .item-body{flex:1;padding:10px 10px 10px 0;min-width:0;}
 .item-name{font-size:13px;color:var(--text);line-height:1.4;font-weight:500;}
 .item-arrow{font-size:18px;color:var(--text-hint);padding-right:10px;flex-shrink:0;}
@@ -80,7 +82,8 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 <div class="tabs">
   <button class="tab-btn active-all" id="tab-all"    onclick="setTab('all')">All</button>
   <button class="tab-btn"            id="tab-amazon" onclick="setTab('amazon')">🛒 Amazon</button>
-  <button class="tab-btn"            id="tab-sams"   onclick="setTab('sams')">🏬 Sam's Club</button>
+  <button class="tab-btn"            id="tab-sams"   onclick="setTab('sams')">🏬 Sam's</button>
+  <button class="tab-btn"            id="tab-webr"   onclick="setTab('webr')">🍽️ Webst.</button>
 </div>
 
 <div class="count-wrap">
@@ -144,6 +147,10 @@ var ITEMS = [
   { store:'sams', name:"Member's Mark Unsalted Sweet Cream Butter Block 1 lb 4-ct",          url:'https://www.samsclub.com/ip/Member-s-Mark-Unsalted-Sweet-Cream-Butter-Block-1-lb-4-ct/13863073873' },
   { store:'sams', name:"Member's Mark Microfiber Towels 16x16 36-ct",                        url:'https://www.samsclub.com/ip/Member-s-Mark-Microfiber-Towels-16-x-16-36-ct-Choose-Color/19667518674' },
   { store:'sams', name:"Member's Mark Antimicrobial Diamond Scraper Entrance Mat",           url:'https://www.samsclub.com/ip/Member-s-Mark-Antimicrobial-Diamond-Scraper-Entrance-Mat-Choose-Size-and-Color/13901807516' }
+  // ── Webstaurant ──
+  { store:'webr', name:'LRS Connect Pro Guest Paging System 30 Pager Kit with Connect Transmitter', url:'https://www.webstaurantstore.com/lrs-connect-pro-guest-paging-system-30-pager-kit-with-connect-transmitter/290GSTPRO30.html' },
+  { store:'webr', name:'LRS Guest Transmitter',   url:'https://www.webstaurantstore.com/lrs-guest-transmitter/290TRNSMTGST.html' },
+  { store:'webr', name:'LRS Guest Pager Pro',     url:'https://www.webstaurantstore.com/lrs-guest-pager-pro/290GSTCSTR.html' }
 ];
 
 var currentTab = 'all';
@@ -151,7 +158,7 @@ var currentQuery = '';
 
 function setTab(tab) {
   currentTab = tab;
-  ['all','amazon','sams'].forEach(function(t) {
+  ['all','amazon','sams','webr'].forEach(function(t) {
     var btn = document.getElementById('tab-'+t);
     btn.className = 'tab-btn' + (t === tab ? ' active-'+t : '');
   });
@@ -182,8 +189,10 @@ function render() {
   if (currentTab === 'all' && !currentQuery) {
     var amazon = filtered.filter(function(i){ return i.store === 'amazon'; });
     var sams   = filtered.filter(function(i){ return i.store === 'sams'; });
+    var webr   = filtered.filter(function(i){ return i.store === 'webr'; });
     html += renderSection('🛒', 'Amazon', amazon);
     html += renderSection('🏬', "Sam's Club", sams);
+    html += renderSection('🍽️', 'Webstaurant', webr);
   } else {
     filtered.forEach(function(item) {
       html += renderCard(item);
@@ -205,8 +214,8 @@ function renderSection(icon, title, items) {
 }
 
 function renderCard(item) {
-  var badgeClass = item.store === 'amazon' ? 'badge-amazon' : 'badge-sams';
-  var badgeText  = item.store === 'amazon' ? 'AMZ' : "SAM'S";
+  var badgeClass = item.store === 'amazon' ? 'badge-amazon' : item.store === 'sams' ? 'badge-sams' : 'badge-webr';
+  var badgeText  = item.store === 'amazon' ? 'AMZ' : item.store === 'sams' ? "SAM'S" : 'WEBR';
   return '<a class="item-card" href="'+item.url+'" target="_blank" rel="noopener">'
     + '<div class="item-store-badge '+badgeClass+'">'+badgeText+'</div>'
     + '<div class="item-body"><div class="item-name">'+item.name+'</div></div>'
