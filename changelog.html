@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Steak Teppei — Version History</title>
+<style>
+:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);font-family:-apple-system,'SF Pro Text',sans-serif;color:var(--text);}
+body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);}
+
+.header{background:var(--card);border-bottom:.5px solid var(--border);padding:16px 16px 14px;position:sticky;top:0;z-index:100;}
+.header-top{display:flex;align-items:center;gap:10px;}
+.back-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text);padding:0 6px 0 0;line-height:1;}
+.back-btn:active{opacity:.6;}
+.header-title{font-size:17px;font-weight:700;}
+.header-sub{font-size:11px;color:var(--text-hint);margin-top:1px;}
+
+.content{max-width:480px;margin:0 auto;padding:16px 14px 48px;}
+
+.current-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:16px;}
+
+.version-card{background:var(--card);border:.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.version-card.latest{border:1.5px solid var(--orange);}
+
+.version-header{display:flex;align-items:center;justify-content:space-between;padding:13px 14px 11px;}
+.version-number{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
+.version-card.latest .version-number{color:var(--orange);}
+.version-date{font-size:11px;color:var(--text-hint);}
+.version-latest-tag{background:var(--orange-light);color:var(--orange);font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:.5px solid var(--orange);}
+
+.version-items{padding:0 14px 13px;border-top:.5px solid var(--border);}
+.version-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:.5px solid var(--border);}
+.version-item:last-child{border-bottom:none;}
+.version-item-icon{width:24px;height:24px;background:var(--orange-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}
+.version-item-text{font-size:13px;color:var(--text-sub);line-height:1.5;flex:1;}
+
+.footer-note{text-align:center;font-size:11px;color:var(--text-hint);padding:8px 0;opacity:.7;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <button class="back-btn" onclick="window.location.href='index.html'">&#8249;</button>
+    <div>
+      <div class="header-title">Version History</div>
+      <div class="header-sub">Steak Teppei Order App</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div id="versionList"></div>
+  <div class="footer-note">Steak Teppei · Makai Market Food Court · Ala Moana Center</div>
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// バージョン履歴 — 新しいものを上に追加していく
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var VERSIONS = [
+  {
+    version: '2.8',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '🔔', text: 'Changelog popup redesigned — slides up from bottom with rich layout' },
+      { icon: '📋', text: 'Version History page added (this page!)' },
+      { icon: '🔧', text: 'Fixed changelog not showing after v2.7 was already seen' }
+    ]
+  },
+  {
+    version: '2.7',
+    date: 'April 8, 2026',
+    items: [
+      { icon: '📅', text: 'Last year same-week sales added to calendar section' },
+      { icon: '📊', text: 'Select a delivery date to see last year revenue by day' }
+    ]
+  },
+  {
+    version: '2.6',
+    date: 'April 2026',
+    items: [
+      { icon: '🗓️', text: 'Upcoming busy periods list added to calendar' },
+      { icon: '🇯🇵', text: 'Japan Golden Week, Obon, Silver Week busy periods added' },
+      { icon: '🏫', text: 'Hawaii DOE school break periods added to calendar' }
+    ]
+  },
+  {
+    version: '2.5',
+    date: 'March 2026',
+    items: [
+      { icon: '⚙️', text: 'Holiday / Special Schedule toggle added for irregular deliveries' },
+      { icon: '📍', text: 'Holiday dots added to calendar dates' },
+      { icon: '⏰', text: 'Deadline urgency color coding (red/amber/gray)' }
+    ]
+  },
+  {
+    version: '2.4',
+    date: 'February 2026',
+    items: [
+      { icon: '📊', text: 'Sales Data page launched (sales.html)' },
+      { icon: '📈', text: 'Busy Periods, Daily, Monthly, Yearly, Hourly, Items tabs' },
+      { icon: '🔗', text: 'Sales Data button added to bottom of order screen' }
+    ]
+  },
+  {
+    version: '2.3',
+    date: 'January 2026',
+    items: [
+      { icon: '🔄', text: 'Auto-reload when app returns from background (5min+)' },
+      { icon: '📲', text: 'PWA update banner added for new version notifications' },
+      { icon: '💾', text: 'Order state saved and restored between sessions' }
+    ]
+  },
+  {
+    version: '2.2',
+    date: 'December 2025',
+    items: [
+      { icon: '💰', text: 'Costco item prices and subtotal added' },
+      { icon: '✅', text: 'Minimum order amount tracker for Costco ($1,000)' },
+      { icon: '✏️', text: 'Custom item add feature' }
+    ]
+  },
+  {
+    version: '2.1',
+    date: 'November 2025',
+    items: [
+      { icon: '👤', text: 'Sender selection (Aki / Kacee / Shaine) added to send screen' },
+      { icon: '📧', text: 'CC auto-removes sender from recipients' },
+      { icon: '✉️', text: 'Email / LINE / SMS preview before sending' }
+    ]
+  },
+  {
+    version: '2.0',
+    date: 'October 2025',
+    items: [
+      { icon: '🎨', text: 'Full UI redesign — card layout, dark mode support' },
+      { icon: '📅', text: 'Interactive calendar with delivery day highlighting' },
+      { icon: '🏝️', text: 'Hawaii state holidays integrated' }
+    ]
+  },
+  {
+    version: '1.0',
+    date: 'July 2019',
+    items: [
+      { icon: '🚀', text: 'Initial launch — basic order form for suppliers' }
+    ]
+  }
+];
+
+function render() {
+  var el = document.getElementById('versionList');
+  var html = '';
+  VERSIONS.forEach(function(v, idx) {
+    var isLatest = idx === 0;
+    html += '<div class="version-card' + (isLatest ? ' latest' : '') + '">';
+    html += '<div class="version-header">';
+    html += '<div>';
+    html += '<div class="version-number">v' + v.version + '</div>';
+    html += '<div class="version-date">' + v.date + '</div>';
+    html += '</div>';
+    if (isLatest) html += '<span class="version-latest-tag">CURRENT</span>';
+    html += '</div>';
+    html += '<div class="version-items">';
+    v.items.forEach(function(item) {
+      html += '<div class="version-item">';
+      html += '<div class="version-item-icon">' + item.icon + '</div>';
+      html += '<div class="version-item-text">' + item.text + '</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  el.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
