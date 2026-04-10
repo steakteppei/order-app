@@ -81,9 +81,9 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 
 <div class="tabs">
   <button class="tab-btn active-all" id="tab-all"    onclick="setTab('all')">All</button>
-  <button class="tab-btn"            id="tab-amazon" onclick="setTab('amazon')">🛒 Amazon</button>
-  <button class="tab-btn"            id="tab-sams"   onclick="setTab('sams')">🏬 Sam's</button>
-  <button class="tab-btn"            id="tab-webr"   onclick="setTab('webr')">🍽️ Webst.</button>
+  <button class="tab-btn"            id="tab-amazon" onclick="setTab('amazon')">Amazon</button>
+  <button class="tab-btn"            id="tab-sams"   onclick="setTab('sams')">Sam's</button>
+  <button class="tab-btn"            id="tab-webr"   onclick="setTab('webr')">Webst.</button>
 </div>
 
 <div class="count-wrap">
@@ -225,9 +225,10 @@ function renderCard(item) {
     + '</a>';
 }
 
-document.addEventListener("DOMContentLoaded", function(){ render(); });
-// Also call immediately in case DOM is already ready
-if(document.readyState === "complete" || document.readyState === "interactive"){
+// iPhoneのSafari対応: DOM準備完了後に確実に実行
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", render);
+} else {
   render();
 }
 </script>

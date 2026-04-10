@@ -1,5 +1,5 @@
-const CACHE='st-order-v4.5';
-const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html'];
+const CACHE='st-order-v4.6';
+const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES);}));
   self.skipWaiting();
