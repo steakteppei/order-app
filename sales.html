@@ -93,6 +93,7 @@ canvas{width:100%!important;}
   <div class="tabs">
     <div class="tab active" onclick="showTab('busy')">Busy Periods</div>
     <div class="tab" onclick="showTab('seasonal')">Seasonal</div>
+    <div class="tab" onclick="showTab('weather')">☁️ Weather</div>
     <div class="tab" onclick="showTab('daily')">Daily Sales</div>
     <div class="tab" onclick="showTab('monthly')">Monthly</div>
     <div class="tab" onclick="showTab('yearly')">Yearly</div>
@@ -104,6 +105,7 @@ canvas{width:100%!important;}
 <div class="content">
   <div id="tab-busy"></div>
   <div id="tab-seasonal" style="display:none"></div>
+  <div id="tab-weather" style="display:none"></div>
   <div id="tab-daily" style="display:none"></div>
   <div id="tab-monthly" style="display:none"></div>
   <div id="tab-yearly" style="display:none"></div>
@@ -121,10 +123,10 @@ var activeTab = 'busy';
 
 function showTab(name) {
   activeTab = name;
-  ['busy','seasonal','daily','monthly','yearly','hourly','items'].forEach(function(t) {
+  ['busy','seasonal','weather','daily','monthly','yearly','hourly','items'].forEach(function(t) {
     document.getElementById('tab-'+t).style.display = t===name ? '' : 'none';
     document.querySelectorAll('.tab').forEach(function(el,i) {
-      el.classList.toggle('active', ['busy','seasonal','daily','monthly','yearly','hourly','items'][i]===name);
+      el.classList.toggle('active', ['busy','seasonal','weather','daily','monthly','yearly','hourly','items'][i]===name);
     });
   });
   renderTab(name);
@@ -166,6 +168,11 @@ function renderTab(name) {
   if (name === 'seasonal') {
     el.innerHTML = '<div class="loading">Loading...</div>';
     loadSheet('Daily Sales', function(rows) { renderSeasonal(rows); });
+    return;
+  }
+  if (name === 'weather') {
+    el.innerHTML = '<div class="loading">Loading weather & sales data...</div>';
+    loadSheet('Daily Sales', function(rows) { renderWeatherCorrelation(rows); });
     return;
   }
   if (cache[name]) { renderContent(name, cache[name]); return; }
@@ -543,6 +550,175 @@ function renderSeasonal(dailyRows) {
       + '</div></div></div>';
   });
   html += '</div><div style="font-size:10px;color:var(--text-hint);margin-top:8px;">77%+ from US mainland &nbsp;|&nbsp; Japan = largest intl market</div></div>';
+
+  el.innerHTML = html;
+}
+
+// ── ⑩ 天気×売上相関 ──
+function renderWeatherCorrelation(dailyRows) {
+  var el = document.getElementById('tab-weather');
+  el.innerHTML = '<div class="loading">Fetching 90 days of Honolulu weather history...</div>';
+
+  // 売上データをdayMapに変換
+  var dayMap = {};
+  dailyRows.forEach(function(r) {
+    var key = parseGvizDate(r[0]);
+    if (!key) return;
+    dayMap[key] = { rev: parseFloat(r[1])||0, orders: parseInt(r[2])||0 };
+  });
+
+  // Open-Meteo 過去90日の天気を取得（無料・APIキー不要）
+  var endDate = new Date();
+  endDate.setDate(endDate.getDate() - 1); // 昨日まで
+  var startDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 89); // 90日前
+
+  function fmt(d) {
+    return d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
+  }
+
+  var url = 'https://archive-api.open-meteo.com/v1/archive'
+    + '?latitude=21.3069&longitude=-157.8583'
+    + '&start_date=' + fmt(startDate)
+    + '&end_date='   + fmt(endDate)
+    + '&daily=weathercode,precipitation_sum,temperature_2m_max'
+    + '&timezone=Pacific%2FHonolulu&temperature_unit=fahrenheit';
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(wdata) {
+      if (!wdata.daily) { el.innerHTML = '<div class="error">Weather data unavailable</div>'; return; }
+      buildWeatherCorrelation(el, dayMap, wdata.daily);
+    })
+    .catch(function() {
+      el.innerHTML = '<div class="error">Failed to load weather data.</div>';
+    });
+}
+
+function buildWeatherCorrelation(el, dayMap, wDaily) {
+  // 天気×売上を日ごとにペアリング
+  var sunny=[], cloudy=[], drizzle=[], rain=[], storm=[];
+  var dates = wDaily.time;
+
+  for (var i = 0; i < dates.length; i++) {
+    var key = dates[i];
+    var sales = dayMap[key];
+    if (!sales || sales.orders < 1) continue; // 休業日除外
+    var wc = wDaily.weathercode[i];
+    var precip = wDaily.precipitation_sum[i] || 0;
+    var rev = sales.rev;
+
+    if (wc >= 80 && wc <= 99)      storm.push(rev);   // 嵐・強雨
+    else if (wc >= 61 && wc <= 67) rain.push(rev);    // 雨
+    else if (wc >= 51 && wc <= 59) drizzle.push(rev); // 小雨
+    else if (wc >= 1  && wc <= 3)  cloudy.push(rev);  // 曇り
+    else                           sunny.push(rev);   // 晴れ
+  }
+
+  function avg(arr) {
+    if (!arr.length) return null;
+    return arr.reduce(function(a,b){return a+b;},0) / arr.length;
+  }
+  function pctDiff(base, val) {
+    if (!base || !val) return null;
+    return ((val - base) / base * 100);
+  }
+
+  var baseRev = avg(sunny) || avg(cloudy) || 1;
+  var categories = [
+    { label:'☀️ Sunny',    arr:sunny,   color:'orange' },
+    { label:'☁️ Cloudy',   arr:cloudy,  color:'blue'   },
+    { label:'🌦️ Drizzle',  arr:drizzle, color:'blue'   },
+    { label:'🌧️ Rain',     arr:rain,    color:'green'  },
+    { label:'⛈️ Storm',    arr:storm,   color:'purple' }
+  ];
+
+  var maxAvg = 0;
+  categories.forEach(function(c){ var a=avg(c.arr); if(a&&a>maxAvg)maxAvg=a; });
+
+  // ── Summary cards ──
+  var rainAvg   = avg(rain);
+  var stormAvg  = avg(storm);
+  var sunnyAvg  = avg(sunny);
+  var rainDiff  = pctDiff(baseRev, rainAvg);
+  var stormDiff = pctDiff(baseRev, stormAvg);
+
+  var html = '<div class="section"><div class="section-title">☁️ Weather vs Revenue <span class="section-sub">Last 90 days · Honolulu actual</span></div>';
+
+  // サマリーカード
+  html += '<div class="summary-row">';
+  if (rainAvg) {
+    var rd = rainDiff ? (rainDiff>=0?'▲':'▼')+Math.abs(rainDiff).toFixed(0)+'%' : '—';
+    var rdColor = rainDiff&&rainDiff>=0?'#16a34a':'#dc2626';
+    html += '<div class="summary-card"><div class="summary-label">🌧️ Rainy days avg</div>'
+      +'<div class="summary-val orange">'+fmt$(rainAvg)+'</div>'
+      +'<div style="font-size:11px;font-weight:600;color:'+rdColor+';">'+rd+' vs sunny</div></div>';
+  }
+  if (stormAvg) {
+    var sd2 = stormDiff ? (stormDiff>=0?'▲':'▼')+Math.abs(stormDiff).toFixed(0)+'%' : '—';
+    var sdColor = stormDiff&&stormDiff>=0?'#16a34a':'#dc2626';
+    html += '<div class="summary-card"><div class="summary-label">⛈️ Stormy days avg</div>'
+      +'<div class="summary-val orange">'+fmt$(stormAvg)+'</div>'
+      +'<div style="font-size:11px;font-weight:600;color:'+sdColor+';">'+sd2+' vs sunny</div></div>';
+  }
+  if (sunnyAvg) {
+    html += '<div class="summary-card"><div class="summary-label">☀️ Sunny days avg</div>'
+      +'<div class="summary-val">'+fmt$(sunnyAvg)+'</div>'
+      +'<div style="font-size:11px;color:var(--text-hint);">(baseline)</div></div>';
+  }
+  html += '</div>';
+
+  // バーチャート
+  html += '<div class="bar-chart" style="margin-top:8px;">';
+  categories.forEach(function(c) {
+    var a = avg(c.arr);
+    if (!a) return;
+    var pct = maxAvg > 0 ? Math.round(a / maxAvg * 100) : 0;
+    var diff = pctDiff(baseRev, a);
+    var diffStr = diff !== null ? ' <span style="font-size:9px;color:'+(diff>=0?'#16a34a':'#dc2626')+';">'+(diff>=0?'▲':'▼')+Math.abs(diff).toFixed(0)+'%</span>' : '';
+    var countStr = ' <span style="font-size:9px;color:var(--text-hint);">('+c.arr.length+'days)</span>';
+    html += '<div class="bar-row">'
+      + '<div class="bar-label" style="width:100px;">'+c.label+'</div>'
+      + '<div class="bar-track"><div class="bar-fill '+c.color+'" style="width:'+pct+'%">'
+      + (pct>20?'<span class="bar-val">'+fmt$(a)+'</span>':'')
+      + '</div>'
+      + (pct<=20?'<span class="bar-val-out">'+fmt$(a)+'</span>':'')
+      + diffStr + countStr
+      + '</div></div>';
+  });
+  html += '</div>';
+
+  // 注釈
+  html += '<div style="font-size:10px;color:var(--text-hint);margin-top:8px;line-height:1.6;">'
+    + '📊 Based on actual weather data from Open-Meteo archive.<br>'
+    + '🍽️ Bad weather = more indoor dining at Ala Moana = higher revenue.<br>'
+    + '📅 Days with 0 orders (closed) are excluded.'
+    + '</div></div>';
+
+  // ── 月別降水量×売上の散布図風テーブル ──
+  var monthData = {};
+  dates.forEach(function(key, i) {
+    var m = key.substring(0, 7);
+    var sales = dayMap[key];
+    if (!sales || sales.orders < 1) return;
+    if (!monthData[m]) monthData[m] = { rev:0, rain:0, days:0 };
+    monthData[m].rev   += sales.rev;
+    monthData[m].rain  += (wDaily.precipitation_sum[i] || 0);
+    monthData[m].days  += 1;
+  });
+
+  var months = Object.keys(monthData).sort().slice(-3); // 直近3ヶ月
+  if (months.length) {
+    html += '<div class="section"><div class="section-title">Recent 3 Months — Rain vs Revenue</div>'
+      + '<table class="data-table"><tr><th>Month</th><th class="num">Revenue</th><th class="num">Avg/day</th><th class="num">Rain (mm)</th></tr>';
+    months.forEach(function(m) {
+      var d = monthData[m];
+      var avgDay = d.days > 0 ? d.rev / d.days : 0;
+      html += '<tr><td>'+m+'</td><td class="num rev">'+fmt$(d.rev)+'</td><td class="num">'+fmt$(avgDay)+'</td>'
+        + '<td class="num">'+d.rain.toFixed(0)+'mm</td></tr>';
+    });
+    html += '</table></div>';
+  }
 
   el.innerHTML = html;
 }

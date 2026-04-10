@@ -187,7 +187,8 @@ input:checked+.slider:before{transform:translateX(16px);}
 .note-wrap textarea:focus{border-color:var(--orange);}
 .go-btn{width:100%;padding:14px;border-radius:var(--radius-sm);cursor:pointer;font-size:15px;font-weight:700;border:none;background:var(--orange);color:#fff;margin-top:4px;letter-spacing:-.2px;}
 .go-btn:active{opacity:.85;}
-.go-btn:disabled{background:#ccc;cursor:not-allowed;}
+.go-btn.go-btn-dim{background:#aaa;}
+.go-btn.go-btn-ready{background:var(--orange);}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 .sales-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:12px;}
 .sales-btn:active{opacity:.85;transform:scale(.99);}
@@ -326,7 +327,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     </div>
   </div>
   <div class="card">
-    <button class="go-btn" id="goBtn" onclick="goToSend()" disabled>Preview &amp; Send &rarr;</button>
+    <button class="go-btn" id="goBtn" onclick="goToSendOrHint()">Preview &amp; Send &rarr;</button>
   </div>
 </div>
 <a class="sales-btn" href="sales.html">
@@ -543,7 +544,7 @@ var V=[
    items:[{n:'KM-57-T 8X8 3-COMP',u:'CS'}]},
   {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',method:'sms',
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
-   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},phone:'BPO not included Fresh Island Fish - Steak Teppei',
+   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
    items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
@@ -926,7 +927,28 @@ function addCustomItem(){
 function updateGoBtn(){
   var all=getItems();var hasQty=false;
   for(var i=0;i<all.length;i++){if((qty['i'+i]||0)>0){hasQty=true;break;}}
-  document.getElementById('goBtn').disabled=!(selId&&selDate&&hasQty);
+  var btn=document.getElementById('goBtn');
+  var ready=!!(selId&&selDate&&hasQty);
+  btn.classList.toggle('go-btn-ready',ready);
+  btn.classList.toggle('go-btn-dim',!ready);
+}
+
+function goToSendOrHint(){
+  // ⑧ 未入力の項目をヒントで教える
+  if(!selId){showGoHint('👆 Please select a supplier first');return;}
+  if(!selDate){showGoHint('📅 Please select a delivery date');return;}
+  var all=getItems();var hasQty=false;
+  for(var i=0;i<all.length;i++){if((qty['i'+i]||0)>0){hasQty=true;break;}}
+  if(!hasQty){showGoHint('📦 Please enter at least one item quantity');return;}
+  goToSend();
+}
+
+function showGoHint(msg){
+  var btn=document.getElementById('goBtn');
+  var orig=btn.textContent;
+  btn.textContent=msg;
+  btn.style.background='#555';
+  setTimeout(function(){btn.textContent=orig;btn.style.background='';},2200);
 }
 
 function saveState(){
@@ -1077,10 +1099,15 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.2',
+  version: '4.3',
   date: 'April 10, 2026',
   items: [
-    { icon: '🔄', text: 'After sending an order, returning to home now resets to blank state — no supplier highlighted' }
+    { icon: '👤', text: 'Sender name remembered — no need to select Aki/Kacee/Shaine every time' },
+    { icon: '✍️', text: 'Sender name now included in order message signature' },
+    { icon: '🗑️', text: 'Fixed: Fresh Island Fish BPO phone removed' },
+    { icon: '⚡', text: 'Weather forecast now cached — loads instantly on revisit' },
+    { icon: '💬', text: 'Preview & Send button now shows what\'s missing if tapped early' },
+    { icon: '☁️', text: 'New: Weather tab in Sales — rainy/stormy days vs revenue (90-day actual)' }
   ]
 };
 
@@ -1112,13 +1139,23 @@ function closeChangelog(){
 function loadWeather(){
   var el=document.getElementById('weatherRow');
   if(!el)return;
-  // ホノルル: 21.3069, -157.8583
+  // ④ SessionStorageに1時間キャッシュ
+  try{
+    var cached=sessionStorage.getItem('st_weather_cache');
+    if(cached){
+      var obj=JSON.parse(cached);
+      if(Date.now()-obj.ts < 60*60*1000){renderWeather(obj.data);return;}
+    }
+  }catch(e){}
   var url='https://api.open-meteo.com/v1/forecast?latitude=21.3069&longitude=-157.8583'
     +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
     +'&timezone=Pacific%2FHonolulu&forecast_days=7&temperature_unit=fahrenheit';
   fetch(url)
     .then(function(r){return r.json();})
-    .then(function(data){renderWeather(data);})
+    .then(function(data){
+      try{sessionStorage.setItem('st_weather_cache',JSON.stringify({ts:Date.now(),data:data}));}catch(e){}
+      renderWeather(data);
+    })
     .catch(function(){el.innerHTML='<div class="weather-loading" style="color:var(--text-hint);">Weather unavailable</div>';});
 }
 

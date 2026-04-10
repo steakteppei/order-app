@@ -252,7 +252,7 @@ var V=[
    items:[{n:'KM-57-T 8X8 3-COMP',u:'CS'}]},
   {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',method:'sms',
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
-   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},phone:'BPO not included Fresh Island Fish - Steak Teppei',
+   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
    items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
@@ -308,8 +308,14 @@ function init(){
   }
 
   renderSenderBtns();
-  buildMsg(v,null);
-  renderSend(v);
+  // ① 前回の送信者を復元
+  var lastSender=localStorage.getItem('st_last_sender');
+  if(lastSender){
+    selSender(lastSender);
+  } else {
+    buildMsg(v,null);
+    renderSend(v);
+  }
 }
 
 function renderSenderBtns(){
@@ -324,9 +330,12 @@ function renderSenderBtns(){
 function selSender(key){
   sender=key;
   document.querySelectorAll('.sender-btn').forEach(function(b){b.classList.remove('selected');});
-  document.getElementById('sb'+key).classList.add('selected');
+  var btn=document.getElementById('sb'+key);
+  if(btn)btn.classList.add('selected');
   var hint=document.getElementById('senderHint');
   if(hint)hint.style.display='none';
+  // ① 送信者をlocalStorageに記憶
+  try{localStorage.setItem('st_last_sender',key);}catch(e){}
   var v=gv(data.vendorId);
   buildMsg(v,key);
   renderSend(v);
@@ -360,7 +369,7 @@ function buildMsg(v,senderKey){
   b+=(lines.length?lines.join('\n'):'  (No items selected)');
   if(data.note)b+='\n\nNote: '+data.note;
   b+='\n\nReceiving Hours: 10:00 AM - 8:00 PM';
-  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\nSteak Teppei';
+  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\n'+(sObj?sObj.label+'\n':'')+'Steak Teppei';
   msg=b;
 }
 
