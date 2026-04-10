@@ -346,7 +346,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: April 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a></div>
+  <div class="app-version">Last updated: April 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -1256,6 +1256,9 @@ function schedulePushReminders(){
 requestPushPermission();
 
 renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();loadWeather();schedulePushReminders();
+// ⑫ バージョン番号を表示
+var verEl=document.getElementById('appVerDisplay');
+if(verEl)verEl.textContent='v'+CHANGELOG.version;
 // ⑤ 初期状態で業者未選択なら誘導メッセージを表示
 if(!selId){var hint=document.getElementById('calHint');if(hint)hint.style.display='';}
 else{var hint=document.getElementById('calHint');if(hint)hint.style.display='none';}

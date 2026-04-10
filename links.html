@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Steak Teppei — Product Links</title>
 <style>
-:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--amazon:#FF9900;--amazon-light:#fff8ee;--sams:#0067A0;--sams-light:#e8f3fb;--webr:#d32f2f;--webr-light:#fff0f0;}
-@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;--amazon-light:#2a1e00;--sams-light:#001d2e;--webr-light:#2a0000;}}
+:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--amazon:#FF9900;--amazon-light:#fff8ee;--sams:#0067A0;--sams-light:#e8f3fb;--webr:#2e7d32;--webr-light:#f1f8e9;}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;--amazon-light:#2a1e00;--sams-light:#001d2e;--webr-light:#1b2e1b;}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{background:var(--bg);font-family:-apple-system,'SF Pro Text',sans-serif;color:var(--text);}
 body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);}
@@ -225,7 +225,11 @@ function renderCard(item) {
     + '</a>';
 }
 
-render();
+document.addEventListener("DOMContentLoaded", function(){ render(); });
+// Also call immediately in case DOM is already ready
+if(document.readyState === "complete" || document.readyState === "interactive"){
+  render();
+}
 </script>
 </body>
 </html>
