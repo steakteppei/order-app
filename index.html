@@ -157,6 +157,23 @@ input:checked+.slider:before{transform:translateX(16px);}
 .weather-icon{font-size:18px;line-height:1;}
 .weather-temp{font-size:10px;font-weight:700;color:var(--text);}
 .weather-loading{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
+/* ⑤ 業者未選択時の誘導 */
+.cal-hint{font-size:11px;color:var(--text-hint);text-align:center;padding:6px 0;font-style:italic;}
+/* ⑥ Costco価格注記 */
+.price-note{font-size:10px;color:var(--text-hint);margin-top:6px;padding-top:6px;border-top:.5px solid var(--border);line-height:1.5;}
+/* ⑨ 最近の注文 */
+.recent-wrap{margin-top:8px;padding-top:8px;border-top:.5px solid var(--border);}
+.recent-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.recent-item{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;border:.5px solid var(--border);}
+.recent-item:active{opacity:.7;}
+.recent-item-info{flex:1;}
+.recent-item-vendor{font-size:12px;font-weight:600;color:var(--text);}
+.recent-item-detail{font-size:10px;color:var(--text-hint);margin-top:1px;}
+.recent-item-arrow{font-size:16px;color:var(--text-hint);}
+/* ⑩ 次回配達可能日 */
+.next-delivery{display:none;margin-top:8px;padding:8px 10px;background:var(--blue-light);border:.5px solid var(--blue);border-radius:var(--radius-sm);}
+.next-delivery-label{font-size:10px;color:var(--blue);font-weight:700;}
+.next-delivery-date{font-size:13px;font-weight:700;color:var(--blue);margin-top:2px;}
 .custom-toggle{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:8px 0 2px;display:block;text-decoration:underline;}
 .custom-row{display:none;gap:7px;margin-top:6px;}
 .custom-row.open{display:flex;}
@@ -249,7 +266,14 @@ input:checked+.slider:before{transform:translateX(16px);}
       <button class="cal-today-btn" onclick="goToday()">Today</button>
     </div>
     <div class="cal-grid" id="calHeaders"></div>
+    <!-- ⑤ 業者未選択時の誘導メッセージ -->
+    <div class="cal-hint" id="calHint">👆 Select a supplier above to see available delivery dates</div>
     <div class="cal-grid" id="calCells"></div>
+    <!-- ⑩ 次回配達可能日 -->
+    <div class="next-delivery" id="nextDelivery">
+      <div class="next-delivery-label">📅 Next available delivery</div>
+      <div class="next-delivery-date" id="nextDeliveryDate">—</div>
+    </div>
     <!-- カレンダー凡例 -->
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding:7px 4px 4px;border-top:.5px solid var(--border);">
       <span style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text-hint);"><span style="width:12px;height:12px;border-radius:3px;background:#fef9c3;display:inline-block;border:.5px solid #ca8a04;"></span>Marathon week</span>
@@ -288,6 +312,8 @@ input:checked+.slider:before{transform:translateX(16px);}
   </div>
   <div class="card">
     <div class="slabel">Items &amp; Quantities</div>
+    <!-- ⑨ 最近の注文 -->
+    <div id="recentOrdersWrap"></div>
     <div id="itemsList"><div class="items-placeholder">Select a supplier above to see items</div></div>
     <button class="custom-toggle" onclick="toggleCustom()">+ Add custom item</button>
     <div class="custom-row" id="customRow">
@@ -542,11 +568,34 @@ var DAY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 function checkBanner(){
   var now=new Date(),msgs=[];
-  if(dow(now)===5){msgs.push('Coca-Cola deadline TODAY by 2:00 PM');msgs.push('Costco deadline TODAY by 12:00 PM (Mon delivery)');}
-  if(dow(now)===3)msgs.push('Costco deadline TODAY by 12:00 PM (Thu delivery)');
-  if(now.getHours()<7&&dow(now)!==0&&!isHoliday(now))msgs.push('Fresh Island Fish deadline TODAY by 7:00 AM');
+  var todayIsHol=isHoliday(now);
+  // 祝日当日は全業者の締め切りバナーを表示しない
+  if(todayIsHol){
+    var b=document.getElementById('deadlineAlertBanner');
+    b.classList.remove('show');
+    return;
+  }
+  var h=now.getHours();
+  var d=dow(now);
+  // 明日の日付（祝日チェック用）
   var tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
-  if(dow(tmr)>=1&&dow(tmr)<=5&&!isHoliday(tmr)){msgs.push('Eskimo Candy deadline TODAY by 3:00 PM');msgs.push("Wong's deadline TODAY by 2:00 PM");}
+  var tmrIsHol=isHoliday(tmr);
+  var tmrD=dow(tmr);
+  // Coca-Cola: 金曜が締め切り（月曜配達の前週金曜）
+  if(d===5&&!todayIsHol){msgs.push('Coca-Cola deadline TODAY by 2:00 PM');}
+  // Costco: 金曜（月曜配達）・水曜（木曜配達）
+  if(d===5&&!todayIsHol)msgs.push('Costco deadline TODAY by 12:00 PM (Mon delivery)');
+  if(d===3&&!todayIsHol)msgs.push('Costco deadline TODAY by 12:00 PM (Thu delivery)');
+  // Fresh Island Fish: 当日が平日・非祝日で7時前
+  if(h<7&&d!==0&&d!==6&&!todayIsHol)msgs.push('Fresh Island Fish deadline TODAY by 7:00 AM');
+  // Eskimo Candy / Wong's: 明日が平日・非祝日なら今日が締め切り
+  // ただし今日が祝日の場合は前営業日に繰り上がっている（当日表示不要）
+  if(!todayIsHol&&tmrD>=1&&tmrD<=5&&!tmrIsHol){
+    if(h<15)msgs.push("Eskimo Candy deadline TODAY by 3:00 PM");
+    if(h<14)msgs.push("Wong's deadline TODAY by 2:00 PM");
+  }
+  // Apax Hawaii / Wismettac / Fukuoka / ATM / Ala Moana: 翌営業日配達の前日締め切り
+  // 今日が祝日の場合は前営業日に繰り上がる → 当日バナー不要
   var b=document.getElementById('deadlineAlertBanner');
   if(msgs.length){b.innerHTML='\u23f0 '+msgs.join(' \xb7 ');b.classList.add('show');}
   else b.classList.remove('show');
@@ -654,7 +703,13 @@ function selV(id){
   document.getElementById('calDisplay').textContent='No date selected';
   document.getElementById('calDeadline').textContent='';
   document.getElementById('calDeadline').className='cal-deadline';
+  // ⑤ 業者選択後は誘導メッセージを非表示
+  var hint=document.getElementById('calHint');if(hint)hint.style.display='none';
   renderCal();renderItems();updateGoBtn();
+  // ⑩ 次回配達可能日を表示
+  showNextDelivery();
+  // ⑨ 最近の注文を表示
+  renderRecentOrders();
 }
 
 function renderCal(){
@@ -781,7 +836,10 @@ function renderItems(){
       +'<div class="costco-progress-bar"><div class="costco-progress-fill'+(done?' done':'')+'" id="cp-bar" style="width:'+pct+'%"></div></div>'
       +'<div class="costco-progress-status" id="cp-status" style="color:'+(done?'#16a34a':'var(--text-hint)')+';">'
       +(done?'✓ Minimum order met':'$'+remaining.toFixed(2)+' more to reach minimum')
-      +'</div></div>';
+      +'</div>'
+      // ⑥ 価格は目安の注記
+      +'<div class="price-note">⚠ Prices shown are estimates. Actual invoice may differ due to Costco price changes.</div>'
+      +'</div>';
   }
   document.getElementById('itemsList').innerHTML=h;
 }
@@ -888,12 +946,7 @@ function restoreState(){
     cy=s.cy||today.getFullYear();cm=s.cm||today.getMonth();
     document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
     var vb=document.getElementById('vb'+selId);if(vb)vb.classList.add('selected');
-    var v=gv(selId);
-    if(v){
-      document.getElementById('deadlineInfo').innerHTML=v.tbd
-        ?'<div class="deadline-box deadline-tbd">'+v.di+'</div>'
-        :'<div class="deadline-box"><strong>Schedule:</strong> '+v.di+'</div>';
-    }
+    // ① restoreState: deadlineInfoは存在しないDOMのため参照なし（修正済み）
     if(flex){
       document.getElementById('flexToggle').checked=true;
       var t=document.getElementById('flexTxt');t.textContent='ON';t.className='toggle-txt on';
@@ -910,11 +963,109 @@ function restoreState(){
     }
     if(s.note)document.getElementById('orderNote').value=s.note;
     renderItems();renderCal();updateGoBtn();
+    // ⑩ 復元後に次回配達可能日を表示
+    showNextDelivery();
   }catch(e){}
 }
+// ── ⑩ 次回配達可能日を自動表示 ──
+function showNextDelivery(){
+  var el=document.getElementById('nextDelivery');
+  var elDate=document.getElementById('nextDeliveryDate');
+  if(!el||!elDate)return;
+  if(!selId){el.style.display='none';return;}
+  var v=gv(selId);
+  if(!v||v.tbd){el.style.display='none';return;}
+  // 今日から最大60日間で最初のok日を探す
+  var d=new Date(today);
+  for(var i=0;i<60;i++){
+    d.setDate(d.getDate()+(i===0?0:1));
+    if(v.ok(d)&&!isHoliday(d)){
+      var label=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      elDate.textContent=label;
+      el.style.display='block';
+      return;
+    }
+  }
+  el.style.display='none';
+}
+
+// ── ⑨ 最近の注文（保存・表示・再利用） ──
+var MAX_RECENT=3;
+function saveRecentOrder(){
+  if(!selId||!selDate)return;
+  var all=getItems();
+  var items=[];
+  for(var i=0;i<all.length;i++){var q=qty['i'+i]||0;if(q>0)items.push({n:all[i].n,u:all[i].u,q:q});}
+  if(!items.length)return;
+  var v=gv(selId);
+  var entry={
+    id:selId,
+    vendor:v?v.short:selId,
+    items:items,
+    qty:JSON.parse(JSON.stringify(qty)),
+    custom:custom.slice(),
+    savedAt:Date.now()
+  };
+  try{
+    var raw=localStorage.getItem('st_recent_orders');
+    var list=raw?JSON.parse(raw):[];
+    // 同じ業者の既存エントリを削除して最新を先頭に
+    list=list.filter(function(r){return r.id!==selId;});
+    list.unshift(entry);
+    if(list.length>MAX_RECENT)list=list.slice(0,MAX_RECENT);
+    localStorage.setItem('st_recent_orders',JSON.stringify(list));
+  }catch(e){}
+}
+
+function renderRecentOrders(){
+  var wrap=document.getElementById('recentOrdersWrap');
+  if(!wrap||!selId)return;
+  try{
+    var raw=localStorage.getItem('st_recent_orders');
+    if(!raw){wrap.innerHTML='';return;}
+    var list=JSON.parse(raw).filter(function(r){return r.id===selId;});
+    if(!list.length){wrap.innerHTML='';return;}
+    var h='<div class="recent-wrap"><div class="recent-title">Recent Order — tap to reuse</div>';
+    list.forEach(function(r,idx){
+      var summary=r.items.slice(0,3).map(function(it){return it.q+'× '+it.n.split(' ').slice(0,2).join(' ');}).join(', ');
+      if(r.items.length>3)summary+=' +more';
+      var date=new Date(r.savedAt);
+      var dateLabel=date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      h+='<div class="recent-item" onclick="applyRecentOrder('+idx+')">'
+        +'<div class="recent-item-info">'
+        +'<div class="recent-item-vendor">'+r.vendor+'</div>'
+        +'<div class="recent-item-detail">'+summary+'</div>'
+        +'<div class="recent-item-detail" style="margin-top:1px;color:var(--text-hint);">Saved '+dateLabel+'</div>'
+        +'</div>'
+        +'<div class="recent-item-arrow">↩</div>'
+        +'</div>';
+    });
+    h+='</div>';
+    wrap.innerHTML=h;
+  }catch(e){wrap.innerHTML='';}
+}
+
+function applyRecentOrder(idx){
+  try{
+    var raw=localStorage.getItem('st_recent_orders');
+    if(!raw)return;
+    var list=JSON.parse(raw).filter(function(r){return r.id===selId;});
+    if(!list[idx])return;
+    var r=list[idx];
+    qty=r.qty||{};
+    custom=r.custom||[];
+    renderItems();updateGoBtn();
+    // 一時的にボタンをフラッシュ表示
+    var wrap=document.getElementById('recentOrdersWrap');
+    if(wrap){wrap.style.opacity='.5';setTimeout(function(){wrap.style.opacity='1';},300);}
+  }catch(e){}
+}
+
 function goToSend(){
   if(!selId||!selDate)return;
   saveState();
+  // ⑨ 送信前に最近の注文として保存
+  saveRecentOrder();
   var all=getItems();var items=[];
   for(var i=0;i<all.length;i++){var q=qty['i'+i]||0;if(q>0)items.push({n:all[i].n,u:all[i].u,q:q});}
   var note=document.getElementById('orderNote').value.trim();
@@ -926,13 +1077,16 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.0',
+  version: '4.1',
   date: 'April 10, 2026',
   items: [
-    { icon: '🎏', text: 'Fixed: Golden Week no longer shown as slow season' },
-    { icon: '🗓️', text: 'Fixed: Sep 13-18 overlap between slow season & September Holidays corrected' },
-    { icon: '✅', text: 'All busy/slow periods verified — zero overlaps' },
-    { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' }
+    { icon: '🐛', text: 'Fixed: holiday deadline bug & restoreState error removed' },
+    { icon: '🌡️', text: 'Weather now shows °F + °C' },
+    { icon: '↩️', text: 'Back from send screen restores your order' },
+    { icon: '📅', text: 'Next available delivery date shown after selecting supplier' },
+    { icon: '🔁', text: 'Recent orders saved — tap to reuse in one tap' },
+    { icon: '🌧️', text: 'Rainy days show 👥↑ — more customers at Ala Moana!' },
+    { icon: '📋', text: 'Version History page redesigned' }
   ]
 };
 
@@ -982,24 +1136,32 @@ function renderWeather(data){
   var DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var html='';
   for(var i=0;i<7;i++){
-    var dateStr=days.time[i]; // 'YYYY-MM-DD'
-    var d=new Date(dateStr+'T12:00:00');
-    var dow=DAY_NAMES[d.getDay()];
+    var dateStr2=days.time[i];
+    var d=new Date(dateStr2+'T12:00:00');
+    var dow2=DAY_NAMES[d.getDay()];
     var wc=days.weathercode[i];
-    var tMax=Math.round(days.temperature_2m_max[i]);
-    var tMin=Math.round(days.temperature_2m_min[i]);
+    var tMaxF=Math.round(days.temperature_2m_max[i]);
+    var tMinF=Math.round(days.temperature_2m_min[i]);
+    // ③ °C変換
+    var tMaxC=Math.round((tMaxF-32)*5/9);
     var icon=wcToIcon(wc);
     var cls=wcToClass(wc);
-    var isToday=(i===0)?'style="font-weight:700;"':'';
+    var isToday=(i===0);
+    // ⑦ 雨・嵐の日に売上期待バッジ
+    var salesBadge='';
+    if(cls==='storm')salesBadge='<div style="font-size:8px;color:#be185d;font-weight:700;margin-top:1px;">👥↑↑</div>';
+    else if(cls==='rain')salesBadge='<div style="font-size:8px;color:#0369a1;font-weight:700;margin-top:1px;">👥↑</div>';
     html+='<div class="weather-day '+cls+'">'
-      +'<div class="weather-dow" '+isToday+'>'+dow+'</div>'
+      +'<div class="weather-dow"'+(isToday?' style="font-weight:700;"':'')+'>'+dow2+'</div>'
       +'<div class="weather-icon">'+icon+'</div>'
-      +'<div class="weather-temp">'+tMax+'°</div>'
-      +'<div class="weather-temp" style="font-weight:400;opacity:.7;">'+tMin+'°</div>'
+      +'<div class="weather-temp">'+tMaxF+'°F</div>'
+      +'<div class="weather-temp" style="font-size:9px;opacity:.8;">'+tMaxC+'°C</div>'
+      +'<div class="weather-temp" style="font-weight:400;opacity:.6;font-size:9px;">Lo '+tMinF+'°</div>'
+      +salesBadge
       +'</div>';
   }
   el.innerHTML=html;
-  if(upEl)upEl.textContent='(°F)';
+  if(upEl)upEl.textContent='Honolulu · 👥↑ = More customers expected';
 }
 
 // WMO天気コード → アイコン
@@ -1060,6 +1222,9 @@ function schedulePushReminders(){
 requestPushPermission();
 
 renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();loadWeather();schedulePushReminders();
+// ⑤ 初期状態で業者未選択なら誘導メッセージを表示
+if(!selId){var hint=document.getElementById('calHint');if(hint)hint.style.display='';}
+else{var hint=document.getElementById('calHint');if(hint)hint.style.display='none';}
 
 // Last Year Sales
 var LY_SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';

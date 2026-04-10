@@ -7,54 +7,89 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Steak Teppei — Version History</title>
 <style>
-:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;}
-@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;}}
+:root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--card:#252525;--border:rgba(255,255,255,.1);--text:#f0f0f0;--text-sub:#aaa;--text-hint:#666;--orange-light:#2a1206;}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{background:var(--bg);font-family:-apple-system,'SF Pro Text',sans-serif;color:var(--text);}
 body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);}
-.header{background:var(--card);border-bottom:.5px solid var(--border);padding:16px 16px 14px;position:sticky;top:0;z-index:100;}
-.header-top{display:flex;align-items:center;gap:10px;}
-.back-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text);padding:0 6px 0 0;line-height:1;}
-.back-btn:active{opacity:.6;}
-.header-title{font-size:17px;font-weight:700;}
-.header-sub{font-size:11px;color:var(--text-hint);margin-top:1px;}
-.content{max-width:480px;margin:0 auto;padding:16px 14px 48px;}
-.version-card{background:var(--card);border:.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
-.version-card.latest{border:1.5px solid var(--orange);}
-.version-header{display:flex;align-items:center;justify-content:space-between;padding:13px 14px 11px;}
-.version-number{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
-.version-card.latest .version-number{color:var(--orange);}
-.version-date{font-size:11px;color:var(--text-hint);}
-.version-latest-tag{background:var(--orange-light);color:var(--orange);font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:.5px solid var(--orange);}
-.version-items{padding:0 14px 13px;border-top:.5px solid var(--border);}
-.version-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:.5px solid var(--border);}
-.version-item:last-child{border-bottom:none;}
-.version-item-icon{width:24px;height:24px;background:var(--orange-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}
-.version-item-text{font-size:13px;color:var(--text-sub);line-height:1.5;flex:1;}
-.footer-note{text-align:center;font-size:11px;color:var(--text-hint);padding:8px 0;opacity:.7;}
+.cl-header{background:var(--orange);color:#fff;padding:16px 16px 18px;position:sticky;top:0;z-index:100;}
+.cl-header-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.cl-back{background:rgba(255,255,255,.22);border:none;border-radius:20px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;padding:5px 13px;-webkit-tap-highlight-color:transparent;}
+.cl-back:active{opacity:.7;}
+.cl-title{font-size:18px;font-weight:800;letter-spacing:-.3px;}
+.cl-sub{font-size:11px;opacity:.75;}
+.content{max-width:480px;margin:0 auto;padding:14px 13px 48px;}
+.ver-card{background:var(--card);border:.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.ver-card.latest{border:1.5px solid var(--orange);}
+.ver-hero{background:var(--orange);color:#fff;padding:16px 16px 14px;display:flex;align-items:center;justify-content:space-between;}
+.ver-hero-icon{font-size:30px;}
+.ver-hero-right{text-align:right;}
+.ver-hero-label{font-size:10px;opacity:.8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.ver-hero-num{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+.ver-hero-date{font-size:11px;opacity:.75;margin-top:1px;}
+.ver-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;}
+.ver-num{font-size:15px;font-weight:800;color:var(--text);}
+.ver-date-label{font-size:11px;color:var(--text-hint);}
+.ver-items{border-top:.5px solid var(--border);padding:2px 0 4px;}
+.ver-item{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;}
+.ver-item-icon{width:28px;height:28px;background:var(--orange-light);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;margin-top:2px;}
+.ver-item-text{font-size:13px;color:var(--text-sub);line-height:1.5;flex:1;padding-top:4px;}
+.cl-footer{text-align:center;font-size:11px;color:var(--text-hint);padding:8px 0 4px;}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-top">
-    <button class="back-btn" onclick="window.location.href='index.html'">&#8249;</button>
-    <div>
-      <div class="header-title">Version History</div>
-      <div class="header-sub">Steak Teppei Order App</div>
-    </div>
+<div class="cl-header">
+  <div class="cl-header-top">
+    <button class="cl-back" onclick="history.length>1?history.back():location.href='index.html'">&#8249; Back</button>
   </div>
+  <div class="cl-title">Version History</div>
+  <div class="cl-sub">Steak Teppei Order App · Makai Market Food Court</div>
 </div>
 <div class="content">
   <div id="versionList"></div>
-  <div class="footer-note">Steak Teppei · Makai Market Food Court · Ala Moana Center</div>
+  <div class="cl-footer">Built with ❤️ for Steak Teppei · Ala Moana Center</div>
 </div>
 <script>
 var VERSIONS = [
   {
+    version: '4.1',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '🐛', text: 'Fixed: deadlineInfo DOM error in restoreState removed' },
+      { icon: '🎌', text: 'Fixed: all supplier deadlines skip on Hawaii holidays — previous business day rule applied' },
+      { icon: '🌡️', text: 'Weather now shows °F + °C side by side' },
+      { icon: '↩️', text: 'Back from send screen now restores your order without resetting' },
+      { icon: '👆', text: 'Calendar shows guidance when no supplier is selected' },
+      { icon: '📅', text: 'Next available delivery date shown after selecting a supplier' },
+      { icon: '⚠️', text: 'Costco prices marked as estimates — actual invoice may differ' },
+      { icon: '🌧️', text: 'Rain / storm days show 👥↑ — more customers expected at Ala Moana' },
+      { icon: '🔁', text: 'Recent orders saved — tap to reuse a previous order in one tap' },
+      { icon: '📋', text: 'Version History page redesigned to match app style' }
+    ]
+  },
+  {
+    version: '4.0',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '🎏', text: 'Fixed: Golden Week no longer shown as slow season' },
+      { icon: '🗓️', text: 'Fixed: Sep slow season overlap with September Holidays corrected' },
+      { icon: '✅', text: 'All busy/slow periods verified — zero overlaps' },
+      { icon: '🌤️', text: 'Honolulu 7-day weather forecast added' }
+    ]
+  },
+  {
+    version: '3.8',
+    date: 'April 10, 2026',
+    items: [
+      { icon: '🌤️', text: 'Weather forecast added — 7 days, rainy days highlighted' },
+      { icon: '🗓️', text: 'Calendar date badges refined — transparent for plain dates' }
+    ]
+  },
+  {
     version: '3.3',
     date: 'April 10, 2026',
     items: [
-      { icon: '🐛', text: 'Fixed Costco subtotal not updating when quantities are entered' },
+      { icon: '🐛', text: 'Fixed: Costco subtotal now updates correctly' },
       { icon: '🗓️', text: 'Calendar legend added — color guide for slow season & marathon week' }
     ]
   },
@@ -62,62 +97,38 @@ var VERSIONS = [
     version: '3.2',
     date: 'April 10, 2026',
     items: [
-      { icon: '🔢', text: 'Tap quantity number to type directly — no more tapping +/- many times' },
-      { icon: '📈', text: 'Costco progress bar — visual gauge showing % toward $1,000 minimum' },
-      { icon: '💰', text: 'Costco per-item line totals shown as you add quantities' },
+      { icon: '🔢', text: 'Tap quantity number to type directly' },
+      { icon: '📈', text: 'Costco progress bar toward $1,000 minimum' },
       { icon: '🏃', text: 'Honolulu Marathon highlighted in yellow on calendar' },
-      { icon: '📉', text: 'Slow seasons shown in gray on calendar — order conservatively' },
-      { icon: '🍁', text: 'Canada Snowbird season added to calendar & upcoming list' },
-      { icon: '📊', text: 'Seasonal tab added to Sales Data — monthly visitor index & market mix' },
-      { icon: '🔮', text: 'Upcoming period forecast added to Busy Periods — based on past years avg' },
-      { icon: '🔔', text: 'Push notification reminders for order deadlines (requires permission)' },
-      { icon: '📋', text: 'Changelog now loaded from Google Sheets — no code edit needed' }
+      { icon: '📉', text: 'Slow seasons shown in gray on calendar' },
+      { icon: '🍁', text: 'Canada Snowbird season added' },
+      { icon: '📊', text: 'Seasonal tab in Sales Data — visitor index & market mix' },
+      { icon: '🔮', text: 'Upcoming period forecast based on past years avg' }
     ]
   },
   {
     version: '3.1',
     date: 'April 10, 2026',
     items: [
-      { icon: '📊', text: 'Busy periods expanded — Winter Peak Season, US Summer Break, Spring Break, Valentine\'s & Presidents Day added' },
-      { icon: '🎄', text: 'Christmas Week added to Sales Data & calendar' },
-      { icon: '🗓️', text: 'Silver Week: all years included (2024/2025 = 3-day weekends, 2026 = 5-day SW)' },
-      { icon: '🔧', text: 'All busy period dates corrected for 2024/2025/2026' }
+      { icon: '📊', text: 'Busy periods expanded — Winter Peak, US Summer, Spring Break added' },
+      { icon: '🎄', text: 'Christmas Week added' },
+      { icon: '🗓️', text: 'Silver Week all years included (2026 = 5-day)' }
     ]
   },
   {
     version: '3.0',
     date: 'April 10, 2026',
     items: [
-      { icon: '🔄', text: 'Auto-update: app now reloads automatically when a new version is available' },
-      { icon: '💤', text: 'Auto-reload after 5 minutes of no activity' },
-      { icon: '📋', text: 'Version History page added (this page!)' },
-      { icon: '🔔', text: 'Changelog popup redesigned — slides up from bottom' },
-      { icon: '🔧', text: 'Fixed changelog not reappearing after previous version was seen' }
-    ]
-  },
-  {
-    version: '2.9',
-    date: 'April 10, 2026',
-    items: [
-      { icon: '📋', text: 'Version History page added (this page!)' },
-      { icon: '🔗', text: '"View full version history" link added to changelog popup' }
-    ]
-  },
-  {
-    version: '2.8',
-    date: 'April 10, 2026',
-    items: [
-      { icon: '🔔', text: 'Changelog popup redesigned — slides up from bottom with hero layout' },
-      { icon: '🔧', text: 'Fixed changelog not reappearing after v2.7 was already seen' },
-      { icon: '🫵', text: 'Background tap to dismiss changelog popup' }
+      { icon: '🔄', text: 'Auto-update when new version is available' },
+      { icon: '💤', text: 'Auto-reload after 5 minutes idle' },
+      { icon: '🔔', text: 'Changelog popup redesigned — slides up from bottom' }
     ]
   },
   {
     version: '2.7',
     date: 'April 8, 2026',
     items: [
-      { icon: '📅', text: 'Last year same-week sales added to calendar section' },
-      { icon: '📊', text: 'Select a delivery date to see last year revenue by day' }
+      { icon: '📅', text: 'Last year same-week sales added to calendar' }
     ]
   },
   {
@@ -125,35 +136,16 @@ var VERSIONS = [
     date: 'March 2026',
     items: [
       { icon: '🗓️', text: 'Upcoming busy periods list added to calendar' },
-      { icon: '🇯🇵', text: 'Japan Golden Week, Obon, Silver Week busy periods added' },
-      { icon: '🏫', text: 'Hawaii DOE school break periods added to calendar' }
-    ]
-  },
-  {
-    version: '2.5',
-    date: 'February 2026',
-    items: [
-      { icon: '⚙️', text: 'Holiday / Special Schedule toggle added for irregular deliveries' },
-      { icon: '📍', text: 'Holiday dots added to calendar dates' },
-      { icon: '⏰', text: 'Deadline urgency color coding (red / amber / gray)' }
+      { icon: '🇯🇵', text: 'Japan Golden Week, Obon, Silver Week added' },
+      { icon: '🏫', text: 'Hawaii DOE school breaks added' }
     ]
   },
   {
     version: '2.4',
     date: 'January 2026',
     items: [
-      { icon: '📊', text: 'Sales Data page launched (sales.html)' },
-      { icon: '📈', text: 'Busy Periods, Daily, Monthly, Yearly, Hourly, Items tabs' },
-      { icon: '🔗', text: 'Sales Data button added to bottom of order screen' }
-    ]
-  },
-  {
-    version: '2.3',
-    date: 'December 2025',
-    items: [
-      { icon: '💾', text: 'Order state saved and restored between sessions' },
-      { icon: '📲', text: 'PWA update banner added' },
-      { icon: '🔄', text: 'Auto-reload when returning from background' }
+      { icon: '📊', text: 'Sales Data page launched' },
+      { icon: '📈', text: 'Busy Periods, Daily, Monthly, Yearly, Hourly, Items tabs' }
     ]
   },
   {
@@ -161,17 +153,8 @@ var VERSIONS = [
     date: 'November 2025',
     items: [
       { icon: '💰', text: 'Costco item prices and subtotal added' },
-      { icon: '✅', text: 'Minimum order amount tracker for Costco ($1,000)' },
+      { icon: '✅', text: 'Minimum order tracker ($1,000)' },
       { icon: '✏️', text: 'Custom item add feature' }
-    ]
-  },
-  {
-    version: '2.1',
-    date: 'October 2025',
-    items: [
-      { icon: '👤', text: 'Sender selection (Aki / Kacee / Shaine) added to send screen' },
-      { icon: '📧', text: 'CC auto-removes sender from recipients' },
-      { icon: '✉️', text: 'Email / LINE / SMS preview before sending' }
     ]
   },
   {
@@ -197,9 +180,14 @@ function render(){
   var html='';
   VERSIONS.forEach(function(v,idx){
     var isLatest=idx===0;
-    html+='<div class="version-card'+(isLatest?' latest':'')+'"><div class="version-header"><div><div class="version-number">v'+v.version+'</div><div class="version-date">'+v.date+'</div></div>'+(isLatest?'<span class="version-latest-tag">CURRENT</span>':'')+'</div><div class="version-items">';
+    if(isLatest){
+      html+='<div class="ver-card latest"><div class="ver-hero"><div class="ver-hero-icon">🚀</div><div class="ver-hero-right"><div class="ver-hero-label">Current Version</div><div class="ver-hero-num">v'+v.version+'</div><div class="ver-hero-date">'+v.date+'</div></div></div>';
+    } else {
+      html+='<div class="ver-card"><div class="ver-head"><div class="ver-num">v'+v.version+'</div><div class="ver-date-label">'+v.date+'</div></div>';
+    }
+    html+='<div class="ver-items">';
     v.items.forEach(function(item){
-      html+='<div class="version-item"><div class="version-item-icon">'+item.icon+'</div><div class="version-item-text">'+item.text+'</div></div>';
+      html+='<div class="ver-item"><div class="ver-item-icon">'+item.icon+'</div><div class="ver-item-text">'+item.text+'</div></div>';
     });
     html+='</div></div>';
   });

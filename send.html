@@ -457,7 +457,14 @@ function copyOrder(){
   }).catch(function(){alert('Copy failed. Please copy manually.');});
 }
 
-function goBack(){window.location.href='index.html';}
+// ④ 戻るボタン：history.back()でブラウザ履歴を使うとstateが保持される
+function goBack(){
+  if(document.referrer.indexOf('index.html')>=0||document.referrer.indexOf('order-app/')>=0){
+    history.back();
+  } else {
+    window.location.href='index.html';
+  }
+}
 
 init();
 
