@@ -1,5 +1,5 @@
-const CACHE='st-order-v5.0';
-const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html'];
+const CACHE='st-order-v5.1';
+const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html', './seasons.html'];
 
 self.addEventListener('install', function(e){
   // キャッシュに新しいファイルを追加するが、skipWaitingはしない

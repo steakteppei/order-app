@@ -339,6 +339,14 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
+<a class="sales-btn" href="seasons.html" style="background:linear-gradient(135deg,#1e3a5f 0%,#1a3050 100%);">
+  <span class="sales-btn-icon">🗓️</span>
+  <span class="sales-btn-text">
+    <span class="sales-btn-title">Busy &amp; Slow Seasons</span>
+    <span class="sales-btn-sub">US · Japan · Hawaii · Canada</span>
+  </span>
+  <span class="sales-btn-arrow">›</span>
+</a>
 <a class="sales-btn" href="links.html" style="background:linear-gradient(135deg,#1a2e1a 0%,#162e13 100%);">
   <span class="sales-btn-icon">🛒</span>
   <span class="sales-btn-text">
@@ -1109,7 +1117,7 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.0',
+  version: '5.1',
   date: 'April 10, 2026',
   items: [
     { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
@@ -1373,7 +1381,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.0'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.1'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
