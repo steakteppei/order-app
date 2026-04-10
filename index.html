@@ -122,16 +122,18 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:active{opacity:.85;}
 .go-btn:disabled{background:#ccc;cursor:not-allowed;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
-.sales-btn{display:block;width:100%;padding:13px;background:var(--card);border:.5px solid var(--border-md);border-radius:var(--radius);font-size:14px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:none;}
-.sales-btn:active{opacity:.7;}
-.sales-btn-icon{margin-right:6px;}
+.sales-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:12px;}
+.sales-btn:active{opacity:.85;transform:scale(.99);}
+.sales-btn-icon{font-size:26px;flex-shrink:0;}
+.sales-btn-text{flex:1;}
+.sales-btn-title{font-size:14px;font-weight:700;color:#fff;line-height:1.3;}
+.sales-btn-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:1px;}
+.sales-btn-arrow{font-size:18px;color:rgba(255,255,255,.4);}
 
 .update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
 .update-banner.show{display:block;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
-.sales-btn{display:block;width:100%;padding:13px;background:var(--card);border:.5px solid var(--border-md);border-radius:var(--radius);font-size:14px;font-weight:600;color:var(--text);cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:none;}
-.sales-btn:active{opacity:.7;}
-.sales-btn-icon{margin-right:6px;}
+
 .dl-urgent{color:#dc2626;}
 .dl-soon{color:var(--amber);}
 .dl-ok{color:var(--text-hint);}
@@ -225,7 +227,14 @@ input:checked+.slider:before{transform:translateX(16px);}
     <button class="go-btn" id="goBtn" onclick="goToSend()" disabled>Preview &amp; Send &rarr;</button>
   </div>
 </div>
-<a class="sales-btn" href="sales.html"><span class="sales-btn-icon">📊</span>Sales Data</a>
+<a class="sales-btn" href="sales.html">
+  <span class="sales-btn-icon">📊</span>
+  <span class="sales-btn-text">
+    <span class="sales-btn-title">Sales Data</span>
+    <span class="sales-btn-sub">Revenue · Orders · Busy Periods</span>
+  </span>
+  <span class="sales-btn-arrow">›</span>
+</a>
   <div class="app-version">Last updated: April 08, 2026</div>
 <script>
 
@@ -608,7 +617,7 @@ function getItems(){
 
 function renderItems(){
   if(!selId){document.getElementById('itemsList').innerHTML='<div class="items-placeholder">Select a supplier above to see items</div>';return;}
-  var v=VENDORS.find(function(x){return x.id===selId;});
+  var v=gv(selId);
   var all=getItems();var h='';
   var showPrice=!!(v&&v.minOrder);
   for(var i=0;i<all.length;i++){
@@ -634,7 +643,7 @@ function renderItems(){
 
 function cq(k,d){qty[k]=Math.max(0,(qty[k]||0)+d);var e=document.getElementById('q'+k);if(e)e.textContent=qty[k];updateGoBtn();updateCostcoTotal();}
 function updateCostcoTotal(){
-  var v=VENDORS.find(function(x){return x.id===selId;});
+  var v=gv(selId);
   if(!v||!v.minOrder)return;
   var all=getItems();
   var total=0;
@@ -851,6 +860,11 @@ if('serviceWorker' in navigator){
   var refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',function(){
     if(!refreshing){refreshing=true;window.location.reload();}
+  });
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    if(reg&&reg.waiting){
+      document.getElementById('updateBanner').classList.add('show');
+    }
   });
 }
 function doUpdate(){
