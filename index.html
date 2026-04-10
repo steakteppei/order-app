@@ -295,38 +295,63 @@ var SCHOOL_BREAKS=[
   {name:'Spring Break',start:'2027-03-15',end:'2027-03-19'},
   {name:'Summer Break',start:'2027-05-28',end:'2027-08-01'}
 ];
-// Japan holiday busy periods (tourist influx to Hawaii)
+// ── Japan holidays (tourist influx to Hawaii) ──
 var JP_BUSY=[
-  // 2026
-  {name:'Japan New Year Holiday',  start:'2025-12-26',end:'2026-01-04'},
-  {name:'Japan Golden Week',       start:'2026-04-29',end:'2026-05-06'},
-  {name:'Japan Obon',              start:'2026-08-11',end:'2026-08-16'},
-  {name:'Japan Silver Week',       start:'2026-09-19',end:'2026-09-23'},
-  {name:'Japan Year-End Holiday',  start:'2026-12-26',end:'2027-01-03'},
-  // 2027
-  {name:'Japan New Year Holiday',  start:'2026-12-26',end:'2027-01-03'},
-  {name:'Japan Golden Week',       start:'2027-04-29',end:'2027-05-05'},
-  {name:'Japan Obon',              start:'2027-08-11',end:'2027-08-16'}
+  // 年末年始
+  {name:'Japan New Year Holiday',start:'2025-12-26',end:'2026-01-04'},
+  // GW
+  {name:'Japan Golden Week',     start:'2026-04-29',end:'2026-05-06'},
+  // お盆
+  {name:'Japan Obon',            start:'2026-08-10',end:'2026-08-17'},
+  // シルバーウィーク 2026のみ5連休（2024・2025は3連休のみ）
+  {name:'Japan Silver Week',     start:'2026-09-19',end:'2026-09-23'},
+  // 年末年始
+  {name:'Japan New Year Holiday',start:'2026-12-26',end:'2027-01-03'},
+  // GW
+  {name:'Japan Golden Week',     start:'2027-04-29',end:'2027-05-05'},
+  // お盆
+  {name:'Japan Obon',            start:'2027-08-10',end:'2027-08-17'}
 ];
-// Hawaii/US/Japan tourist events (non-holiday busy periods)
+
+// ── US & Japan tourist busy periods ──
 var EVENTS=[
-  // Japan school breaks (tourist influx)
-  {name:'Japan Spring Break',   start:'2026-03-20',end:'2026-04-05'},
-  {name:'Japan Summer Break',   start:'2026-07-18',end:'2026-08-31'},
-  {name:'Japan Winter Break',   start:'2026-12-24',end:'2027-01-06'},
-  {name:'Japan Spring Break',   start:'2027-03-20',end:'2027-04-05'},
-  {name:'Japan Summer Break',   start:'2027-07-18',end:'2027-08-31'},
-  // US long weekends
-  {name:'Memorial Day Weekend', start:'2026-05-23',end:'2026-05-25'},
-  {name:'Independence Day Week',start:'2026-07-03',end:'2026-07-05'},
-  {name:'Labor Day Weekend',    start:'2026-09-05',end:'2026-09-07'},
-  {name:'Thanksgiving Week',    start:'2026-11-23',end:'2026-11-29'},
-  {name:'Memorial Day Weekend', start:'2027-05-29',end:'2027-05-31'},
-  {name:'Independence Day Week',start:'2027-07-04',end:'2027-07-05'},
-  {name:'Labor Day Weekend',    start:'2027-09-04',end:'2027-09-06'},
-  {name:'Thanksgiving Week',    start:'2027-11-22',end:'2027-11-28'},
-  // Hawaii events
-  {name:'Honolulu Marathon Weekend',start:'2026-12-11',end:'2026-12-13'}
+  // ── Winter Peak Season（12月中旬〜3月末：ハワイ最繁忙期）──
+  {name:'Winter Peak Season',      start:'2025-12-15',end:'2026-01-04'},
+  {name:'Valentine\'s & Presidents Day',start:'2026-02-12',end:'2026-02-16'},
+  {name:'US Spring Break',         start:'2026-03-14',end:'2026-04-12'},
+  {name:'Japan Spring Break',      start:'2026-03-20',end:'2026-04-05'},
+
+  // ── Summer Season（6月〜8月：年間で最も訪問者が多い月）──
+  {name:'US Summer Break',         start:'2026-06-06',end:'2026-08-20'},
+  {name:'Japan Summer Break',      start:'2026-07-18',end:'2026-08-31'},
+
+  // ── September Silver Week（2024・2025は3連休×2回も繁忙期）──
+  {name:'September Holidays',      start:'2026-09-19',end:'2026-09-23'}, // 2026は5連休
+
+  // ── Fall / Holiday Season ──
+  {name:'Labor Day Weekend',       start:'2026-09-05',end:'2026-09-07'},
+  {name:'Thanksgiving Week',       start:'2026-11-25',end:'2026-11-29'},
+  {name:'Honolulu Marathon Weekend',start:'2026-12-11',end:'2026-12-13'},
+  {name:'Christmas Week',          start:'2026-12-22',end:'2026-12-26'},
+
+  // ── Memorial Day ──
+  {name:'Memorial Day Weekend',    start:'2026-05-23',end:'2026-05-25'},
+  // ── Independence Day ──
+  {name:'Independence Day',        start:'2026-07-03',end:'2026-07-06'},
+
+  // ── 2027 ──
+  {name:'Winter Peak Season',      start:'2026-12-15',end:'2027-01-03'},
+  {name:'Valentine\'s & Presidents Day',start:'2027-02-11',end:'2027-02-15'},
+  {name:'US Spring Break',         start:'2027-03-13',end:'2027-04-11'},
+  {name:'Japan Spring Break',      start:'2027-03-20',end:'2027-04-05'},
+  {name:'Memorial Day Weekend',    start:'2027-05-29',end:'2027-05-31'},
+  {name:'US Summer Break',         start:'2027-06-05',end:'2027-08-20'},
+  {name:'Japan Summer Break',      start:'2027-07-18',end:'2027-08-31'},
+  {name:'Independence Day',        start:'2027-07-04',end:'2027-07-06'},
+  {name:'Labor Day Weekend',       start:'2027-09-04',end:'2027-09-06'},
+  {name:'Thanksgiving Week',       start:'2027-11-24',end:'2027-11-28'},
+  {name:'Honolulu Marathon Weekend',start:'2027-12-11',end:'2027-12-13'},
+  {name:'Christmas Week',          start:'2027-12-22',end:'2027-12-27'}
 ];
 function getEvent(dateStr){
   for(var i=0;i<EVENTS.length;i++){
@@ -743,14 +768,13 @@ function goToSend(){
 
 // ── CHANGELOG ──
 var CHANGELOG = {
-  version: '3.0',
+  version: '3.1',
   date: 'April 10, 2026',
   items: [
-    { icon: '🔄', text: 'App now updates automatically — no manual refresh needed' },
-    { icon: '💤', text: 'Auto-reload after 5 minutes of no activity' },
-    { icon: '📋', text: 'Version History page added' },
-    { icon: '🔔', text: 'Changelog popup redesigned with new slide-up style' },
-    { icon: '🔧', text: 'Fixed changelog not reappearing on new versions' }
+    { icon: '📊', text: 'Busy periods expanded — Winter Peak, US Summer, Spring Break, Valentine\'s & Presidents Day added' },
+    { icon: '🎄', text: 'Christmas Week added to Sales Data & calendar' },
+    { icon: '🗓️', text: 'Silver Week: all years included (2024/2025 = 3-day weekends, 2026 = 5-day)' },
+    { icon: '🔧', text: 'All busy period dates corrected for 2024/2025/2026' }
   ]
 };
 
@@ -852,15 +876,32 @@ function renderLY(deliveryDate){
   });
 }
 
-// Auto-reload when app returns from background
-var lastHidden=null;
-document.addEventListener('visibilitychange',function(){
+// ── 自動更新ロジック ──
+var IDLE_TIMEOUT = 5 * 60 * 1000;
+var idleTimer = null;
+var lastHidden = null;
+
+function resetIdleTimer(){
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(function(){
+    navigator.serviceWorker.getRegistration().then(function(reg){if(reg)reg.update();}).catch(function(){});
+    window.location.reload(true);
+  }, IDLE_TIMEOUT);
+}
+
+['touchstart','touchmove','click','keydown','scroll'].forEach(function(ev){
+  document.addEventListener(ev, resetIdleTimer, {passive:true});
+});
+resetIdleTimer();
+
+document.addEventListener('visibilitychange', function(){
   if(document.hidden){
-    lastHidden=Date.now();
+    lastHidden = Date.now();
   } else {
-    // If was in background for more than 5 minutes, reload for latest version
-    if(lastHidden&&(Date.now()-lastHidden)>5*60*1000){
-      window.location.reload();
+    if(lastHidden && (Date.now() - lastHidden) > 60 * 1000){
+      window.location.reload(true);
+    } else {
+      navigator.serviceWorker.getRegistration().then(function(reg){if(reg)reg.update();}).catch(function(){});
     }
   }
 });
@@ -868,31 +909,28 @@ document.addEventListener('visibilitychange',function(){
 </script>
 
 <script>
+// ── Service Worker ──
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(function(reg){
-    reg.addEventListener('updatefound',function(){
-      var nw=reg.installing;
-      nw.addEventListener('statechange',function(){
-        if(nw.state==='installed'&&navigator.serviceWorker.controller){
-          document.getElementById('updateBanner').classList.add('show');
-        }
+  var refreshing = false;
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
+    function applyUpdate(worker){ worker.postMessage({type:'SKIP_WAITING'}); }
+    if(reg.waiting){ applyUpdate(reg.waiting); }
+    reg.addEventListener('updatefound', function(){
+      var nw = reg.installing;
+      nw.addEventListener('statechange', function(){
+        if(nw.state === 'installed'){ applyUpdate(nw); }
       });
     });
-  });
-  var refreshing=false;
-  navigator.serviceWorker.addEventListener('controllerchange',function(){
-    if(!refreshing){refreshing=true;window.location.reload();}
-  });
-  navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg&&reg.waiting){
-      document.getElementById('updateBanner').classList.add('show');
-    }
+    setInterval(function(){ reg.update(); }, 30000);
+  }).catch(function(err){ console.warn('SW registration failed:', err); });
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if(!refreshing){ refreshing = true; window.location.reload(true); }
   });
 }
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload();
+    if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
+    else window.location.reload(true);
   });
 }
 </script>
