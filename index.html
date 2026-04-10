@@ -198,8 +198,9 @@ input:checked+.slider:before{transform:translateX(16px);}
 .sales-btn-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:1px;}
 .sales-btn-arrow{font-size:18px;color:rgba(255,255,255,.4);}
 
-.update-banner{display:none;background:#185FA5;color:#fff;text-align:center;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:300;}
-.update-banner.show{display:block;}
+.update-banner{display:none;background:linear-gradient(135deg,#185FA5,#1a7abf);color:#fff;text-align:center;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.update-banner.show{display:block;animation:banner-pulse 2s ease-in-out infinite;}
+@keyframes banner-pulse{0%,100%{opacity:1;}50%{opacity:.85;}}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 
 .dl-urgent{color:#dc2626;}
@@ -229,7 +230,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 </style>
 </head>
 <body>
-<div class="update-banner" id="updateBanner" onclick="doUpdate()">&#x1f504; New version available &mdash; tap to update</div>
+<div class="update-banner" id="updateBanner" onclick="doUpdate()">&#x1f504; New version available — tap here to update</div>
 
 <div class="app">
   <div class="header">
@@ -1110,7 +1111,8 @@ var CHANGELOG = {
   version: '4.8',
   date: 'April 10, 2026',
   items: [
-    { icon: '🗂️', text: 'Product Links: items now sorted by category — Food & Beverage, Kitchen & Cooking, Cleaning & Sanitation, Supplies & Equipment' }
+    { icon: '🗂️', text: 'Product Links: items sorted by category — Food & Beverage, Kitchen & Cooking, Cleaning & Sanitation, Supplies & Equipment' },
+    { icon: '📱', text: 'Fixed: update banner now appears on iPhone home screen app when new version is available' }
   ]
 };
 
@@ -1382,34 +1384,63 @@ if('serviceWorker' in navigator){
     reg.addEventListener('updatefound', function(){
       var nw = reg.installing;
       nw.addEventListener('statechange', function(){
-        // installed = ダウンロード完了・waiting状態
         if(nw.state === 'installed' && navigator.serviceWorker.controller){
-          // 即座に切り替え（ユーザーに通知せず自動更新）
           nw.postMessage({type:'SKIP_WAITING'});
         }
       });
     });
 
-    // 定期チェック（5分ごとに短縮）
+    // 定期チェック（5分ごと）
     setInterval(function(){ reg.update(); }, 5 * 60 * 1000);
 
   }).catch(function(err){ console.warn('SW registration failed:', err); });
 
   // controllerが変わったら一度だけリロード
   navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(!refreshing){
-      refreshing = true;
-      window.location.reload(true);
-    }
+    if(!refreshing){ refreshing = true; window.location.reload(true); }
   });
 }
 
+// ── iOS PWA向け強制更新チェック ──
+// SWの更新検知が効かないiOS PWAのために、
+// 起動時にサーバーのsw.jsを直接fetchしてバージョンを比較する
+function checkForUpdateiOS(){
+  // キャッシュバイパスのためにタイムスタンプをつけてfetch
+  fetch('./sw.js?_=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var m = text.match(/CACHE='([^']+)'/);
+      if(!m) return;
+      var serverVer = m[1]; // 例: 'st-order-v4.8'
+      var storedVer = localStorage.getItem('st_sw_version');
+      if(storedVer && storedVer !== serverVer){
+        // バージョンが変わっていたら更新バナーを表示
+        showUpdateBanner();
+      }
+      // 現在のバージョンを保存
+      localStorage.setItem('st_sw_version', serverVer);
+    })
+    .catch(function(){});
+}
+
+function showUpdateBanner(){
+  var b = document.getElementById('updateBanner');
+  if(b) b.classList.add('show');
+}
+
 function doUpdate(){
+  localStorage.removeItem('st_sw_version'); // 次回も正しく動くようリセット
   navigator.serviceWorker.getRegistration().then(function(reg){
     if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
     else window.location.reload(true);
   });
 }
+
+// アプリ起動時とvisibility変化時にチェック
+checkForUpdateiOS();
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) checkForUpdateiOS();
+});
 </script>
 </body>
 </html>
