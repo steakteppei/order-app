@@ -136,6 +136,27 @@ input:checked+.slider:before{transform:translateX(16px);}
 .dot-slow{background:#64748b;}
 .dot-marathon{background:#854d0e;}
 .dot-canada{background:#c0392b;}
+/* ── Weather Widget ── */
+.weather-wrap{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);}
+.weather-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.weather-title span{font-size:9px;font-weight:400;opacity:.7;}
+.weather-row{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.weather-row::-webkit-scrollbar{display:none;}
+.weather-day{flex:1;min-width:38px;text-align:center;background:var(--bg);border-radius:8px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.weather-day.rain{background:#e0f2fe;color:#0369a1;}
+.weather-day.rain .weather-dow,.weather-day.rain .weather-temp{color:#0369a1;}
+@media(prefers-color-scheme:dark){
+  .weather-day.rain{background:#0c2340;color:#7dd3fc;}
+  .weather-day.rain .weather-dow,.weather-day.rain .weather-temp{color:#7dd3fc;}
+}
+.weather-day.drizzle{background:#f0f9ff;color:#0284c7;}
+@media(prefers-color-scheme:dark){.weather-day.drizzle{background:#082030;color:#38bdf8;}}
+.weather-day.storm{background:#fce7f3;color:#be185d;}
+@media(prefers-color-scheme:dark){.weather-day.storm{background:#2d0a1f;color:#f9a8d4;}}
+.weather-dow{font-size:9px;font-weight:700;color:var(--text-hint);}
+.weather-icon{font-size:18px;line-height:1;}
+.weather-temp{font-size:10px;font-weight:700;color:var(--text);}
+.weather-loading{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
 .custom-toggle{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:8px 0 2px;display:block;text-decoration:underline;}
 .custom-row{display:none;gap:7px;margin-top:6px;}
 .custom-row.open{display:flex;}
@@ -238,6 +259,11 @@ input:checked+.slider:before{transform:translateX(16px);}
     </div>
     <div class="cal-selected" id="calDisplay">No date selected</div>
     <div class="cal-deadline" id="calDeadline"></div>
+    <!-- 天気ウィジェット -->
+    <div class="weather-wrap">
+      <div class="weather-title">Honolulu 7-Day Forecast <span id="weatherUpdated"></span></div>
+      <div class="weather-row" id="weatherRow"><div class="weather-loading">Loading weather...</div></div>
+    </div>
     <div class="upcoming-wrap">
       <div class="upcoming-title">Upcoming busy periods</div>
       <div id="upcomingList"></div>
@@ -894,10 +920,12 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '3.7',
+  version: '3.8',
   date: 'April 10, 2026',
   items: [
-    { icon: '🗓️', text: 'Calendar: plain dates now truly transparent — colored badge only on special dates' }
+    { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' },
+    { icon: '🌧️', text: 'Rainy / stormy days highlighted — more customers come to Ala Moana!' },
+    { icon: '🗓️', text: 'Calendar: plain dates now transparent — badges only on special dates' }
   ]
 };
 
@@ -923,6 +951,70 @@ function handleOverlayClick(e){
 function closeChangelog(){
   localStorage.setItem('st_seen_version', CHANGELOG.version);
   document.getElementById('changelogOverlay').classList.remove('open');
+}
+
+// ── 天気予報（Open-Meteo API・無料・APIキー不要）──
+function loadWeather(){
+  var el=document.getElementById('weatherRow');
+  if(!el)return;
+  // ホノルル: 21.3069, -157.8583
+  var url='https://api.open-meteo.com/v1/forecast?latitude=21.3069&longitude=-157.8583'
+    +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
+    +'&timezone=Pacific%2FHonolulu&forecast_days=7&temperature_unit=fahrenheit';
+  fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(data){renderWeather(data);})
+    .catch(function(){el.innerHTML='<div class="weather-loading" style="color:var(--text-hint);">Weather unavailable</div>';});
+}
+
+function renderWeather(data){
+  var el=document.getElementById('weatherRow');
+  var upEl=document.getElementById('weatherUpdated');
+  if(!el||!data.daily)return;
+  var days=data.daily;
+  var DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html='';
+  for(var i=0;i<7;i++){
+    var dateStr=days.time[i]; // 'YYYY-MM-DD'
+    var d=new Date(dateStr+'T12:00:00');
+    var dow=DAY_NAMES[d.getDay()];
+    var wc=days.weathercode[i];
+    var tMax=Math.round(days.temperature_2m_max[i]);
+    var tMin=Math.round(days.temperature_2m_min[i]);
+    var icon=wcToIcon(wc);
+    var cls=wcToClass(wc);
+    var isToday=(i===0)?'style="font-weight:700;"':'';
+    html+='<div class="weather-day '+cls+'">'
+      +'<div class="weather-dow" '+isToday+'>'+dow+'</div>'
+      +'<div class="weather-icon">'+icon+'</div>'
+      +'<div class="weather-temp">'+tMax+'°</div>'
+      +'<div class="weather-temp" style="font-weight:400;opacity:.7;">'+tMin+'°</div>'
+      +'</div>';
+  }
+  el.innerHTML=html;
+  if(upEl)upEl.textContent='(°F)';
+}
+
+// WMO天気コード → アイコン
+function wcToIcon(wc){
+  if(wc===0)return'☀️';
+  if(wc<=2)return'⛅';
+  if(wc<=3)return'☁️';
+  if(wc<=49)return'🌫️'; // 霧
+  if(wc<=59)return'🌦️'; // 小雨
+  if(wc<=67)return'🌧️'; // 雨
+  if(wc<=77)return'🌨️'; // 雪
+  if(wc<=82)return'🌧️'; // にわか雨
+  if(wc<=99)return'⛈️'; // 嵐
+  return'🌡️';
+}
+
+// WMO天気コード → CSSクラス（雨系を強調）
+function wcToClass(wc){
+  if(wc>=80&&wc<=99)return'storm'; // 嵐・強い雨 → 売上↑期待
+  if(wc>=51&&wc<=67)return'rain';  // 雨 → 売上↑期待
+  if(wc>=20&&wc<=50)return'drizzle'; // 小雨・霧
+  return''; // 晴れ・曇り → 通常
 }
 
 // ── Push通知（⑭：締め切りリマインダー）──
@@ -960,7 +1052,7 @@ function schedulePushReminders(){
 // Push通知許可をリクエスト（初回起動時）
 requestPushPermission();
 
-renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();schedulePushReminders();
+renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();loadWeather();schedulePushReminders();
 
 // Last Year Sales
 var LY_SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';
