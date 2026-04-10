@@ -285,6 +285,8 @@ input:checked+.slider:before{transform:translateX(16px);}
     </div>
     <div class="cal-selected" id="calDisplay">No date selected</div>
     <div class="cal-deadline" id="calDeadline"></div>
+    <!-- ④ 選択日の天気 -->
+    <div id="selectedDateWeather" style="display:none;margin-top:6px;"></div>
     <!-- 天気ウィジェット -->
     <div class="weather-wrap">
       <div class="weather-title">Honolulu 7-Day Forecast <span id="weatherUpdated"></span></div>
@@ -639,15 +641,13 @@ function renderUpcoming(){
   var el=document.getElementById('upcomingList');
   if(!el)return;
   var now=new Date();now.setHours(0,0,0,0);
-  var endOfNextMonth=new Date(now.getFullYear(),now.getMonth()+2,0);
-  endOfNextMonth.setHours(23,59,59,0);
-  var horizon=endOfNextMonth;
+  // ⑧ 今日から14日後をhorizonに設定
+  var horizon=new Date(now);horizon.setDate(horizon.getDate()+14);
   var items=[];
 
   var allPeriods=[];
   Object.keys(HI_NAMES).forEach(function(d){allPeriods.push({type:'hi',name:HI_NAMES[d],start:d,end:d});});
-  // SCHOOL_BREAKSはカレンダー色分けのみ使用（Upcomingリストには表示しない）
-  // Summer BreakはEVENTSのUS Summer Breakと期間が重なるため除外
+  // SCHOOL_BREAKSはカレンダー色分けのみ使用
   JP_BUSY.forEach(function(b){allPeriods.push({type:'jp',name:b.name,start:b.start,end:b.end});});
   EVENTS.forEach(function(b){
     var type='event';
@@ -658,9 +658,12 @@ function renderUpcoming(){
   SLOW_SEASONS.forEach(function(b){allPeriods.push({type:'slow',name:'⚠ Slow Season — order conservatively',start:b.start,end:b.end});});
 
   allPeriods.forEach(function(p){
-    var s=new Date(p.start);var e=new Date(p.end);
-    if(e>=now&&s<=horizon){
-      items.push({type:p.type,name:p.name,start:p.start,end:p.end,sortKey:p.start});
+    var s=new Date(p.start+'T12:00:00');var e=new Date(p.end+'T12:00:00');
+    // 現在進行中 OR 14日以内にスタートするもの
+    var isNow=(s<=now&&e>=now);
+    var startsSoon=(s>now&&s<=horizon);
+    if(isNow||startsSoon){
+      items.push({type:p.type,name:p.name,start:p.start,end:p.end,sortKey:p.start,isNow:isNow});
     }
   });
 
@@ -808,6 +811,8 @@ function pickD(y,m,d){
   if(evname)noteHtml+=' <span style="color:#166534;font-size:10px;font-weight:600;">&#x1f4cd; '+evname+'</span>';
   document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+noteHtml;
   renderLY(selDate);
+  // ④ 選択した配達日の天気を表示
+  showWeatherForDate(selDate);
   var v=selId?gv(selId):null;
   var dlEl=document.getElementById('calDeadline');
   var dl=v&&!v.tbd?v.dl(selDate):null;
@@ -1117,7 +1122,7 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.1',
+  version: '5.3',
   date: 'April 10, 2026',
   items: [
     { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
@@ -1146,6 +1151,40 @@ function handleOverlayClick(e){
 function closeChangelog(){
   localStorage.setItem('st_seen_version', CHANGELOG.version);
   document.getElementById('changelogOverlay').classList.remove('open');
+}
+
+// ④ 選択した配達日の天気を表示
+function showWeatherForDate(deliveryDate){
+  var el=document.getElementById('selectedDateWeather');
+  if(!el)return;
+  // キャッシュから天気データを取得
+  var wdata=null;
+  try{
+    var cached=sessionStorage.getItem('st_weather_cache');
+    if(cached){var obj=JSON.parse(cached);wdata=obj.data;}
+  }catch(e){}
+  if(!wdata||!wdata.daily){el.style.display='none';return;}
+  // 配達日と一致する日を探す
+  var targetKey=deliveryDate.getFullYear()+'-'+pad(deliveryDate.getMonth()+1)+'-'+pad(deliveryDate.getDate());
+  var idx=-1;
+  for(var i=0;i<wdata.daily.time.length;i++){
+    if(wdata.daily.time[i]===targetKey){idx=i;break;}
+  }
+  if(idx<0){el.style.display='none';return;}
+  var wc=wdata.daily.weathercode[idx];
+  var tMaxF=Math.round(wdata.daily.temperature_2m_max[idx]);
+  var tMaxC=Math.round((tMaxF-32)*5/9);
+  var icon=wcToIcon(wc);
+  var cls=wcToClass(wc);
+  var badge='';
+  if(cls==='storm')badge='<span style="font-size:10px;color:#be185d;font-weight:700;margin-left:6px;">&#128101;&#8593;&#8593; More customers!</span>';
+  else if(cls==='rain')badge='<span style="font-size:10px;color:#0369a1;font-weight:700;margin-left:6px;">&#128101;&#8593; More customers!</span>';
+  var bg=cls==='storm'?'#fce7f3':cls==='rain'?'#e0f2fe':cls==='drizzle'?'#f0f9ff':'var(--bg)';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:'+bg+';border-radius:var(--radius-sm);font-size:12px;">'
+    +'<span style="font-size:20px;">'+icon+'</span>'
+    +'<span><strong>Delivery day weather:</strong> '+tMaxF+'°F / '+tMaxC+'°C</span>'
+    +badge+'</div>';
+  el.style.display='';
 }
 
 // ── 天気予報（Open-Meteo API・無料・APIキー不要）──
@@ -1381,7 +1420,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.1'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.3'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {

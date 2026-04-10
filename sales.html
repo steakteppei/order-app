@@ -270,7 +270,7 @@ function renderBusy(dailyRows) {
     { name: 'US Summer Break', ranges: [
       ['2024-06-08','2024-08-18'],
       ['2025-06-07','2025-08-17'],
-      ['2026-06-06','2026-08-16']
+      ['2026-06-06','2026-08-20']
     ]},
     // ── Independence Day ──
     { name: 'Independence Day', ranges: [
@@ -297,13 +297,13 @@ function renderBusy(dailyRows) {
     { name: 'Silver Week', ranges: [
       ['2024-09-14','2024-09-23'],
       ['2025-09-13','2025-09-23'],
-      ['2026-09-19','2026-09-23']
+      ['2026-09-13','2026-09-23']
     ]},
     // ── Thanksgiving ──
     { name: 'Thanksgiving', ranges: [
       ['2024-11-28','2024-12-01'],
       ['2025-11-27','2025-11-30'],
-      ['2026-11-26','2026-11-29']
+      ['2026-11-25','2026-11-29']
     ]},
     // ── Honolulu Marathon（毎年12月第2日曜） ──
     { name: 'Honolulu Marathon', ranges: [
@@ -315,7 +315,8 @@ function renderBusy(dailyRows) {
     { name: 'Christmas Week', ranges: [
       ['2023-12-22','2023-12-26'],
       ['2024-12-22','2024-12-26'],
-      ['2025-12-22','2025-12-26']
+      ['2025-12-22','2025-12-26'],
+      ['2026-12-22','2026-12-26']
     ]},
     // ── Hawaii Spring Break（HIDOE） ──
     { name: 'Spring Break HI', ranges: [
@@ -721,9 +722,60 @@ function buildWeatherCorrelation(el, dayMap, wDaily) {
   }
 
   el.innerHTML = html;
-}
 
-// ── DAILY SALES ──
+  // ⑥ 今日・明日の予報をOpen-Meteo forecastから取得して末尾に追加
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=21.3069&longitude=-157.8583'
+    +'&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
+    +'&timezone=Pacific%2FHonolulu&forecast_days=2&temperature_unit=fahrenheit')
+    .then(function(r){return r.json();})
+    .then(function(fd){
+      if(!fd.daily)return;
+      var icons=['&#9728;&#65039;','&#9925;','&#127781;','&#127783;','&#127783;','&#9928;&#65039;'];
+      function wcIcon(wc){
+        if(wc>=80)return '&#9928;&#65039;';
+        if(wc>=61)return '&#127327;';
+        if(wc>=51)return '&#127746;';
+        if(wc>=2) return '&#9925;';
+        return '&#9728;&#65039;';
+      }
+      function wcLabel(wc){
+        if(wc>=80)return 'Storm';
+        if(wc>=61)return 'Rain';
+        if(wc>=51)return 'Drizzle';
+        if(wc>=2) return 'Cloudy';
+        return 'Sunny';
+      }
+      function wcTip(wc){
+        if(wc>=80)return '&#128101;&#8593;&#8593; Expect more customers';
+        if(wc>=61)return '&#128101;&#8593; Expect more customers';
+        if(wc>=51)return 'Slightly more indoor dining expected';
+        return 'Normal traffic expected';
+      }
+      var labels=['Today','Tomorrow'];
+      var fhtml='<div class="section"><div class="section-title">Today &amp; Tomorrow Forecast</div>'
+        +'<div class="summary-row">';
+      for(var i=0;i<2;i++){
+        var wc=fd.daily.weathercode[i];
+        var tMaxF=Math.round(fd.daily.temperature_2m_max[i]);
+        var tMinF=Math.round(fd.daily.temperature_2m_min[i]);
+        var tMaxC=Math.round((tMaxF-32)*5/9);
+        var pop=fd.daily.precipitation_probability_max[i]||0;
+        var bg=wc>=80?'#fce7f3':wc>=61?'#e0f2fe':wc>=51?'#f0f9ff':'#fffbeb';
+        fhtml+='<div class="summary-card" style="background:'+bg+';text-align:center;">'
+          +'<div class="summary-label">'+labels[i]+'</div>'
+          +'<div style="font-size:28px;margin:4px 0;">'+wcIcon(wc)+'</div>'
+          +'<div style="font-size:13px;font-weight:700;">'+wcLabel(wc)+'</div>'
+          +'<div style="font-size:11px;color:var(--text-hint);margin-top:2px;">'+tMaxF+'°F / '+tMaxC+'°C</div>'
+          +'<div style="font-size:10px;color:#0369a1;margin-top:2px;">&#127783; '+pop+'% rain chance</div>'
+          +'<div style="font-size:10px;color:var(--text-sub);margin-top:4px;">'+wcTip(wc)+'</div>'
+          +'</div>';
+      }
+      fhtml+='</div></div>';
+      // 先頭に挿入
+      el.innerHTML=fhtml+el.innerHTML;
+    })
+    .catch(function(){});
+}
 function renderDaily(rows) {
   var el = document.getElementById('tab-daily');
   if (!rows.length) { el.innerHTML = '<div class="loading">No data</div>'; return; }

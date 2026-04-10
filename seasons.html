@@ -33,6 +33,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .filter-btn.active-hi{background:#fff2ed;color:var(--orange);border-color:var(--orange);}
 .filter-btn.active-ca{background:#fef3c7;color:#92400e;border-color:#d97706;}
 .filter-btn.active-slow{background:#f1f5f9;color:#475569;border-color:#94a3b8;}
+.filter-btn.active-hidoe{background:#e0f2fe;color:#0369a1;border-color:#0369a1;}
 .filter-btn.active-all{background:var(--orange-light);color:var(--orange);border-color:var(--orange);}
 
 .content{padding:10px 13px 48px;}
@@ -48,6 +49,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .period-card.busy-hi{border-left:3px solid var(--orange);}
 .period-card.busy-ca{border-left:3px solid #d97706;}
 .period-card.slow{border-left:3px solid #94a3b8;opacity:.85;}
+.period-card.busy-hidoe{border-left:3px solid #0369a1;}
 .period-card.now{box-shadow:0 0 0 1.5px var(--orange);}
 
 .period-left{flex:1;min-width:0;}
@@ -62,6 +64,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
 .badge-hi{background:#fff2ed;color:var(--orange);}
 .badge-ca{background:#fef3c7;color:#92400e;}
 .badge-slow{background:#f1f5f9;color:#475569;}
+.badge-hidoe{background:#e0f2fe;color:#0369a1;}
 .now-badge{font-size:9px;font-weight:700;background:#dc2626;color:#fff;padding:3px 7px;border-radius:10px;}
 
 .no-results{text-align:center;padding:32px 0;font-size:13px;color:var(--text-hint);}
@@ -94,6 +97,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
   <button class="filter-btn" id="f-us"   onclick="setFilter('us')">&#127482;&#127480; US</button>
   <button class="filter-btn" id="f-jp"   onclick="setFilter('jp')">&#127471;&#127477; Japan</button>
   <button class="filter-btn" id="f-hi"   onclick="setFilter('hi')">&#127959; Hawaii</button>
+  <button class="filter-btn" id="f-hidoe" onclick="setFilter('hidoe')">&#127979; HIDOE</button>
   <button class="filter-btn" id="f-ca"   onclick="setFilter('ca')">&#127464;&#127462; Canada</button>
   <button class="filter-btn" id="f-slow" onclick="setFilter('slow')">&#128197; Slow</button>
 </div>
@@ -104,6 +108,7 @@ body{padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-ar
   <div class="legend-item"><div class="legend-bar" style="background:#E8440A;"></div>Hawaii</div>
   <div class="legend-item"><div class="legend-bar" style="background:#d97706;"></div>Canada</div>
   <div class="legend-item"><div class="legend-bar" style="background:#94a3b8;"></div>Slow season</div>
+  <div class="legend-item"><div class="legend-bar" style="background:#0369a1;"></div>HIDOE School</div>
 </div>
 
 <div class="content" id="seasonList"></div>
@@ -114,57 +119,94 @@ var MONTHS = ['January','February','March','April','May','June','July','August',
 // 全期間データ（region: us/jp/hi/ca/slow）
 var PERIODS = [
   // ── BUSY: US ──
-  { region:'us', name:'Winter Peak Season',          start:'2025-12-15', end:'2026-01-04', tip:'Peak Hawaii tourism — US mainland families on winter vacation.' },
-  { region:'us', name:'Valentine\'s & Presidents Day',start:'2026-02-12', end:'2026-02-16', tip:'Long weekend drives short-haul Hawaii trips from US West Coast.' },
-  { region:'us', name:'US Spring Break',             start:'2026-03-14', end:'2026-04-12', tip:'College & K-12 spring breaks. Major influx from California & Pacific Northwest.' },
-  { region:'us', name:'Memorial Day Weekend',        start:'2026-05-23', end:'2026-05-25', tip:'US federal holiday. Long weekend — many fly to Hawaii.' },
-  { region:'us', name:'US Summer Break',             start:'2026-06-06', end:'2026-08-20', tip:'Busiest season for US mainland visitors. Families travel during school summer break.' },
-  { region:'us', name:'Independence Day',            start:'2026-07-03', end:'2026-07-06', tip:'4th of July long weekend. High domestic travel volume.' },
-  { region:'us', name:'Labor Day Weekend',           start:'2026-09-05', end:'2026-09-07', tip:'Last summer holiday. Short peak before fall slowdown.' },
-  { region:'us', name:'Thanksgiving Week',           start:'2026-11-25', end:'2026-11-29', tip:'US Thanksgiving. Families travel; Ala Moana busy with holiday shoppers.' },
-  { region:'us', name:'Christmas Week',              start:'2026-12-22', end:'2026-12-26', tip:'High domestic travel. Many families spend Christmas in Hawaii.' },
-  { region:'us', name:'Winter Peak Season',          start:'2026-12-15', end:'2027-01-03', tip:'Peak Hawaii tourism — US mainland families on winter vacation.' },
-  { region:'us', name:'Valentine\'s & Presidents Day',start:'2027-02-11', end:'2027-02-15', tip:'Long weekend drives short-haul Hawaii trips from US West Coast.' },
-  { region:'us', name:'US Spring Break',             start:'2027-03-13', end:'2027-04-11', tip:'College & K-12 spring breaks. Major influx from California & Pacific Northwest.' },
-  { region:'us', name:'Memorial Day Weekend',        start:'2027-05-29', end:'2027-05-31', tip:'US federal holiday. Long weekend.' },
-  { region:'us', name:'US Summer Break',             start:'2027-06-05', end:'2027-08-20', tip:'Busiest season for US mainland visitors.' },
-  { region:'us', name:'Independence Day',            start:'2027-07-04', end:'2027-07-06', tip:'4th of July long weekend.' },
-  { region:'us', name:'Labor Day Weekend',           start:'2027-09-04', end:'2027-09-06', tip:'Last summer holiday.' },
-  { region:'us', name:'Thanksgiving Week',           start:'2027-11-24', end:'2027-11-28', tip:'US Thanksgiving.' },
-  { region:'us', name:'Christmas Week',              start:'2027-12-22', end:'2027-12-27', tip:'High domestic travel.' },
+  { region:'us', name:'Winter Peak Season',          start:'2025-12-15', end:'2026-01-04', tip:"Peak Hawaii tourism — US mainland families on winter vacation." },
+  { region:'us', name:"Valentine's & Presidents Day",start:'2026-02-12', end:'2026-02-16', tip:"Long weekend drives short-haul Hawaii trips from US West Coast." },
+  { region:'us', name:'US Spring Break',             start:'2026-03-14', end:'2026-04-12', tip:"College & K-12 spring breaks. Major influx from California & Pacific Northwest." },
+  { region:'us', name:'Memorial Day Weekend',        start:'2026-05-23', end:'2026-05-25', tip:"US federal holiday. Long weekend — many fly to Hawaii." },
+  { region:'us', name:'US Summer Break',             start:'2026-06-06', end:'2026-08-20', tip:"Busiest season for US mainland visitors. Families travel during school summer break." },
+  { region:'us', name:'Independence Day',            start:'2026-07-03', end:'2026-07-06', tip:"4th of July long weekend. High domestic travel volume." },
+  { region:'us', name:'Labor Day Weekend',           start:'2026-09-05', end:'2026-09-07', tip:"Last summer holiday. Short peak before fall slowdown." },
+  { region:'us', name:'Thanksgiving Week',           start:'2026-11-25', end:'2026-11-29', tip:"US Thanksgiving. Families travel; Ala Moana busy with holiday shoppers." },
+  { region:'us', name:'Christmas Week',              start:'2026-12-22', end:'2026-12-26', tip:"High domestic travel. Many families spend Christmas in Hawaii." },
+  { region:'us', name:'Winter Peak Season',          start:'2026-12-15', end:'2027-01-03', tip:"Peak Hawaii tourism — US mainland families on winter vacation." },
+  { region:'us', name:"Valentine's & Presidents Day",start:'2027-02-11', end:'2027-02-15', tip:"Long weekend drives short-haul Hawaii trips from US West Coast." },
+  { region:'us', name:'US Spring Break',             start:'2027-03-13', end:'2027-04-11', tip:"College & K-12 spring breaks. Major influx from California & Pacific Northwest." },
+  { region:'us', name:'Memorial Day Weekend',        start:'2027-05-29', end:'2027-05-31', tip:"US federal holiday. Long weekend." },
+  { region:'us', name:'US Summer Break',             start:'2027-06-05', end:'2027-08-20', tip:"Busiest season for US mainland visitors." },
+  { region:'us', name:'Independence Day',            start:'2027-07-04', end:'2027-07-06', tip:"4th of July long weekend." },
+  { region:'us', name:'Labor Day Weekend',           start:'2027-09-04', end:'2027-09-06', tip:"Last summer holiday." },
+  { region:'us', name:'Thanksgiving Week',           start:'2027-11-24', end:'2027-11-28', tip:"US Thanksgiving." },
+  { region:'us', name:'Christmas Week',              start:'2027-12-22', end:'2027-12-27', tip:"High domestic travel." },
 
   // ── BUSY: Japan ──
-  { region:'jp', name:'Japan New Year Holiday',      start:'2025-12-26', end:'2026-01-04', tip:'Largest Japanese holiday. Many tourists fly to Hawaii for New Year.' },
-  { region:'jp', name:'Japan Spring Break',          start:'2026-03-20', end:'2026-04-05', tip:'Japanese school spring break. Families and students travel abroad.' },
-  { region:'jp', name:'Japan Golden Week',           start:'2026-04-29', end:'2026-05-06', tip:'Biggest Japanese holiday week. Showa Day, Constitution Day, Children\'s Day.' },
-  { region:'jp', name:'Japan Summer Break',          start:'2026-07-18', end:'2026-08-31', tip:'Japanese school summer break. Peak Japanese tourist season in Hawaii.' },
-  { region:'jp', name:'Japan Obon',                  start:'2026-08-10', end:'2026-08-17', tip:'Obon holiday. Many Japanese take time off; Hawaii is a top destination.' },
-  { region:'jp', name:'Japan Silver Week',           start:'2026-09-19', end:'2026-09-23', tip:'2026 is a rare 5-day Silver Week. Strong Japanese tourist influx expected.' },
-  { region:'jp', name:'Japan New Year Holiday',      start:'2026-12-26', end:'2027-01-03', tip:'Largest Japanese holiday. Many tourists fly to Hawaii for New Year.' },
-  { region:'jp', name:'Japan Spring Break',          start:'2027-03-20', end:'2027-04-05', tip:'Japanese school spring break.' },
-  { region:'jp', name:'Japan Golden Week',           start:'2027-04-29', end:'2027-05-05', tip:'Biggest Japanese holiday week.' },
-  { region:'jp', name:'Japan Summer Break',          start:'2027-07-18', end:'2027-08-31', tip:'Japanese school summer break.' },
-  { region:'jp', name:'Japan Obon',                  start:'2027-08-10', end:'2027-08-17', tip:'Obon holiday. Hawaii is a top destination.' },
+  { region:'jp', name:'Japan New Year Holiday',      start:'2025-12-26', end:'2026-01-04', tip:"Largest Japanese holiday. Many tourists fly to Hawaii for New Year." },
+  { region:'jp', name:'Japan Spring Break',          start:'2026-03-20', end:'2026-04-05', tip:"Japanese school spring break. Families and students travel abroad." },
+  { region:'jp', name:'Japan Golden Week',           start:'2026-04-29', end:'2026-05-06', tip:"Biggest Japanese holiday week. Showa Day, Constitution Day, Children's Day." },
+  { region:'jp', name:'Japan Summer Break',          start:'2026-07-18', end:'2026-08-31', tip:"Japanese school summer break. Peak Japanese tourist season in Hawaii." },
+  { region:'jp', name:'Japan Obon',                  start:'2026-08-10', end:'2026-08-17', tip:"Obon holiday. Many Japanese take time off; Hawaii is a top destination." },
+  { region:'jp', name:'Japan Silver Week',           start:'2026-09-19', end:'2026-09-23', tip:"2026 is a rare 5-day Silver Week. Strong Japanese tourist influx expected." },
+  { region:'jp', name:'Japan New Year Holiday',      start:'2026-12-26', end:'2027-01-03', tip:"Largest Japanese holiday. Many tourists fly to Hawaii for New Year." },
+  { region:'jp', name:'Japan Spring Break',          start:'2027-03-20', end:'2027-04-05', tip:"Japanese school spring break." },
+  { region:'jp', name:'Japan Golden Week',           start:'2027-04-29', end:'2027-05-05', tip:"Biggest Japanese holiday week." },
+  { region:'jp', name:'Japan Summer Break',          start:'2027-07-18', end:'2027-08-31', tip:"Japanese school summer break." },
+  { region:'jp', name:'Japan Obon',                  start:'2027-08-10', end:'2027-08-17', tip:"Obon holiday. Hawaii is a top destination." },
 
   // ── BUSY: Hawaii ──
-  { region:'hi', name:'September Holidays',          start:'2026-09-13', end:'2026-09-23', tip:'Combines with Silver Week — double boost from Japan & US visitors.' },
-  { region:'hi', name:'Honolulu Marathon',           start:'2026-12-11', end:'2026-12-13', tip:'One of the world\'s largest marathons. 30,000+ runners, mostly Japanese. Ala Moana extremely busy.' },
-  { region:'hi', name:'September Holidays',          start:'2027-09-13', end:'2027-09-23', tip:'Combines multiple holiday periods — strong visitor numbers.' },
-  { region:'hi', name:'Honolulu Marathon',           start:'2027-12-11', end:'2027-12-13', tip:'30,000+ runners, mostly Japanese. Ala Moana extremely busy.' },
+  { region:'hi', name:'September Holidays',          start:'2026-09-13', end:'2026-09-23', tip:"Combines with Silver Week — double boost from Japan & US visitors." },
+  { region:'hi', name:'Honolulu Marathon',           start:'2026-12-11', end:'2026-12-13', tip:"One of the world's largest marathons. 30,000+ runners, mostly Japanese. Ala Moana extremely busy." },
+  { region:'hi', name:'September Holidays',          start:'2027-09-13', end:'2027-09-23', tip:"Combines multiple holiday periods — strong visitor numbers." },
+  { region:'hi', name:'Honolulu Marathon',           start:'2027-12-11', end:'2027-12-13', tip:"30,000+ runners, mostly Japanese. Ala Moana extremely busy." },
 
   // ── BUSY: Canada ──
-  { region:'ca', name:'Canada Snowbird Season',      start:'2026-01-05', end:'2026-03-31', tip:'Canadian retirees and families escape winter by visiting Hawaii. Steady boost Jan-Mar.' },
-  { region:'ca', name:'Canada Snowbird Season',      start:'2027-01-04', end:'2027-03-31', tip:'Canadian retirees and families escape winter by visiting Hawaii.' },
+  { region:'ca', name:'Canada Snowbird Season',      start:'2026-01-05', end:'2026-03-31', tip:"Canadian retirees and families escape winter by visiting Hawaii. Steady boost Jan-Mar." },
+  { region:'ca', name:'Canada Snowbird Season',      start:'2027-01-04', end:'2027-03-31', tip:"Canadian retirees and families escape winter by visiting Hawaii." },
 
+
+  // ── Hawaii Public Holidays (HI_NAMES already in index) ──
+  { region:'hi', name:"New Year's Day",              start:'2026-01-01', end:'2026-01-01', tip:"Hawaii State & US Federal Holiday." },
+  { region:'hi', name:'MLK Day',                     start:'2026-01-19', end:'2026-01-19', tip:"Martin Luther King Jr. Day. US Federal & Hawaii State Holiday." },
+  { region:'hi', name:"Presidents Day",              start:'2026-02-16', end:'2026-02-16', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Prince Kuhio Day',            start:'2026-03-26', end:'2026-03-26', tip:"Hawaii State Holiday. Celebrates Prince Jonah Kuhio Kalanianaole." },
+  { region:'hi', name:'Good Friday',                 start:'2026-04-03', end:'2026-04-03', tip:"Hawaii State Holiday (unique to Hawaii among US states)." },
+  { region:'hi', name:'Memorial Day',                start:'2026-05-25', end:'2026-05-25', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'King Kamehameha Day',         start:'2026-06-11', end:'2026-06-11', tip:"Hawaii State Holiday. Honors King Kamehameha I, unifier of Hawaii." },
+  { region:'hi', name:'Independence Day (observed)', start:'2026-07-03', end:'2026-07-03', tip:"US Federal & Hawaii State Holiday (observed)." },
+  { region:'hi', name:'Statehood Day',               start:'2026-08-21', end:'2026-08-21', tip:'Hawaii State Holiday. Celebrates Hawaii statehood on Aug 21, 1959.' },
+  { region:'hi', name:'Labor Day',                   start:'2026-09-07', end:'2026-09-07', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'General Election Day',        start:'2026-11-03', end:'2026-11-03', tip:"Hawaii State Holiday (unique to Hawaii). State & county elections." },
+  { region:'hi', name:'Veterans Day',                start:'2026-11-11', end:'2026-11-11', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Thanksgiving',                start:'2026-11-26', end:'2026-11-26', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Christmas',                   start:'2026-12-25', end:'2026-12-25', tip:"US Federal & Hawaii State Holiday." },
+  // 2027
+  { region:'hi', name:"New Year's Day",              start:'2027-01-01', end:'2027-01-01', tip:"Hawaii State & US Federal Holiday." },
+  { region:'hi', name:'MLK Day',                     start:'2027-01-18', end:'2027-01-18', tip:"Martin Luther King Jr. Day." },
+  { region:'hi', name:"Presidents Day",              start:'2027-02-15', end:'2027-02-15', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Prince Kuhio Day / Good Friday',start:'2027-03-26', end:'2027-03-26', tip:"Both Prince Kuhio Day and Good Friday fall on the same date in 2027." },
+  { region:'hi', name:'Memorial Day',                start:'2027-05-31', end:'2027-05-31', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'King Kamehameha Day',         start:'2027-06-11', end:'2027-06-11', tip:"Hawaii State Holiday." },
+  { region:'hi', name:'Independence Day (observed)', start:'2027-07-05', end:'2027-07-05', tip:"US Federal & Hawaii State Holiday (observed)." },
+  { region:'hi', name:'Statehood Day',               start:'2027-08-20', end:'2027-08-20', tip:"Hawaii State Holiday." },
+  { region:'hi', name:'Labor Day',                   start:'2027-09-06', end:'2027-09-06', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Veterans Day',                start:'2027-11-11', end:'2027-11-11', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Thanksgiving',                start:'2027-11-25', end:'2027-11-25', tip:"US Federal & Hawaii State Holiday." },
+  { region:'hi', name:'Christmas (observed)',        start:'2027-12-27', end:'2027-12-27', tip:"US Federal & Hawaii State Holiday (observed)." },
+
+  // ── Hawaii DOE School Breaks ──
+  { region:'hidoe', name:'HIDOE Spring Break',          start:'2026-03-23', end:'2026-03-27', tip:"Hawaii Dept. of Education school spring break." },
+  { region:'hidoe', name:'HIDOE Summer Break',          start:'2026-05-29', end:'2026-08-02', tip:"Hawaii Dept. of Education school summer break. Many local families travel." },
+  { region:'hidoe', name:'HIDOE Fall Break',            start:'2026-10-05', end:'2026-10-09', tip:"Hawaii Dept. of Education school fall break." },
+  { region:'hidoe', name:'HIDOE Winter Break',          start:'2026-12-21', end:'2027-01-01', tip:"Hawaii Dept. of Education school winter break." },
+  { region:'hidoe', name:'HIDOE Spring Break',          start:'2027-03-15', end:'2027-03-19', tip:"Hawaii Dept. of Education school spring break." },
+  { region:'hidoe', name:'HIDOE Summer Break',          start:'2027-05-28', end:'2027-08-01', tip:"Hawaii Dept. of Education school summer break." },
   // ── SLOW ──
-  { region:'slow', name:'Post-Spring Break Lull',   start:'2026-04-15', end:'2026-04-28', tip:'Spring Break ends, Golden Week not yet started. Quietest period of spring.' },
-  { region:'slow', name:'Post-Golden Week Lull',    start:'2026-05-07', end:'2026-05-22', tip:'After Golden Week, before Memorial Day. Low visitor numbers.' },
-  { region:'slow', name:'Post-Labor Day Lull',      start:'2026-09-08', end:'2026-09-12', tip:'Brief quiet period after Labor Day before September Holidays.' },
-  { region:'slow', name:'Fall Slow Season',         start:'2026-10-08', end:'2026-11-19', tip:'Slowest stretch of the year. Low visitor counts until Thanksgiving.' },
-  { region:'slow', name:'Post-Spring Break Lull',   start:'2027-04-15', end:'2027-04-28', tip:'Spring Break ends, Golden Week not yet started.' },
-  { region:'slow', name:'Post-Golden Week Lull',    start:'2027-05-07', end:'2027-05-22', tip:'After Golden Week, before Memorial Day.' },
-  { region:'slow', name:'Post-Labor Day Lull',      start:'2027-09-07', end:'2027-09-12', tip:'Brief quiet period after Labor Day.' },
-  { region:'slow', name:'Fall Slow Season',         start:'2027-10-07', end:'2027-11-18', tip:'Slowest stretch of the year until Thanksgiving.' }
+  { region:'slow', name:'Post-Spring Break Lull',   start:'2026-04-15', end:'2026-04-28', tip:"Spring Break ends, Golden Week not yet started. Quietest period of spring." },
+  { region:'slow', name:'Post-Golden Week Lull',    start:'2026-05-07', end:'2026-05-22', tip:"After Golden Week, before Memorial Day. Low visitor numbers." },
+  { region:'slow', name:'Post-Labor Day Lull',      start:'2026-09-08', end:'2026-09-12', tip:"Brief quiet period after Labor Day before September Holidays." },
+  { region:'slow', name:'Fall Slow Season',         start:'2026-10-08', end:'2026-11-19', tip:"Slowest stretch of the year. Low visitor counts until Thanksgiving." },
+  { region:'slow', name:'Post-Spring Break Lull',   start:'2027-04-15', end:'2027-04-28', tip:"Spring Break ends, Golden Week not yet started." },
+  { region:'slow', name:'Post-Golden Week Lull',    start:'2027-05-07', end:'2027-05-22', tip:"After Golden Week, before Memorial Day." },
+  { region:'slow', name:'Post-Labor Day Lull',      start:'2027-09-07', end:'2027-09-12', tip:"Brief quiet period after Labor Day." },
+  { region:'slow', name:'Fall Slow Season',         start:'2027-10-07', end:'2027-11-18', tip:"Slowest stretch of the year until Thanksgiving." }
 ];
 
 var currentYear   = '2026';
@@ -181,7 +223,7 @@ function setYear(yr){
 
 function setFilter(f){
   currentFilter = f;
-  ['all','us','jp','hi','ca','slow'].forEach(function(x){
+  ['all','us','jp','hi','ca','slow','hidoe'].forEach(function(x){
     var btn = document.getElementById('f-'+x);
     if(btn) btn.className = 'filter-btn' + (x===f?' active-'+f:'');
   });
@@ -204,9 +246,9 @@ function fmtDateRange(s, e){
   return ms[ds.getMonth()]+' '+ds.getDate()+', '+ds.getFullYear()+' – '+ms[de.getMonth()]+' '+de.getDate()+', '+de.getFullYear();
 }
 
-var REGION_LABELS = { us:'US', jp:'Japan', hi:'Hawaii', ca:'Canada', slow:'Slow Season' };
-var REGION_BADGES = { us:'badge-us', jp:'badge-jp', hi:'badge-hi', ca:'badge-ca', slow:'badge-slow' };
-var CARD_CLASSES  = { us:'busy-us', jp:'busy-jp', hi:'busy-hi', ca:'busy-ca', slow:'slow' };
+var REGION_LABELS = { us:'US', jp:'Japan', hi:'Hawaii', ca:'Canada', hidoe:'HIDOE School', slow:'Slow Season' };
+var REGION_BADGES = { us:'badge-us', jp:'badge-jp', hi:'badge-hi', ca:'badge-ca', hidoe:'badge-hidoe', slow:'badge-slow' };
+var CARD_CLASSES  = { us:'busy-us', jp:'busy-jp', hi:'busy-hi', ca:'busy-ca', hidoe:'busy-hidoe', slow:'slow' };
 
 function render(){
   var now = new Date(); now.setHours(0,0,0,0);
@@ -214,29 +256,49 @@ function render(){
   var filtered = PERIODS.filter(function(p){
     if(currentFilter!=='all' && p.region!==currentFilter) return false;
     if(currentYear==='2026'){
-      // 2026年に重なるもの
-      return p.start.substring(0,4)==='2026' || p.end.substring(0,4)==='2026'
-        || (p.start<='2026-12-31' && p.end>='2026-01-01');
+      // ① 修正: 期間が2026年に1日でも重なるものを全て表示
+      return p.start <= '2026-12-31' && p.end >= '2026-01-01';
     }
     if(currentYear==='2027'){
-      return p.start.substring(0,4)==='2027' || p.end.substring(0,4)==='2027'
-        || (p.start<='2027-12-31' && p.end>='2027-01-01');
+      return p.start <= '2027-12-31' && p.end >= '2027-01-01';
     }
     return true;
   });
 
-  // 開始日でソート
-  filtered.sort(function(a,b){ return a.start<b.start?-1:a.start>b.start?1:0; });
+  // ③ NOW中の期間を先頭に、それ以外は開始日順
+  filtered.sort(function(a,b){
+    var aNow = new Date(a.start+'T12:00:00')<=now && new Date(a.end+'T12:00:00')>=now;
+    var bNow = new Date(b.start+'T12:00:00')<=now && new Date(b.end+'T12:00:00')>=now;
+    if(aNow && !bNow) return -1;
+    if(!aNow && bNow) return 1;
+    return a.start<b.start?-1:a.start>b.start?1:0;
+  });
 
   if(!filtered.length){
     document.getElementById('seasonList').innerHTML='<div class="no-results">No periods found</div>';
     return;
   }
 
+  // ③ NOW中セクションを分離
+  var nowItems = filtered.filter(function(p){
+    return new Date(p.start+'T12:00:00')<=now && new Date(p.end+'T12:00:00')>=now;
+  });
+  var restItems = filtered.filter(function(p){
+    return !(new Date(p.start+'T12:00:00')<=now && new Date(p.end+'T12:00:00')>=now);
+  });
+
+  var html = '';
+
+  // NOWセクション（あれば先頭に表示）
+  if(nowItems.length){
+    html += '<div class="month-head" style="color:var(--orange);">&#128308; Currently Active</div>';
+    nowItems.forEach(function(p){ html += renderCard(p, now); });
+  }
+
   // 月ごとにグループ化
   var groups = {};
   var groupOrder = [];
-  filtered.forEach(function(p){
+  restItems.forEach(function(p){
     var d = new Date(p.start+'T12:00:00');
     var key = d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1);
     var label = MONTHS[d.getMonth()]+' '+d.getFullYear();
@@ -244,35 +306,37 @@ function render(){
     groups[key].items.push(p);
   });
 
-  var html = '';
   groupOrder.forEach(function(key){
     var g = groups[key];
     html += '<div class="month-head">'+g.label+'</div>';
-    g.items.forEach(function(p){
-      var isNow = new Date(p.start+'T12:00:00')<=now && new Date(p.end+'T12:00:00')>=now;
-      var cardCls = 'period-card ' + (CARD_CLASSES[p.region]||'') + (isNow?' now':'');
-      var badgeCls = REGION_BADGES[p.region]||'';
-      var regionLabel = REGION_LABELS[p.region]||'';
-      var icon = p.region==='us'?'&#127482;&#127480;'
-               : p.region==='jp'?'&#127471;&#127477;'
-               : p.region==='hi'?'&#127959;'
-               : p.region==='ca'?'&#127464;&#127462;'
-               : '&#128197;';
-      html += '<div class="'+cardCls+'">'
-        + '<div class="period-left">'
-        + '<div class="period-name">'+p.name+'</div>'
-        + '<div class="period-date">'+fmtDateRange(p.start, p.end)+'</div>'
-        + (p.tip?'<div class="period-tip">'+p.tip+'</div>':'')
-        + '</div>'
-        + '<div class="period-right">'
-        + '<span class="region-badge '+badgeCls+'">'+icon+' '+regionLabel+'</span>'
-        + (isNow?'<span class="now-badge">NOW</span>':'')
-        + '</div>'
-        + '</div>';
-    });
+    g.items.forEach(function(p){ html += renderCard(p, now); });
   });
 
   document.getElementById('seasonList').innerHTML = html;
+}
+
+function renderCard(p, now){
+  var isNow = new Date(p.start+'T12:00:00')<=now && new Date(p.end+'T12:00:00')>=now;
+  var cardCls = 'period-card ' + (CARD_CLASSES[p.region]||'') + (isNow?' now':'');
+  var badgeCls = REGION_BADGES[p.region]||'';
+  var regionLabel = REGION_LABELS[p.region]||'';
+  var icon = p.region==='us'?'&#127482;&#127480;'
+           : p.region==='jp'?'&#127471;&#127477;'
+           : p.region==='hi'?'&#127959;'
+           : p.region==='ca'?'&#127464;&#127462;'
+           : p.region==='hidoe'?'&#127979;'
+           : '&#128197;';
+  return '<div class="'+cardCls+'">'
+    + '<div class="period-left">'
+    + '<div class="period-name">'+p.name+'</div>'
+    + '<div class="period-date">'+fmtDateRange(p.start, p.end)+'</div>'
+    + (p.tip?'<div class="period-tip">'+p.tip+'</div>':'')
+    + '</div>'
+    + '<div class="period-right">'
+    + '<span class="region-badge '+badgeCls+'">'+icon+' '+regionLabel+'</span>'
+    + (isNow?'<span class="now-badge">NOW</span>':'')
+    + '</div>'
+    + '</div>';
 }
 
 if(document.readyState==='loading'){

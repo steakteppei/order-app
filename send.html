@@ -239,7 +239,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
