@@ -423,7 +423,8 @@ var SLOW_SEASONS=[
   {name:'Slow Season',start:'2026-04-15',end:'2026-04-28'},
   // GW後〜Memorial Day前（5/7〜5/22）
   {name:'Slow Season',start:'2026-05-07',end:'2026-05-22'},
-  {name:'Slow Season',start:'2026-09-08',end:'2026-09-18'},
+  // Sep: Labor Day直後〜September Holidays前（9/8〜9/12）
+  {name:'Slow Season',start:'2026-09-08',end:'2026-09-12'},
   {name:'Slow Season',start:'2026-10-08',end:'2026-11-19'},
   // 2027
   {name:'Slow Season',start:'2027-04-15',end:'2027-04-28'},
@@ -925,10 +926,12 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '3.9',
+  version: '4.0',
   date: 'April 10, 2026',
   items: [
-    { icon: '🎏', text: 'Fixed: Golden Week (Apr 29 - May 6) no longer shown as slow season' },
+    { icon: '🎏', text: 'Fixed: Golden Week no longer shown as slow season' },
+    { icon: '🗓️', text: 'Fixed: Sep 13-18 overlap between slow season & September Holidays corrected' },
+    { icon: '✅', text: 'All busy/slow periods verified — zero overlaps' },
     { icon: '🌤️', text: 'Honolulu 7-day weather forecast added below calendar' }
   ]
 };
