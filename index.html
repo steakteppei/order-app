@@ -1108,11 +1108,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.8',
+  version: '4.9',
   date: 'April 10, 2026',
   items: [
-    { icon: '🗂️', text: 'Product Links: items sorted by category — Food & Beverage, Kitchen & Cooking, Cleaning & Sanitation, Supplies & Equipment' },
-    { icon: '📱', text: 'Fixed: update banner now appears on iPhone home screen app when new version is available' }
+    { icon: '📱', text: 'Fixed: iPhone home screen app now auto-updates when new version is released' },
+    { icon: '🔄', text: 'All pages (order, send, sales, links) now force-refresh on version change' }
   ]
 };
 
@@ -1369,78 +1369,69 @@ document.addEventListener('visibilitychange', function(){
 </script>
 
 <script>
-// ── Service Worker ──
-if('serviceWorker' in navigator){
-  var refreshing = false;
+// ── バージョンチェック（Service Worker非依存・iOS PWA対応）──
+// version.jsonをサーバーから毎回直接取得してバージョンを比較
+// キャッシュを完全にバイパスするためno-storeを使用
 
-  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
+var APP_VERSION = '4.9'; // ★ バージョンアップ時はここも更新する
 
-    // 既にwaiting中のSWがあれば即座に有効化
-    if(reg.waiting){
-      reg.waiting.postMessage({type:'SKIP_WAITING'});
+function checkVersion(){
+  fetch('./version.json?_=' + Date.now(), {
+    cache: 'no-store',
+    headers: {'Cache-Control': 'no-cache, no-store'}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var serverVer = String(data.version);
+    var localVer  = localStorage.getItem('st_app_version');
+
+    if(localVer && localVer !== serverVer){
+      // バージョンが変わっていたら全ページをハードリロード
+      localStorage.setItem('st_app_version', serverVer);
+      // Service Workerのキャッシュも全削除してからリロード
+      if('caches' in window){
+        caches.keys().then(function(keys){
+          Promise.all(keys.map(function(k){ return caches.delete(k); }))
+            .then(function(){ window.location.reload(true); });
+        });
+      } else {
+        window.location.reload(true);
+      }
+    } else {
+      // 初回または同じバージョン → 保存
+      localStorage.setItem('st_app_version', serverVer);
     }
-
-    // 新しいSWが見つかったとき
-    reg.addEventListener('updatefound', function(){
-      var nw = reg.installing;
-      nw.addEventListener('statechange', function(){
-        if(nw.state === 'installed' && navigator.serviceWorker.controller){
-          nw.postMessage({type:'SKIP_WAITING'});
-        }
-      });
-    });
-
-    // 定期チェック（5分ごと）
-    setInterval(function(){ reg.update(); }, 5 * 60 * 1000);
-
-  }).catch(function(err){ console.warn('SW registration failed:', err); });
-
-  // controllerが変わったら一度だけリロード
-  navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(!refreshing){ refreshing = true; window.location.reload(true); }
+  })
+  .catch(function(){
+    // オフライン時は何もしない
   });
 }
 
-// ── iOS PWA向け強制更新チェック ──
-// SWの更新検知が効かないiOS PWAのために、
-// 起動時にサーバーのsw.jsを直接fetchしてバージョンを比較する
-function checkForUpdateiOS(){
-  // キャッシュバイパスのためにタイムスタンプをつけてfetch
-  fetch('./sw.js?_=' + Date.now(), {cache:'no-store'})
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      var m = text.match(/CACHE='([^']+)'/);
-      if(!m) return;
-      var serverVer = m[1]; // 例: 'st-order-v4.8'
-      var storedVer = localStorage.getItem('st_sw_version');
-      if(storedVer && storedVer !== serverVer){
-        // バージョンが変わっていたら更新バナーを表示
-        showUpdateBanner();
-      }
-      // 現在のバージョンを保存
-      localStorage.setItem('st_sw_version', serverVer);
-    })
+// 起動時に即チェック
+checkVersion();
+
+// アプリをバックグラウンドから戻したときもチェック
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) checkVersion();
+});
+
+// Service Workerは登録だけしてキャッシュ管理に使用（更新検知には使わない）
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
     .catch(function(){});
 }
 
-function showUpdateBanner(){
-  var b = document.getElementById('updateBanner');
-  if(b) b.classList.add('show');
-}
-
 function doUpdate(){
-  localStorage.removeItem('st_sw_version'); // 次回も正しく動くようリセット
-  navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload(true);
-  });
+  localStorage.removeItem('st_app_version');
+  if('caches' in window){
+    caches.keys().then(function(keys){
+      Promise.all(keys.map(function(k){ return caches.delete(k); }))
+        .then(function(){ window.location.reload(true); });
+    });
+  } else {
+    window.location.reload(true);
+  }
 }
-
-// アプリ起動時とvisibility変化時にチェック
-checkForUpdateiOS();
-document.addEventListener('visibilitychange', function(){
-  if(!document.hidden) checkForUpdateiOS();
-});
 </script>
 </body>
 </html>

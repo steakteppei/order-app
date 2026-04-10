@@ -285,5 +285,28 @@ function render(){
 }
 render();
 </script>
+
+<script>
+// バージョンチェック（iOS PWA強制更新対応）
+function checkVersion(){
+  fetch('./version.json?_='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache,no-store'}})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var sv=String(data.version);
+    var lv=localStorage.getItem('st_app_version');
+    if(lv&&lv!==sv){
+      localStorage.setItem('st_app_version',sv);
+      if('caches' in window){
+        caches.keys().then(function(keys){
+          Promise.all(keys.map(function(k){return caches.delete(k);}))
+            .then(function(){window.location.reload(true);});
+        });
+      } else { window.location.reload(true); }
+    } else { localStorage.setItem('st_app_version',sv); }
+  }).catch(function(){});
+}
+checkVersion();
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkVersion();});
+</script>
 </body>
 </html>
