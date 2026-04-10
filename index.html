@@ -941,30 +941,30 @@ function restoreState(){
     var raw=localStorage.getItem('st_order_state');
     if(!raw)return;
     var s=JSON.parse(raw);
-    if(!s.selId)return;
+    // 業者・日付・数量が揃っていない場合は復元しない（送信完了後のクリア状態）
+    if(!s.selId||!s.dateStr)return;
     selId=s.selId;flex=s.flex||false;qty=s.qty||{};custom=s.custom||[];
     cy=s.cy||today.getFullYear();cm=s.cm||today.getMonth();
     document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
     var vb=document.getElementById('vb'+selId);if(vb)vb.classList.add('selected');
-    // ① restoreState: deadlineInfoは存在しないDOMのため参照なし（修正済み）
+    // ⑤ 業者復元後は誘導メッセージを非表示
+    var hint=document.getElementById('calHint');if(hint)hint.style.display='none';
     if(flex){
       document.getElementById('flexToggle').checked=true;
       var t=document.getElementById('flexTxt');t.textContent='ON';t.className='toggle-txt on';
     }
-    if(s.dateStr){
-      dateStr=s.dateStr;
-      var parsed=new Date(s.dateStr);
-      if(!isNaN(parsed)){
-        selDate=parsed;selDate.setHours(0,0,0,0);
-        var hname=HI_NAMES[selDate.getFullYear()+'-'+pad(selDate.getMonth()+1)+'-'+pad(selDate.getDate())];
-        var holNote=hname?' <span style="color:var(--orange);font-size:10px;font-weight:600;">&#x26a0; '+hname+'</span>':'';
-        document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+holNote;
-      }
+    dateStr=s.dateStr;
+    var parsed=new Date(s.dateStr);
+    if(!isNaN(parsed)){
+      selDate=parsed;selDate.setHours(0,0,0,0);
+      var hname=HI_NAMES[selDate.getFullYear()+'-'+pad(selDate.getMonth()+1)+'-'+pad(selDate.getDate())];
+      var holNote=hname?' <span style="color:var(--orange);font-size:10px;font-weight:600;">&#x26a0; '+hname+'</span>':'';
+      document.getElementById('calDisplay').innerHTML='<span>'+dateStr+'</span>'+holNote;
     }
     if(s.note)document.getElementById('orderNote').value=s.note;
     renderItems();renderCal();updateGoBtn();
-    // ⑩ 復元後に次回配達可能日を表示
     showNextDelivery();
+    renderRecentOrders();
   }catch(e){}
 }
 // ── ⑩ 次回配達可能日を自動表示 ──
@@ -1077,16 +1077,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.1',
+  version: '4.2',
   date: 'April 10, 2026',
   items: [
-    { icon: '🐛', text: 'Fixed: holiday deadline bug & restoreState error removed' },
-    { icon: '🌡️', text: 'Weather now shows °F + °C' },
-    { icon: '↩️', text: 'Back from send screen restores your order' },
-    { icon: '📅', text: 'Next available delivery date shown after selecting supplier' },
-    { icon: '🔁', text: 'Recent orders saved — tap to reuse in one tap' },
-    { icon: '🌧️', text: 'Rainy days show 👥↑ — more customers at Ala Moana!' },
-    { icon: '📋', text: 'Version History page redesigned' }
+    { icon: '🔄', text: 'After sending an order, returning to home now resets to blank state — no supplier highlighted' }
   ]
 };
 

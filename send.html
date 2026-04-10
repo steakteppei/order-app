@@ -406,6 +406,12 @@ function renderSend(v){
   document.getElementById('previewArea').innerHTML=area;
 }
 
+// 送信完了後にorderStateをクリアしてindexへ
+function clearAndGoHome(){
+  try{localStorage.removeItem('st_order_state');}catch(e){}
+  window.location.href='index.html';
+}
+
 function showDone(){
   var v=gv(data.vendorId);
   var wrap=document.createElement('div');
@@ -417,7 +423,7 @@ function showDone(){
   var btn=document.createElement('button');
   btn.className='done-btn';
   btn.textContent='New Order';
-  btn.onclick=function(){window.location.href='index.html';};
+  btn.onclick=clearAndGoHome;
   wrap.appendChild(btn);
   document.querySelector('.app').innerHTML='';
   document.querySelector('.app').appendChild(wrap);
@@ -426,7 +432,7 @@ function showDone(){
     sec--;
     var el=document.getElementById('doneCountdown');
     if(!el){clearInterval(timer);return;}
-    if(sec<=0){clearInterval(timer);window.location.href='index.html';}
+    if(sec<=0){clearInterval(timer);clearAndGoHome();}
     else el.textContent='Returning to order screen in '+sec+' second'+(sec>1?'s':'')+'...';
   },1000);
 }
