@@ -880,80 +880,44 @@ function goToSend(){
   window.location.href='send.html?d='+encoded;
 }
 
-// ── CHANGELOG（Googleスプレッドシートから取得）──
-var SHEET_ID='1syr0EeXr5d6mRzE-VlzIFe-zDOaAhnFGau5bPg-leNQ';
-var CURRENT_VERSION='3.3'; // ← アップデートのたびにここを上げる
+// ── CHANGELOG ──
+// ★ アップデートのたびに version・date・items を更新する
+var CHANGELOG = {
+  version: '3.3',
+  date: 'April 10, 2026',
+  items: [
+    { icon: '🐛', text: 'Fixed: Costco subtotal now updates correctly when quantities are entered' },
+    { icon: '🗓️', text: 'Calendar legend added — color guide for slow season & marathon week' },
+    { icon: '🔢', text: 'Tap quantity number to type directly' },
+    { icon: '📈', text: 'Costco progress bar toward $1,000 minimum' },
+    { icon: '🏃', text: 'Honolulu Marathon highlighted in yellow on calendar' },
+    { icon: '📉', text: 'Slow seasons shown in gray on calendar' },
+    { icon: '🍁', text: 'Canada Snowbird season added' },
+    { icon: '📊', text: 'Seasonal tab in Sales Data — visitor index & market mix' }
+  ]
+};
 
 function checkChangelog(){
-  var seen=localStorage.getItem('st_seen_version');
-  // スプシからchangelogを取得
-  var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent('Changelog');
-  fetch(url).then(function(r){return r.text();}).then(function(text){
-    try{
-      var json=JSON.parse(text.replace(/^[^\(]+\(/,'').replace(/\);?\s*$/,''));
-      var rows=json.table.rows.map(function(r){return r.c.map(function(c){return c&&c.v!=null?c.v:'';});});
-      // 最新バージョン行 = rows[0]: [version, date, icon, text, icon2, text2, ...]
-      if(!rows.length)return;
-      var latest=rows[0];
-      var version=latest[0]?String(latest[0]):'';
-      var date=latest[1]?String(latest[1]):'';
-      // itemsは col2,3 / col4,5 / col6,7 ...
-      var items=[];
-      for(var c=2;c<latest.length-1;c+=2){
-        if(latest[c]&&latest[c+1])items.push({icon:String(latest[c]),text:String(latest[c+1])});
-      }
-      // バージョンが変わっていたら表示
-      if(seen===version)return;
-      document.getElementById('cl-version').textContent='Version '+version;
-      document.getElementById('cl-date').textContent=date;
-      var ul=document.getElementById('cl-items');ul.innerHTML='';
-      items.forEach(function(item){
-        var li=document.createElement('li');
-        li.innerHTML='<span class="changelog-item-dot">'+(item.icon||'✦')+'</span><span>'+item.text+'</span>';
-        ul.appendChild(li);
-      });
-      if(items.length>0)document.getElementById('changelogOverlay').classList.add('open');
-      // seen更新はGot it!ボタンで行う
-      window._clVersion=version;
-    }catch(e){
-      // スプシ読み込み失敗時はフォールバック
-      showFallbackChangelog(seen);
-    }
-  }).catch(function(){showFallbackChangelog(seen);});
-}
-
-function showFallbackChangelog(seen){
-  var fallback={
-    version:CURRENT_VERSION,
-    date:'April 10, 2026',
-    items:[
-      {icon:'📊',text:'Busy periods expanded with seasonal data'},
-      {icon:'🔢',text:'Tap quantity to type directly'},
-      {icon:'📈',text:'Costco progress bar added'},
-      {icon:'🏃',text:'Honolulu Marathon highlighted on calendar'},
-      {icon:'🍁',text:'Canada Snowbird season added'}
-    ]
-  };
-  if(seen===fallback.version)return;
-  document.getElementById('cl-version').textContent='Version '+fallback.version;
-  document.getElementById('cl-date').textContent=fallback.date;
-  var ul=document.getElementById('cl-items');ul.innerHTML='';
-  fallback.items.forEach(function(item){
-    var li=document.createElement('li');
-    li.innerHTML='<span class="changelog-item-dot">'+item.icon+'</span><span>'+item.text+'</span>';
+  var seen = localStorage.getItem('st_seen_version');
+  if(seen === CHANGELOG.version) return;
+  document.getElementById('cl-version').textContent = 'Version ' + CHANGELOG.version;
+  document.getElementById('cl-date').textContent = CHANGELOG.date;
+  var ul = document.getElementById('cl-items');
+  ul.innerHTML = '';
+  CHANGELOG.items.forEach(function(item){
+    var li = document.createElement('li');
+    li.innerHTML = '<span class="changelog-item-dot">' + (item.icon||'✦') + '</span><span>' + item.text + '</span>';
     ul.appendChild(li);
   });
   document.getElementById('changelogOverlay').classList.add('open');
-  window._clVersion=fallback.version;
 }
 
 function handleOverlayClick(e){
-  if(e.target===document.getElementById('changelogOverlay'))closeChangelog();
+  if(e.target === document.getElementById('changelogOverlay')) closeChangelog();
 }
 
 function closeChangelog(){
-  var v=window._clVersion||CURRENT_VERSION;
-  localStorage.setItem('st_seen_version',v);
+  localStorage.setItem('st_seen_version', CHANGELOG.version);
   document.getElementById('changelogOverlay').classList.remove('open');
 }
 
