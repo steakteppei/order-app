@@ -1107,11 +1107,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '4.6',
+  version: '4.7',
   date: 'April 10, 2026',
   items: [
-    { icon: '🐛', text: 'Fixed: Product Links page now loads correctly on iPhone' },
-    { icon: '🟢', text: 'Webstaurant badge color changed to green' }
+    { icon: '🔧', text: 'Fixed: version number no longer reverts after update (Service Worker conflict resolved)' },
+    { icon: '🐛', text: 'Fixed: Product Links now loads correctly on iPhone' }
   ]
 };
 
@@ -1371,21 +1371,40 @@ document.addEventListener('visibilitychange', function(){
 // ── Service Worker ──
 if('serviceWorker' in navigator){
   var refreshing = false;
+
   navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
-    function applyUpdate(worker){ worker.postMessage({type:'SKIP_WAITING'}); }
-    if(reg.waiting){ applyUpdate(reg.waiting); }
+
+    // 既にwaiting中のSWがあれば即座に有効化
+    if(reg.waiting){
+      reg.waiting.postMessage({type:'SKIP_WAITING'});
+    }
+
+    // 新しいSWが見つかったとき
     reg.addEventListener('updatefound', function(){
       var nw = reg.installing;
       nw.addEventListener('statechange', function(){
-        if(nw.state === 'installed'){ applyUpdate(nw); }
+        // installed = ダウンロード完了・waiting状態
+        if(nw.state === 'installed' && navigator.serviceWorker.controller){
+          // 即座に切り替え（ユーザーに通知せず自動更新）
+          nw.postMessage({type:'SKIP_WAITING'});
+        }
       });
     });
-    setInterval(function(){ reg.update(); }, 30000);
+
+    // 定期チェック（5分ごとに短縮）
+    setInterval(function(){ reg.update(); }, 5 * 60 * 1000);
+
   }).catch(function(err){ console.warn('SW registration failed:', err); });
+
+  // controllerが変わったら一度だけリロード
   navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(!refreshing){ refreshing = true; window.location.reload(true); }
+    if(!refreshing){
+      refreshing = true;
+      window.location.reload(true);
+    }
   });
 }
+
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
     if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
