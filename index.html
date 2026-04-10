@@ -117,10 +117,8 @@ input:checked+.slider:before{transform:translateX(16px);}
 .costco-progress-fill{height:100%;border-radius:20px;background:var(--orange);transition:width .3s ease;}
 .costco-progress-fill.done{background:#16a34a;}
 .costco-progress-status{font-size:11px;margin-top:5px;text-align:right;font-weight:600;}
-.cal-cell.slow{background:#f1f5f9;color:#64748b;}
-.cal-cell.slow:hover{background:#e2e8f0;}
-.cal-cell.marathon{background:#fef9c3;color:#854d0e;}
-.cal-cell.marathon:hover{background:#fef08a;}
+.cal-cell.slow:hover .cal-num{background:#e2e8f0;}
+.cal-cell.marathon:hover .cal-num{background:#fef08a;}
 .dot-slow{background:#64748b;}
 .dot-marathon{background:#854d0e;}
 .dot-canada{background:#c0392b;}
@@ -882,12 +880,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '3.4',
+  version: '3.5',
   date: 'April 10, 2026',
   items: [
-    { icon: '🗓️', text: 'Calendar date badges resized — compact square instead of wide oval' },
-    { icon: '🐛', text: 'Fixed: Costco subtotal now updates correctly' },
-    { icon: '📋', text: 'Calendar legend added for slow season & marathon week' }
+    { icon: '🗓️', text: 'Calendar date badges now uniform size — all same as selected date square' }
   ]
 };
 
