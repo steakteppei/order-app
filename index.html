@@ -1158,8 +1158,8 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.4',
-  date: 'April 10, 2026',
+  version: '5.5',
+  date: 'April 11, 2026',
   items: [
     { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
   ]
@@ -1489,25 +1489,15 @@ function callClaudeAPI(wdata, lyData){
     + 'Keep each analysis to 2-3 sentences. Be direct and practical for restaurant staff.\n'
     + 'Response must be valid JSON only.';
 
-  fetch('https://api.anthropic.com/v1/messages', {
+  // Cloudflare Worker経由でClaude APIを呼び出す（APIキーを安全に保管）
+  fetch('https://steak-teppei-ai.aki16-dan.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ prompt: prompt })
   })
   .then(function(r){ return r.json(); })
   .then(function(data){
-    // テキストブロックを抽出
-    var text = '';
-    if(data.content){
-      data.content.forEach(function(block){
-        if(block.type === 'text') text += block.text;
-      });
-    }
+    var text = data.text || '';
     // JSON部分を抽出
     try{
       var jsonStr = text.trim();
