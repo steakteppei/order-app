@@ -586,7 +586,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   minOrder:1000,items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS',p:16.49},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG',p:14.49},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN',p:18.19},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS',p:13.79},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX',p:39.59},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN',p:39.59},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX',p:13.72}]},
+   minOrder:1000,items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS',p:16.49},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG',p:14.49},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN',p:18.19},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS',p:13.79},{n:'Kirkland Signature Stretch-Tite Plastic Food Wrap 12in x 3000ft #208733',u:'BOX',p:19.99},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN',p:39.59},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX',p:13.72}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -1158,7 +1158,7 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.5',
+  version: '5.6',
   date: 'April 11, 2026',
   items: [
     { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
@@ -1521,7 +1521,16 @@ function callClaudeAPI(wdata, lyData){
     }
   })
   .catch(function(){
-    el.innerHTML = '<div class="ai-error">Analysis unavailable — check connection. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
+    el.innerHTML = '<div class="ai-error">Analysis unavailable — retrying... <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry now</button></div>';
+    // 30秒後に自動リトライ（最大2回）
+    if(!callClaudeAPI._retries) callClaudeAPI._retries = 0;
+    if(callClaudeAPI._retries < 2){
+      callClaudeAPI._retries++;
+      setTimeout(function(){ fetchAIOutlook(); }, 30000);
+    } else {
+      callClaudeAPI._retries = 0;
+      el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
+    }
   });
 }
 

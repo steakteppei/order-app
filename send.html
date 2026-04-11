@@ -239,7 +239,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Mon: Prev Fri by 12pm | Thu: Prev Wed by 12pm',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var d=dow(dt)===1?-3:-1;var f=new Date(dt);f.setDate(f.getDate()+d);return 'Order by: '+f.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Plastic Food Wrap 12in x 3000ft #208733',u:'BOX'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
+   items:[{n:'Cage Free Large Eggs 5 Dozen #1025795',u:'CS'},{n:'Christopher Ranch Peeled Garlic 3 lb #5855',u:'BAG'},{n:'Horizon Heavy Whipping Cream 64 oz #506970',u:'CRTN'},{n:'Kirkland Drinking Water 40pk 16.9 oz #782796',u:'CS'},{n:'Kirkland Signature Stretch-Tite Plastic Food Wrap 12in x 3000ft #208733',u:'BOX'},{n:'Kirkland Soybean Salad Oil 35 lb #71011',u:'CTN'},{n:'Kirkland Unsalted Butter 4/1 lb #44110',u:'BOX'}]},
   {id:'eskimo',name:'Eskimo Candy Oahu Inc.',short:'Eskimo Candy',method:'email',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Previous day by 3:00 PM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -252,7 +252,7 @@ var V=[
    items:[{n:'KM-57-T 8X8 3-COMP',u:'CS'}]},
   {id:'freshisland',name:'Fresh Island Fish Co., Inc.',short:'Fresh Island Fish',method:'sms',
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
-   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
+   ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},phone:'BPO not included Fresh Island Fish - Steak Teppei',
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
    items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
@@ -308,14 +308,8 @@ function init(){
   }
 
   renderSenderBtns();
-  // ① 前回の送信者を復元
-  var lastSender=localStorage.getItem('st_last_sender');
-  if(lastSender){
-    selSender(lastSender);
-  } else {
-    buildMsg(v,null);
-    renderSend(v);
-  }
+  buildMsg(v,null);
+  renderSend(v);
 }
 
 function renderSenderBtns(){
@@ -330,12 +324,9 @@ function renderSenderBtns(){
 function selSender(key){
   sender=key;
   document.querySelectorAll('.sender-btn').forEach(function(b){b.classList.remove('selected');});
-  var btn=document.getElementById('sb'+key);
-  if(btn)btn.classList.add('selected');
+  document.getElementById('sb'+key).classList.add('selected');
   var hint=document.getElementById('senderHint');
   if(hint)hint.style.display='none';
-  // ① 送信者をlocalStorageに記憶
-  try{localStorage.setItem('st_last_sender',key);}catch(e){}
   var v=gv(data.vendorId);
   buildMsg(v,key);
   renderSend(v);
@@ -369,7 +360,7 @@ function buildMsg(v,senderKey){
   b+=(lines.length?lines.join('\n'):'  (No items selected)');
   if(data.note)b+='\n\nNote: '+data.note;
   b+='\n\nReceiving Hours: 10:00 AM - 8:00 PM';
-  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\n'+(sObj?sObj.label+'\n':'')+'Steak Teppei';
+  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\nSteak Teppei';
   msg=b;
 }
 
@@ -415,12 +406,6 @@ function renderSend(v){
   document.getElementById('previewArea').innerHTML=area;
 }
 
-// 送信完了後にorderStateをクリアしてindexへ
-function clearAndGoHome(){
-  try{localStorage.removeItem('st_order_state');}catch(e){}
-  window.location.href='index.html';
-}
-
 function showDone(){
   var v=gv(data.vendorId);
   var wrap=document.createElement('div');
@@ -432,7 +417,7 @@ function showDone(){
   var btn=document.createElement('button');
   btn.className='done-btn';
   btn.textContent='New Order';
-  btn.onclick=clearAndGoHome;
+  btn.onclick=function(){window.location.href='index.html';};
   wrap.appendChild(btn);
   document.querySelector('.app').innerHTML='';
   document.querySelector('.app').appendChild(wrap);
@@ -441,7 +426,7 @@ function showDone(){
     sec--;
     var el=document.getElementById('doneCountdown');
     if(!el){clearInterval(timer);return;}
-    if(sec<=0){clearInterval(timer);clearAndGoHome();}
+    if(sec<=0){clearInterval(timer);window.location.href='index.html';}
     else el.textContent='Returning to order screen in '+sec+' second'+(sec>1?'s':'')+'...';
   },1000);
 }
@@ -472,14 +457,7 @@ function copyOrder(){
   }).catch(function(){alert('Copy failed. Please copy manually.');});
 }
 
-// ④ 戻るボタン：history.back()でブラウザ履歴を使うとstateが保持される
-function goBack(){
-  if(document.referrer.indexOf('index.html')>=0||document.referrer.indexOf('order-app/')>=0){
-    history.back();
-  } else {
-    window.location.href='index.html';
-  }
-}
+function goBack(){window.location.href='index.html';}
 
 init();
 
@@ -487,51 +465,27 @@ init();
 
 <script>
 if('serviceWorker' in navigator){
-  var refreshing = false;
-  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(function(reg){
-    function applyUpdate(w){ w.postMessage({type:'SKIP_WAITING'}); }
-    if(reg.waiting){ applyUpdate(reg.waiting); }
-    reg.addEventListener('updatefound', function(){
-      var nw = reg.installing;
-      nw.addEventListener('statechange', function(){
-        if(nw.state === 'installed'){ applyUpdate(nw); }
+  navigator.serviceWorker.register('./sw.js').then(function(reg){
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='installed'&&navigator.serviceWorker.controller){
+          document.getElementById('updateBanner').classList.add('show');
+        }
       });
     });
-    setInterval(function(){ reg.update(); }, 30000);
-  }).catch(function(err){ console.warn('SW registration failed:', err); });
-  navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if(!refreshing){ refreshing = true; window.location.reload(true); }
+  });
+  var refreshing=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(!refreshing){refreshing=true;window.location.reload();}
   });
 }
 function doUpdate(){
   navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg && reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload(true);
+    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+    else window.location.reload();
   });
 }
-</script>
-
-<script>
-// バージョンチェック（iOS PWA強制更新対応）
-function checkVersion(){
-  fetch('./version.json?_='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache,no-store'}})
-  .then(function(r){return r.json();})
-  .then(function(data){
-    var sv=String(data.version);
-    var lv=localStorage.getItem('st_app_version');
-    if(lv&&lv!==sv){
-      localStorage.setItem('st_app_version',sv);
-      if('caches' in window){
-        caches.keys().then(function(keys){
-          Promise.all(keys.map(function(k){return caches.delete(k);}))
-            .then(function(){window.location.reload(true);});
-        });
-      } else { window.location.reload(true); }
-    } else { localStorage.setItem('st_app_version',sv); }
-  }).catch(function(){});
-}
-checkVersion();
-document.addEventListener('visibilitychange',function(){if(!document.hidden)checkVersion();});
 </script>
 </body>
 </html>
