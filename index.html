@@ -393,7 +393,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: April 12, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
+  <div class="app-version">Last updated: April 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -1158,10 +1158,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.7',
-  date: 'April 12, 2026',
+  version: '5.8',
+  date: 'April 11, 2026',
   items: [
-    { icon: '🔧', text: 'Fixed: Service Worker now allows POST requests to pass through (fixes AI 7-Day Outlook)' }
+    { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
   ]
 };
 
@@ -1735,7 +1735,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.4'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.8'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
@@ -1777,10 +1777,34 @@ document.addEventListener('visibilitychange', function(){
   if(!document.hidden) checkVersion();
 });
 
-// Service Workerは登録だけしてキャッシュ管理に使用（更新検知には使わない）
+// Service Worker登録 — 古いSWがPOSTをブロックしている場合は強制unregister→再登録
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
-    .catch(function(){});
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    var needsReset = false;
+    regs.forEach(function(reg){
+      // 古いキャッシュ名（v5.6以前）が残っていたら強制削除
+      if(reg.active && reg.active.scriptURL && reg.active.scriptURL.indexOf('sw.js') !== -1){
+        // sw.jsのバージョンをチェックするためSKIP_WAITINGを送信
+        if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
+        reg.update();
+      }
+    });
+    // キャッシュ名がst-order-v5.6以前なら削除
+    if('caches' in window){
+      caches.keys().then(function(keys){
+        keys.forEach(function(k){
+          if(k.match(/st-order-v[0-4]\.|st-order-v5\.[0-6]$/)){
+            caches.delete(k);
+          }
+        });
+      });
+    }
+    if(regs.length === 0){
+      navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
+    }
+  }).catch(function(){
+    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
+  });
 }
 
 function doUpdate(){
