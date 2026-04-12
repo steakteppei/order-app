@@ -217,6 +217,8 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:active{opacity:.85;}
 .go-btn.go-btn-dim{background:#aaa;}
 .go-btn.go-btn-ready{background:var(--orange);}
+.clear-btn{width:100%;padding:11px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:transparent;color:var(--text-hint);margin-top:8px;letter-spacing:-.2px;}
+.clear-btn:active{opacity:.7;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 .sales-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:12px;}
 .sales-btn:active{opacity:.85;transform:scale(.99);}
@@ -367,6 +369,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </div>
   <div class="card">
     <button class="go-btn" id="goBtn" onclick="goToSendOrHint()">Preview &amp; Send &rarr;</button>
+    <button class="clear-btn" id="clearBtn" onclick="clearAll()" style="display:none;">&#x2715; Clear All</button>
   </div>
 </div>
 <a class="sales-btn" href="sales.html">
@@ -393,7 +396,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: April 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
+  <div class="app-version">Last updated: April 12, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -990,6 +993,9 @@ function updateGoBtn(){
   var ready=!!(selId&&selDate&&hasQty);
   btn.classList.toggle('go-btn-ready',ready);
   btn.classList.toggle('go-btn-dim',!ready);
+  // Clear Allボタン：業者が選択されたら表示
+  var cb=document.getElementById('clearBtn');
+  if(cb) cb.style.display=selId?'':'none';
 }
 
 function goToSendOrHint(){
@@ -1016,6 +1022,20 @@ function saveState(){
       note:document.getElementById('orderNote').value.trim(),cy:cy,cm:cm};
     localStorage.setItem('st_order_state',JSON.stringify(state));
   }catch(e){}
+}
+function clearAll(){
+  selId=null;selDate=null;dateStr='';qty={};custom=[];flex=false;
+  document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
+  document.getElementById('calDisplay').textContent='No date selected';
+  var hint=document.getElementById('calHint');if(hint)hint.style.display='';
+  document.getElementById('flexToggle').checked=false;
+  var t=document.getElementById('flexTxt');t.textContent='OFF';t.className='toggle-txt';
+  document.getElementById('orderNote').value='';
+  var nb=document.getElementById('nextDelivery');if(nb)nb.style.display='none';
+  var sdw=document.getElementById('selectedDateWeather');if(sdw)sdw.style.display='none';
+  var dl=document.getElementById('deadlineInfo');if(dl)dl.style.display='none';
+  localStorage.removeItem('st_order_state');
+  renderItems();renderCal();updateGoBtn();
 }
 function restoreState(){
   try{
@@ -1144,7 +1164,8 @@ function applyRecentOrder(idx){
 
 function goToSend(){
   if(!selId||!selDate)return;
-  saveState();
+  // send.htmlから戻ったときにリセットされるよう、状態を保存しない
+  localStorage.removeItem('st_order_state');
   // ⑨ 送信前に最近の注文として保存
   saveRecentOrder();
   var all=getItems();var items=[];
@@ -1158,10 +1179,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.8',
-  date: 'April 11, 2026',
+  version: '5.9',
+  date: 'April 12, 2026',
   items: [
-    { icon: '🗓️', text: 'Fixed: Summer Break and US Summer Break no longer shown as duplicates in Upcoming Busy Periods' }
+    { icon: '🔄', text: 'Clear All button added — resets supplier, date, and quantities in one tap' },
+    { icon: '🔧', text: 'Fixed: returning from Preview screen now resets selection state' }
   ]
 };
 
@@ -1735,7 +1757,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.8'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.9'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
@@ -1777,34 +1799,10 @@ document.addEventListener('visibilitychange', function(){
   if(!document.hidden) checkVersion();
 });
 
-// Service Worker登録 — 古いSWがPOSTをブロックしている場合は強制unregister→再登録
+// Service Workerは登録だけしてキャッシュ管理に使用（更新検知には使わない）
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    var needsReset = false;
-    regs.forEach(function(reg){
-      // 古いキャッシュ名（v5.6以前）が残っていたら強制削除
-      if(reg.active && reg.active.scriptURL && reg.active.scriptURL.indexOf('sw.js') !== -1){
-        // sw.jsのバージョンをチェックするためSKIP_WAITINGを送信
-        if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
-        reg.update();
-      }
-    });
-    // キャッシュ名がst-order-v5.6以前なら削除
-    if('caches' in window){
-      caches.keys().then(function(keys){
-        keys.forEach(function(k){
-          if(k.match(/st-order-v[0-4]\.|st-order-v5\.[0-6]$/)){
-            caches.delete(k);
-          }
-        });
-      });
-    }
-    if(regs.length === 0){
-      navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
-    }
-  }).catch(function(){
-    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
-  });
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
+    .catch(function(){});
 }
 
 function doUpdate(){
