@@ -1187,10 +1187,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.10',
+  version: '5.11',
   date: 'April 12, 2026',
   items: [
-    { icon: '📖', text: 'User Guide added — auto-detects mobile/desktop and shows the right version' }
+    { icon: '💰', text: 'AI Outlook: switched to Haiku model, removed auto-retry to prevent runaway API costs' }
   ]
 };
 
@@ -1339,6 +1339,7 @@ function wcToClass(wc){
 // 1日1回だけClaude APIを呼び出してキャッシュ。3人使っても同じ日は1回のみ。
 
 var AI_CACHE_KEY = 'st_ai_outlook';
+var AI_FETCHING = false; // 多重呼び出し防止フラグ
 
 function getTodayKey(){
   var d = new Date();
@@ -1366,8 +1367,10 @@ function loadAIOutlook(){
 }
 
 function fetchAIOutlook(){
+  if(AI_FETCHING) return; // 既に実行中なら無視
+  AI_FETCHING = true;
   var el = document.getElementById('aiContent');
-  if(!el) return;
+  if(!el){ AI_FETCHING = false; return; }
   el.innerHTML = '<div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div>';
 
   // 天気データを取得してからAI分析を実行
@@ -1541,25 +1544,19 @@ function callClaudeAPI(wdata, lyData){
           generated: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
         };
         try{ localStorage.setItem(AI_CACHE_KEY, JSON.stringify(cacheObj)); }catch(e){}
+        AI_FETCHING = false;
         renderAIDays(parsed.days, cacheObj.generated, true);
       } else {
         throw new Error('No days in response');
       }
     }catch(e){
+      AI_FETCHING = false;
       el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
     }
   })
   .catch(function(){
-    el.innerHTML = '<div class="ai-error">Analysis unavailable — retrying... <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry now</button></div>';
-    // 30秒後に自動リトライ（最大2回）
-    if(!callClaudeAPI._retries) callClaudeAPI._retries = 0;
-    if(callClaudeAPI._retries < 2){
-      callClaudeAPI._retries++;
-      setTimeout(function(){ fetchAIOutlook(); }, 30000);
-    } else {
-      callClaudeAPI._retries = 0;
-      el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
-    }
+    AI_FETCHING = false;
+    el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
   });
 }
 
@@ -1764,7 +1761,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.10'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.11'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
