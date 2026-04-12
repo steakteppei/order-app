@@ -1187,11 +1187,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.12',
+  version: '5.13',
   date: 'April 12, 2026',
   items: [
-    { icon: '💰', text: 'AI Outlook: switched to Gemini 2.0 Flash-Lite — significantly lower cost' },
-    { icon: '🎨', text: 'AI Outlook badge updated to Gemini AI' }
+    { icon: '🔧', text: 'Fixed: AI Outlook prompt updated for Gemini compatibility (removed Claude-specific web search)' }
   ]
 };
 
@@ -1512,17 +1511,15 @@ function callClaudeAPI(wdata, lyData){
     if(day.marathon) contextStr += '  Note: Honolulu Marathon week - extremely busy!\n';
   });
 
-  var prompt = contextStr + '\n\nUsing the data above AND your web search to find:\n'
-    + '1. Latest Hawaii tourism news (visitor counts, new flights, hotel occupancy)\n'
-    + '2. Latest Hawaii local news that could affect restaurant traffic (events, construction, weather alerts)\n'
-    + '3. Latest Hawaii Tourism Authority (HTA) press releases\n\n'
+  var prompt = contextStr + '\n\nBased on the data above, analyze customer traffic for Steak Teppei restaurant.\n'
+    + 'Consider: bad weather drives indoor mall traffic UP, good weather may reduce it. Spring Break and holidays increase tourism.\n\n'
     + 'Provide a JSON response ONLY (no markdown, no backticks) with this exact structure:\n'
-    + '{"days":[{"date":"MMM DD","dayName":"Monday","weatherIcon":"⛈️","tempF":82,"score":"HIGH","scoreLabel":"Very Busy","analysis":"2-3 sentence analysis combining weather trend, last year data, and any relevant news. Be specific and actionable.","recommendation":"Specific order recommendation e.g. Order 20-25% more than usual"}]}\n\n'
-    + 'Score values: HIGH (expect very busy, bad weather or big event), BUSY (above average), NORMAL (average day), SLOW (below average)\n'
+    + '{"days":[{"date":"MMM DD","dayName":"Monday","weatherIcon":"⛈️","tempF":82,"score":"HIGH","scoreLabel":"Very Busy","analysis":"2-3 sentence analysis combining weather and last year sales data. Be specific and actionable.","recommendation":"Specific order recommendation e.g. Order 20-25% more than usual"}]}\n\n'
+    + 'Score values: HIGH (expect very busy), BUSY (above average), NORMAL (average day), SLOW (below average)\n'
     + 'Keep each analysis to 2-3 sentences. Be direct and practical for restaurant staff.\n'
-    + 'Response must be valid JSON only.';
+    + 'Response must be valid JSON only. No markdown, no backticks, just pure JSON.';
 
-  // Cloudflare Worker経由でClaude APIを呼び出す（APIキーを安全に保管）
+  // Cloudflare Worker経由でGemini APIを呼び出す
   fetch('https://steak-teppei-ai.aki16-dan.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1762,7 +1759,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.12'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.13'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
