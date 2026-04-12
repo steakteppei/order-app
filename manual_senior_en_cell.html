@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ST Guide">
+<meta name="theme-color" content="#E8440A">
+<title>Steak Teppei Order App User Guide</title>
+<style>
+/* -- Base -- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #f9f7f4;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #222;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* -- Cover -- */
+.cover {
+  background: #E8440A;
+  color: #fff;
+  padding: 48px 20px 56px;
+  padding-top: calc(48px + env(safe-area-inset-top));
+  text-align: center;
+}
+.cover-logo { font-size: 40px; margin-bottom: 12px; }
+.cover h1 {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.cover-sub {
+  font-size: 15px;
+  opacity: .85;
+  margin-bottom: 24px;
+}
+.cover-notice {
+  background: rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+/* -- Table of Contents -- */
+.toc {
+  background: #fff;
+  padding: 32px 16px;
+  border-bottom: 2px solid #f0ede8;
+}
+.toc h2 {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  color: #E8440A;
+}
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #222;
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid #e8e5e0;
+  transition: background .15s;
+  -webkit-tap-highlight-color: rgba(232,68,10,.1);
+}
+.toc-list a:active { background: #fff2ed; border-color: #E8440A; }
+.toc-num {
+  width: 32px; height: 32px;
+  background: #E8440A;
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* -- Section -- */
+.section {
+  padding: 40px 16px 36px;
+  border-bottom: 2px solid #f0ede8;
+}
+
+.section-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #E8440A;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 4px 12px 4px 8px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+.section-num-circle {
+  width: 22px; height: 22px;
+  background: rgba(255,255,255,.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+
+.section h2 {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+.section-lead {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 24px;
+  line-height: 1.65;
+}
+
+/* -- Photo Frame -- */
+.photo-frame {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 8px;
+  margin: 20px auto;
+  max-width: 280px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.15);
+}
+.photo-inner {
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.photo-inner img {
+  width: 100%;
+  display: block;
+}
+
+.photo-caption {
+  text-align: center;
+  font-size: 13px;
+  color: #777;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+/* Side-by-side photos */
+.photo-row {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: center;
+}
+.photo-row .photo-frame {
+  max-width: 160px;
+  margin: 0;
+}
+
+/* -- Steps -- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 20px 0;
+  border: 2px solid #e8e5e0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.step {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8e5e0;
+  background: #fff;
+}
+.step:last-child { border-bottom: none; }
+.step-left {
+  width: 48px;
+  flex-shrink: 0;
+  background: #E8440A;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 16px;
+}
+.step-num-big {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+}
+.step-right {
+  flex: 1;
+  padding: 14px 14px;
+}
+.step-title {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+}
+.step-body {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.7;
+}
+.step-body strong { color: #E8440A; }
+
+/* -- Point Box -- */
+.point-box {
+  border-radius: 14px;
+  padding: 16px 16px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.point-box.red    { background: #fff2ed; border: 2px solid #E8440A; }
+.point-box.green  { background: #f0fdf4; border: 2px solid #16a34a; }
+.point-box.blue   { background: #eff6ff; border: 2px solid #1a56db; }
+.point-box.yellow { background: #fffbeb; border: 2px solid #d97706; }
+.point-box.gray   { background: #f8f8f6; border: 2px solid #ccc; }
+.point-box-title {
+  font-size: 14px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.point-box.red    .point-box-title { color: #E8440A; }
+.point-box.green  .point-box-title { color: #16a34a; }
+.point-box.blue   .point-box-title { color: #1a56db; }
+.point-box.yellow .point-box-title { color: #d97706; }
+.point-box.gray   .point-box-title { color: #555; }
+
+/* -- Supplier Cards -- */
+.supplier-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+.supplier-card {
+  background: #fff;
+  border: 2px solid #e8e5e0;
+  border-radius: 14px;
+  padding: 14px 14px;
+}
+.supplier-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.supplier-name { font-size: 16px; font-weight: 900; }
+.supplier-method {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+.method-email { background: #eff6ff; color: #1a56db; }
+.method-line  { background: #e6f9ee; color: #06c755; }
+.method-sms   { background: #f0fdf4; color: #16a34a; }
+.supplier-schedule { font-size: 14px; color: #555; line-height: 1.6; }
+.supplier-deadline {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E8440A;
+  margin-top: 4px;
+}
+
+/* -- Q&A -- */
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 20px 0;
+  border: 2px solid #e8e5e0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.qa-item {
+  border-bottom: 2px solid #e8e5e0;
+  background: #fff;
+}
+.qa-item:last-child { border-bottom: none; }
+.qa-q {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 14px 10px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(232,68,10,.08);
+}
+.qa-icon {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900;
+  flex-shrink: 0;
+}
+.qa-icon-q { background: #E8440A; color: #fff; }
+.qa-icon-a { background: #1a56db; color: #fff; }
+.qa-text-q { font-size: 15px; font-weight: 700; line-height: 1.45; padding-top: 4px; }
+.qa-a {
+  display: none;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 0 14px 14px;
+  background: #f9f7f4;
+}
+.qa-item.open .qa-a { display: flex; }
+.qa-text-a { font-size: 14px; color: #333; line-height: 1.7; padding-top: 6px; }
+.qa-text-a strong { color: #E8440A; }
+.qa-toggle {
+  margin-left: auto;
+  font-size: 18px;
+  color: #aaa;
+  flex-shrink: 0;
+  transition: transform .2s;
+  padding-top: 4px;
+}
+.qa-item.open .qa-toggle { transform: rotate(180deg); }
+
+/* -- Calendar Legend -- */
+.cal-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #e8e5e0;
+  border-radius: 10px;
+}
+.cal-sample {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* -- Big Note -- */
+.big-note {
+  background: #fff2ed;
+  border-left: 5px solid #E8440A;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 16px;
+  margin: 20px 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.big-note-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: #E8440A;
+  margin-bottom: 6px;
+}
+
+/* -- Benefits Section -- */
+.benefit-section {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 40px 16px 48px;
+  border-bottom: 2px solid #f0ede8;
+}
+.benefit-section h2 {
+  font-size: 21px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+.benefit-lead {
+  font-size: 14px;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* Hero benefit */
+.benefit-hero {
+  background: linear-gradient(135deg, #E8440A 0%, #ff6b35 100%);
+  border-radius: 18px;
+  padding: 22px 18px 20px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.benefit-hero::before {
+  content: '\2605';
+  position: absolute;
+  top: -8px; right: 12px;
+  font-size: 64px;
+  opacity: .15;
+  line-height: 1;
+}
+.benefit-hero-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 8px;
+}
+.benefit-hero-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.benefit-hero-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.benefit-hero-list li {
+  font-size: 14px;
+  color: #fff;
+  line-height: 1.55;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.benefit-hero-list li::before {
+  content: '\2713';
+  font-weight: 900;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  background: rgba(255,255,255,.25);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Category benefits */
+.benefit-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.benefit-cat {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.benefit-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.05);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255,255,255,.05);
+}
+.benefit-cat-icon { font-size: 20px; }
+.benefit-cat-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+}
+.benefit-cat-toggle {
+  margin-left: auto;
+  font-size: 16px;
+  color: rgba(255,255,255,.4);
+  transition: transform .2s;
+}
+.benefit-cat.open .benefit-cat-toggle { transform: rotate(180deg); }
+.benefit-items {
+  padding: 12px 14px 14px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.benefit-cat.open .benefit-items { display: flex; }
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.55;
+}
+.benefit-item-dot {
+  width: 7px; height: 7px;
+  background: #E8440A;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.benefit-item.star {
+  color: #fff;
+  font-weight: 700;
+}
+.benefit-item.star .benefit-item-dot {
+  background: #ffd700;
+  width: 9px; height: 9px;
+  margin-top: 6px;
+}
+.benefit-item strong { color: #ff8c5a; }
+
+/* Benefit numbers */
+.benefit-numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.benefit-number-card {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.benefit-number {
+  font-size: 30px;
+  font-weight: 900;
+  color: #E8440A;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.benefit-number-label {
+  font-size: 12px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.35;
+}
+
+/* -- Back to Top -- */
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 16px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  width: 44px; height: 44px;
+  background: #E8440A;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+  z-index: 100;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-to-top.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* -- Footer -- */
+.footer {
+  background: #1a1a1a;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  padding: 36px 16px;
+  padding-bottom: calc(36px + env(safe-area-inset-bottom));
+  font-size: 13px;
+  line-height: 1.9;
+}
+.footer strong { color: rgba(255,255,255,.8); }
+
+/* -- Print -- */
+@media print {
+  .cover { padding: 32px; }
+  .photo-frame { box-shadow: none; }
+  .back-to-top { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- == Cover == -->
+<div class="cover">
+  <div class="cover-logo">🥩</div>
+  <h1>Steak Teppei<br>Order App<br>User Guide</h1>
+  <p class="cover-sub">Makai Market · Ala Moana Center</p>
+  <div class="cover-notice">
+    📱 This guide explains<br>
+    how to use the<br>
+    smartphone ordering app
+  </div>
+</div>
+
+<!-- == Table of Contents == -->
+<div class="toc" id="top">
+  <h2>Contents</h2>
+  <ul class="toc-list">
+    <li><a href="#benefits" style="background:linear-gradient(135deg,#E8440A,#ff6b35);color:#fff;border-color:#E8440A;"><div class="toc-num" style="background:rgba(255,255,255,.25);color:#fff;">★</div>Features &amp; Benefits</a></li>
+    <li><a href="#install"><div class="toc-num">1</div>How to Install the App</a></li>
+    <li><a href="#order"><div class="toc-num">2</div>Ordering Process (Overview)</a></li>
+    <li><a href="#supplier"><div class="toc-num">3</div>Select a Supplier</a></li>
+    <li><a href="#calendar"><div class="toc-num">4</div>Select a Delivery Date</a></li>
+    <li><a href="#items"><div class="toc-num">5</div>Enter Items &amp; Quantities</a></li>
+    <li><a href="#send"><div class="toc-num">6</div>Send Your Order</a></li>
+    <li><a href="#suppliers-list"><div class="toc-num">7</div>Supplier List (Schedule)</a></li>
+    <li><a href="#sales"><div class="toc-num">8</div>View Sales Data</a></li>
+    <li><a href="#seasons"><div class="toc-num">9</div>Busy &amp; Slow Seasons</a></li>
+    <li><a href="#links"><div class="toc-num">10</div>Product Links</a></li>
+    <li><a href="#update"><div class="toc-num">11</div>App Updates</a></li>
+    <li><a href="#qa"><div class="toc-num">Q&A</div>FAQ</a></li>
+  </ul>
+</div>
+
+<!-- == Benefits Section == -->
+<div class="benefit-section" id="benefits">
+  <h2>What This App Can Do<br>Features &amp; Benefits</h2>
+  <p class="benefit-lead">Here's how this app makes ordering easier.</p>
+
+  <div class="benefit-numbers">
+    <div class="benefit-number-card">
+      <div class="benefit-number">10</div>
+      <div class="benefit-number-label">Suppliers managed<br>in one app</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">53</div>
+      <div class="benefit-number-label">Product links<br>one tap away</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">5 min</div>
+      <div class="benefit-number-label">To complete an order<br>(once familiar)</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">$0</div>
+      <div class="benefit-number-label">No extra cost<br>Completely free</div>
+    </div>
+  </div>
+
+  <div class="benefit-hero">
+    <div class="benefit-hero-label">⭐ Most Important Benefit</div>
+    <div class="benefit-hero-title">Dramatically reduces<br>ordering mistakes &amp; missed orders</div>
+    <ul class="benefit-hero-list">
+      <li>Deadline countdowns are auto-calculated (red &amp; orange warnings)</li>
+      <li>Non-delivery days are grayed out — no wrong dates</li>
+      <li>Always review the message before sending</li>
+      <li>Costco's minimum order ($1,000) is auto-calculated</li>
+      <li>Select your name and To, CC, subject are auto-filled</li>
+    </ul>
+  </div>
+
+  <div class="benefit-cats">
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">📱</div>
+        <div class="benefit-cat-title">Ordering becomes dramatically faster</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Email, LINE, and SMS are auto-generated.</strong> Supplier, date, items, quantities, and signature are pre-filled</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>All 10 suppliers in one app.</strong> No more switching between Gmail, LINE, and Messages</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Just tap "+" to set quantities — no complicated steps</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Your name is remembered from last time</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Add unlisted items freely with "Custom Item"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">⏰</div>
+        <div class="benefit-cat-title">Never miss a deadline</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Less than 2 hours to deadline? It turns red.</strong> Prevents forgotten orders</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>"Due today" suppliers shown in orange banner on launch.</strong> See what needs doing at a glance</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Complex deadlines like Coca-Cola's "previous Friday by 2 PM" are auto-calculated</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Costco's split deadlines (Mon = prev Fri noon, Thu = prev Wed noon) are auto-determined</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">📊</div>
+        <div class="benefit-cat-title">Easily decide order quantities</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>"Same week last year" sales shown when you pick a date.</strong> Know what you used last year</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Rain/storm days show "expect more customers."</strong> Know when to order extra</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Golden Week, Obon, Honolulu Marathon — busy periods clearly displayed</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Slow seasons shown too — know when to order less</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>7-day weather forecast always on the home screen</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Upcoming busy/slow periods within 2 weeks auto-listed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">📈</div>
+        <div class="benefit-cat-title">Sales data on your phone anytime</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>All sales since 2019 on your phone.</strong> No computer needed</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>View by day, month, year, or time of day</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Year-over-year comparison at a glance</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Compare busy period sales by year</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Weather vs. sales correlation</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">🛒</div>
+        <div class="benefit-cat-title">Easy Amazon, Sam's &amp; Webstaurant shopping</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>53 product links, one tap to open.</strong> No more searching every time</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Organized by category — food, cookware, cleaning, equipment</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Search by product name to filter</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="benefit-cat-icon">🔄</div>
+        <div class="benefit-cat-title">Hassle-free design</div>
+        <div class="benefit-cat-toggle">▼</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Auto-updates</strong> when a new version is released</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Dark mode supported automatically</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Hawaii, Japan, U.S., and Canada holidays built in</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>No App Store needed — just add from Safari</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Completely free to use</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- == 1. Installation == -->
+<div class="section" id="install">
+  <div class="section-num"><div class="section-num-circle">1</div>Chapter 1</div>
+  <h2>How to Install the App</h2>
+  <p class="section-lead">Add the app to your home screen from Safari. No App Store download required.</p>
+
+  <div class="point-box blue">
+    <div class="point-box-title">ℹ️ One-time setup only</div>
+    You only do this once. After that, just tap the icon to launch.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Open Safari</div>
+        <div class="step-body">Open <strong>Safari (compass icon)</strong> on your iPhone.<br>(Not Chrome or Firefox)</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Enter the URL</div>
+        <div class="step-body">Type in the address bar:<br><strong style="font-size:14px;word-break:break-all;">steakteppei.github.io/order-app</strong></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap the Share button</div>
+        <div class="step-body">Tap the <strong>square with arrow (Share button)</strong> at the bottom.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Add to Home Screen"</div>
+        <div class="step-body">Scroll up on the menu and tap <strong>"Add to Home Screen"</strong>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">5</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Add"</div>
+        <div class="step-body">Tap <strong>"Add"</strong> in the top right. Done!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真1.jpg" alt="Photo 1">
+        </div>
+      </div>
+      <div class="photo-caption">Page opened in Safari</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真2.jpg" alt="Photo 2">
+        </div>
+      </div>
+      <div class="photo-caption">"Add to Home Screen"</div>
+    </div>
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真3.jpg" alt="Photo 3">
+    </div>
+  </div>
+  <div class="photo-caption">Icon added to your home screen</div>
+
+  <div class="big-note">
+    <div class="big-note-title">⚠️ Important</div>
+    Always launch from the <strong>Steak Teppei icon</strong> on your home screen.<br>
+    Do not open it from Safari.
+  </div>
+</div>
+
+<!-- == 2. Ordering Process == -->
+<div class="section" id="order">
+  <div class="section-num"><div class="section-num-circle">2</div>Chapter 2</div>
+  <h2>Ordering Process (Overview)</h2>
+  <p class="section-lead">Every order follows the same 4 steps. Takes less than 5 minutes once you're used to it.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真4.jpg" alt="Photo 4">
+    </div>
+  </div>
+  <div class="photo-caption">The app's home screen</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Select a supplier</div>
+        <div class="step-body"><strong>Tap</strong> a supplier button at the top. It turns orange.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Select a delivery date</div>
+        <div class="step-body"><strong>Tap</strong> a date on the calendar. Gray dates can't be selected.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Enter quantities</div>
+        <div class="step-body">Tap <strong>"+"</strong> to add quantities. Items at 0 aren't included.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Send the order</div>
+        <div class="step-body">Tap the orange <strong>"Preview &amp; Send"</strong> button, review, and send.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == 3. Select a Supplier == -->
+<div class="section" id="supplier">
+  <div class="section-num"><div class="section-num-circle">3</div>Chapter 3</div>
+  <h2>Select a Supplier</h2>
+  <p class="section-lead">10 supplier buttons at the top. Tap the one you want — it turns orange.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真5.jpg" alt="Photo 5">
+    </div>
+  </div>
+  <div class="photo-caption">Selected supplier turns orange</div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">📮 Sending methods</div>
+    Below each button: "via Gmail," "via LINE," or "via Text Message." The app opens the right one for you.
+  </div>
+</div>
+
+<!-- == 4. Calendar == -->
+<div class="section" id="calendar">
+  <div class="section-num"><div class="section-num-circle">4</div>Chapter 4</div>
+  <h2>Select a Delivery Date</h2>
+  <p class="section-lead">After picking a supplier, available delivery days appear in white. Gray days are unavailable.</p>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真6.jpg" alt="Photo 6">
+        </div>
+      </div>
+      <div class="photo-caption">Before selection</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真7.jpg" alt="Photo 7">
+        </div>
+      </div>
+      <div class="photo-caption">After selection (orange)</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:20px 0 10px;">Calendar Color Guide</h3>
+  <div class="cal-legend">
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#E8440A;color:#fff;">15</div>
+      <div><strong>Selected date</strong> (orange)</div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#ddd;color:#999;">8</div>
+      <div><strong>Unavailable</strong> (gray)<br><span style="font-size:13px;color:#777;">Holiday or non-delivery day</span></div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#fef9c3;color:#ca8a04;">12</div>
+      <div><strong>Marathon week</strong> (yellow)<br><span style="font-size:13px;color:#777;">Extra busy during Honolulu Marathon</span></div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#f1f5f9;color:#94a3b8;">22</div>
+      <div><strong>Slow season</strong> (light gray)<br><span style="font-size:13px;color:#777;">Fewer customers — order conservatively</span></div>
+    </div>
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">⏰ Watch the deadline!</div>
+    After selecting a date, the deadline appears below the calendar.<br>
+    <strong style="color:#dc2626;">Red</strong> = within 2 hours. <strong style="color:#d97706;">Orange</strong> = within 24 hours. Hurry!
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真8.jpg" alt="Photo 8">
+    </div>
+  </div>
+  <div class="photo-caption">Weather and deadline for the delivery date</div>
+
+  <div class="point-box green">
+    <div class="point-box-title">🌤️ Weather &amp; Sales</div>
+    The weather forecast for the delivery date is shown. Rain/storms tend to bring more customers. See "👥↑"? Consider ordering extra.
+  </div>
+
+  <h3 style="font-size:17px;font-weight:900;margin:20px 0 10px;">Upcoming Busy &amp; Slow Periods</h3>
+  <p style="font-size:14px;color:#555;margin-bottom:14px;">Below the calendar: events starting within 2 weeks. Use this to plan order quantities.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真9.jpg" alt="Photo 9">
+    </div>
+  </div>
+  <div class="photo-caption">Events starting within 2 weeks</div>
+</div>
+
+<!-- == 5. Items & Quantities == -->
+<div class="section" id="items">
+  <div class="section-num"><div class="section-num-circle">5</div>Chapter 5</div>
+  <h2>Enter Items &amp; Quantities</h2>
+  <p class="section-lead">After selecting supplier and date, the product list appears. Tap "+" to increase quantities.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "+" to increase</div>
+        <div class="step-body">Tap <strong>"+"</strong> on the right side of each product.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "−" to decrease</div>
+        <div class="step-body">Added too many? Tap <strong>"−"</strong> to reduce.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap the number to type directly</div>
+        <div class="step-body">Tap the number in the center to type the quantity.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真10.jpg" alt="Photo 10">
+        </div>
+      </div>
+      <div class="photo-caption">Before entering</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真11.jpg" alt="Photo 11">
+        </div>
+      </div>
+      <div class="photo-caption">After entering</div>
+    </div>
+  </div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">🛒 Costco (minimum order)</div>
+    Costco requires <strong>$1,000</strong> minimum. The running total is shown at the bottom. Exceeding $1,000 shows a green "✓ Min. order met."
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真12.jpg" alt="Photo 12">
+    </div>
+  </div>
+  <div class="photo-caption">Costco's real-time running total</div>
+
+  <div class="point-box gray">
+    <div class="point-box-title">📝 Adding a note</div>
+    Use the "Note (optional)" field below the list for special requests. (e.g., "Please call before delivery")
+  </div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">➕ Adding unlisted items</div>
+    Tap "+ Add custom item" to type in any product name.
+  </div>
+</div>
+
+<!-- == 6. Send Your Order == -->
+<div class="section" id="send">
+  <div class="section-num"><div class="section-num-circle">6</div>Chapter 6</div>
+  <h2>Send Your Order</h2>
+  <p class="section-lead">Tap the orange "Preview &amp; Send" button, review, and send.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Preview &amp; Send"</div>
+        <div class="step-body">The orange button at the bottom of the screen.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Select your name</div>
+        <div class="step-body">Tap <strong>Aki, Kacee, or Shaine</strong>. Remembered for next time.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Review the order</div>
+        <div class="step-body">Check supplier, date, items, and quantities are correct.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap send</div>
+        <div class="step-body">Tap the blue button (Gmail / LINE / Text). The app opens pre-filled. Just hit send.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真13.jpg" alt="Photo 13">
+        </div>
+      </div>
+      <div class="photo-caption">Before selecting name</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="images/manual/写真14.jpg" alt="Photo 14">
+        </div>
+      </div>
+      <div class="photo-caption">Message preview</div>
+    </div>
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">📋 If sending doesn't work</div>
+    Tap "Copy Order Message" to copy the text. Then open Gmail/LINE/Messages manually, paste, and send.
+  </div>
+
+  <div class="point-box red">
+    <div class="point-box-title">⚠️ Always check before sending</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+      <li>✅ Supplier name is correct</li>
+      <li>✅ Delivery date is correct</li>
+      <li>✅ Items and quantities are correct</li>
+      <li>✅ Your name is selected</li>
+    </ul>
+  </div>
+</div>
+
+<!-- == 7. Supplier List == -->
+<div class="section" id="suppliers-list">
+  <div class="section-num"><div class="section-num-circle">7</div>Chapter 7</div>
+  <h2>Supplier List (Schedule)</h2>
+  <p class="section-lead">Delivery days and deadlines for each supplier. Always check before ordering.</p>
+
+  <div class="supplier-cards">
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Ala Moana Produce</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon, Wed, Fri</div>
+      <div class="supplier-deadline">⏰ By 6:00 AM day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">ATM International</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon–Fri (excl. holidays)</div>
+      <div class="supplier-deadline">⏰ By 7:00 AM day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Apax Hawaii</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon, Thu</div>
+      <div class="supplier-deadline">⏰ By 12:00 PM day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Coca-Cola Hawaii</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Tue only</div>
+      <div class="supplier-deadline">⏰ By 2:00 PM previous Friday</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Costco Wholesale</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon, Thu · Min: $1,000</div>
+      <div class="supplier-deadline">⏰ Mon: prev Fri 12 PM<br>⏰ Thu: prev Wed 12 PM</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Eskimo Candy Oahu</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon–Fri (excl. holidays)</div>
+      <div class="supplier-deadline">⏰ By 3:00 PM day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Fukuoka Package</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon, Wed, Fri</div>
+      <div class="supplier-deadline">⏰ By 12:00 PM day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Fresh Island Fish</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon–Sat (excl. holidays)</div>
+      <div class="supplier-deadline">⏰ By 7:00 AM day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Wismettac</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Fri only</div>
+      <div class="supplier-deadline">⏰ By 12:00 PM Thursday (day before)</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Wong's Meat Market</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery: Mon–Fri (excl. holidays)</div>
+      <div class="supplier-deadline">⏰ By 2:00 PM day before delivery</div>
+    </div>
+  </div>
+</div>
+
+<!-- == 8. Sales Data == -->
+<div class="section" id="sales">
+  <div class="section-num"><div class="section-num-circle">8</div>Chapter 8</div>
+  <h2>View Sales Data</h2>
+  <p class="section-lead">Tap "Sales Data" on the home screen. Use it to decide how much to order.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真15.jpg" alt="Photo 15">
+    </div>
+  </div>
+  <div class="photo-caption">Tap "Sales Data"</div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">📊 Available data</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;">
+      <li>📅 <strong>Busy Periods</strong> — past busy period sales</li>
+      <li>📆 <strong>Daily Sales</strong> — last 30 days</li>
+      <li>🗓️ <strong>Monthly</strong> — monthly trends</li>
+      <li>📈 <strong>Yearly</strong> — since 2019</li>
+      <li>🕐 <strong>By Hour</strong> — by time of day</li>
+      <li>🌧️ <strong>Weather</strong> — weather vs. sales</li>
+      <li>🍽️ <strong>Items</strong> — by product</li>
+    </ul>
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真16.jpg" alt="Photo 16">
+    </div>
+  </div>
+  <div class="photo-caption">Compare busy period sales</div>
+</div>
+
+<!-- == 9. Busy & Slow Seasons == -->
+<div class="section" id="seasons">
+  <div class="section-num"><div class="section-num-circle">9</div>Chapter 9</div>
+  <h2>Busy &amp; Slow Seasons</h2>
+  <p class="section-lead">Tap "Busy &amp; Slow Seasons" to view U.S., Japan, and Hawaii event calendars.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真17.jpg" alt="Photo 17">
+    </div>
+  </div>
+  <div class="photo-caption">Busy &amp; Slow Seasons page</div>
+
+  <div class="point-box green">
+    <div class="point-box-title">🗓️ Filter by region</div>
+    Buttons at the top: 🇺🇸 US · 🇯🇵 Japan · 🏯 Hawaii · 🇨🇦 Canada
+  </div>
+
+  <div class="point-box red">
+    <div class="point-box-title">🔴 NOW badge</div>
+    A red "NOW" badge means that busy/slow period is happening right now. It shows at the top of the list.
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">📉 During Slow Season</div>
+    Gray "Slow Season" label = fewer customers expected.<br>Consider ordering <strong>20–30% less</strong> than usual.
+  </div>
+</div>
+
+<!-- == 10. Product Links == -->
+<div class="section" id="links">
+  <div class="section-num"><div class="section-num-circle">10</div>Chapter 10</div>
+  <h2>Product Links</h2>
+  <p class="section-lead">Tap "Product Links" for 53 links to Amazon, Sam's Club, and Webstaurant products. Tap to open in browser.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <img src="images/manual/写真18.jpg" alt="Photo 18">
+    </div>
+  </div>
+  <div class="photo-caption">Tap a product to open in browser</div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">🔍 Finding a product</div>
+    Type in "Search products..." to filter. Or tap "Amazon," "Sam's," "Webst." to filter by store.
+  </div>
+</div>
+
+<!-- == 11. App Updates == -->
+<div class="section" id="update">
+  <div class="section-num"><div class="section-num-circle">11</div>Chapter 11</div>
+  <h2>App Updates</h2>
+  <p class="section-lead">The app updates automatically. No action needed.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">✓</div></div>
+      <div class="step-right">
+        <div class="step-title">Auto-updates</div>
+        <div class="step-body">Each time you open the app, it checks for updates and installs them automatically.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">✓</div></div>
+      <div class="step-right">
+        <div class="step-title">Check version</div>
+        <div class="step-body">Version number (e.g., "v5.3") is at the bottom of the home screen.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">🔄 Not updating?</div>
+    Fully close the app (double-tap Home, swipe up), then reopen.
+  </div>
+</div>
+
+<!-- == Q&A == -->
+<div class="section" id="qa">
+  <div class="section-num"><div class="section-num-circle">Q&A</div>FAQ</div>
+  <h2>Frequently Asked Questions</h2>
+  <p class="section-lead">Tap a question to see the answer.</p>
+
+  <div class="qa-list">
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The app won't open / screen is blank</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          <strong>Fully close the app</strong> and reopen it.<br>
+          1. Double-tap Home (or swipe up from bottom)<br>
+          2. Swipe the app up to close<br>
+          3. Tap the icon to reopen<br><br>
+          Still not working? Check your <strong>Wi-Fi connection</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">"Preview &amp; Send" is grayed out</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Make sure all three are done:<br>
+          ✅ <strong>Supplier selected</strong> (orange button)<br>
+          ✅ <strong>Date selected</strong> (tapped on calendar)<br>
+          ✅ <strong>At least one quantity entered</strong> (not all zeros)<br><br>
+          All done? The button turns orange.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The date I want is grayed out</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Gray = non-delivery day or past date.<br><br>
+          Need a holiday delivery? Tap <strong>"Holiday / Special Schedule"</strong> and turn the switch ON. All dates become selectable.<br>
+          Confirm with the supplier first — a special schedule note is auto-added to the message.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">I sent an order by mistake</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          No cancel function in the app.<br>
+          Open <strong>Gmail, LINE, or Messages</strong> and contact the supplier directly. The sooner, the better.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">Gmail doesn't open after tapping send</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Tap <strong>"Copy Order Message"</strong> to copy the text.<br>
+          Open <strong>Gmail</strong> manually, create a new email, paste, and send.<br>
+          To/CC addresses are shown on the app screen.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">Costco order doesn't reach $1,000</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          You'll see <strong>"$XX more to reach $1,000 min"</strong> below the list.<br>
+          Add more items until you exceed $1,000.<br>
+          A green <strong>"✓ Min. order met"</strong> appears when you're there.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">App seems stuck on old version</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          1. Double-tap Home, swipe app up to close<br>
+          2. Check <strong>Wi-Fi</strong> is connected<br>
+          3. Reopen from the home screen icon<br><br>
+          This forces an update to the latest version.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">"Weather unavailable" message</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          No internet connection. Connect to <strong>Wi-Fi or mobile data</strong> and reopen.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">What does the red "NOW" badge mean?</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          A busy or slow period is happening right now.<br>
+          e.g., "Japan Golden Week" with "NOW" = more Japanese tourists right now.<br>
+          Adjust order quantities accordingly.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">What does "👥↑" mean?</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Rain/storms are forecasted. Past data shows <strong>rainy days bring more customers</strong>.<br>
+          "👥↑" = more customers expected. "👥↑↑" = significantly more.<br>
+          Order extra the day before.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">Can I redo the home screen setup?</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Yes, anytime. Open <strong>Safari</strong>, go to <code style="background:#f0ede8;padding:2px 6px;border-radius:4px;font-size:13px;">steakteppei.github.io/order-app</code>, and follow Chapter 1 again.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">Can I add items not on the list?</div>
+        <div class="qa-toggle">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Yes. Tap <strong>"+ Add custom item"</strong> below the product list and type any product name. It'll be included in the order message.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- == Footer == -->
+<div class="footer">
+  <p><strong>Steak Teppei Order App</strong> User Guide</p>
+  <p>Version 5.3 · April 2026</p>
+  <p>Makai Market Food Court · Ala Moana Center · Honolulu, Hawaii</p>
+  <p style="margin-top:12px;font-size:12px;">steakteppei.github.io/order-app</p>
+</div>
+
+<!-- Back to Top button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Back to top visibility
+const btn = document.getElementById('backToTop');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      btn.classList.toggle('show', window.scrollY > 600);
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+</script>
+
+</body>
+</html>

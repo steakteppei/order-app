@@ -396,6 +396,14 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
+<a class="sales-btn" href="manual.html" style="background:linear-gradient(135deg,#2e1a2e 0%,#1e0e2e 100%);">
+  <span class="sales-btn-icon">📖</span>
+  <span class="sales-btn-text">
+    <span class="sales-btn-title">User Guide</span>
+    <span class="sales-btn-sub">How to use this app</span>
+  </span>
+  <span class="sales-btn-arrow">›</span>
+</a>
   <div class="app-version">Last updated: April 12, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
@@ -1179,11 +1187,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.9',
+  version: '5.10',
   date: 'April 12, 2026',
   items: [
-    { icon: '🔄', text: 'Clear All button added — resets supplier, date, and quantities in one tap' },
-    { icon: '🔧', text: 'Fixed: returning from Preview screen now resets selection state' }
+    { icon: '📖', text: 'User Guide added — auto-detects mobile/desktop and shows the right version' }
   ]
 };
 
@@ -1757,7 +1764,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.9'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.10'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {

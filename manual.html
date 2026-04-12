@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Steak Teppei — User Guide</title>
+<script>
+// スマートフォン判定（iOS / Android）
+var ua = navigator.userAgent;
+var isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+if(isMobile){
+  window.location.replace('./manual_senior_en_cell.html');
+} else {
+  window.location.replace('./manual_senior_en.html');
+}
+</script>
+<style>
+body { background:#1a1a1a; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; font-family:-apple-system,sans-serif; color:#fff; }
+</style>
+</head>
+<body>
+<p>Loading manual...</p>
+</body>
+</html>

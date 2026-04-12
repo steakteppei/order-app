@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Steak Teppei Order App User Guide</title>
+<style>
+/* -- Base -- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #f9f7f4;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.85;
+  color: #222;
+}
+
+/* -- Cover -- */
+.cover {
+  background: #E8440A;
+  color: #fff;
+  padding: 64px 32px 72px;
+  text-align: center;
+}
+.cover-logo {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+.cover h1 {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.cover-sub {
+  font-size: 18px;
+  opacity: .85;
+  margin-bottom: 32px;
+}
+.cover-notice {
+  background: rgba(255,255,255,.15);
+  border-radius: 16px;
+  padding: 16px 24px;
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* -- Table of Contents -- */
+.toc {
+  background: #fff;
+  padding: 48px 32px;
+  border-bottom: 3px solid #f0ede8;
+}
+.toc h2 {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 24px;
+  color: #E8440A;
+}
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: #222;
+  font-size: 19px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #e8e5e0;
+  transition: background .15s;
+}
+.toc-list a:hover { background: #fff2ed; border-color: #E8440A; }
+.toc-num {
+  width: 36px; height: 36px;
+  background: #E8440A;
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* -- Section -- */
+.section {
+  padding: 56px 32px 48px;
+  border-bottom: 3px solid #f0ede8;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.section-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #E8440A;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 5px 14px 5px 10px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+  letter-spacing: .04em;
+}
+.section-num-circle {
+  width: 24px; height: 24px;
+  background: rgba(255,255,255,.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+
+.section h2 {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+.section-lead {
+  font-size: 17px;
+  color: #555;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+/* -- Photo Frame -- */
+.photo-frame {
+  background: #1a1a1a;
+  border-radius: 24px;
+  padding: 10px;
+  margin: 24px auto;
+  max-width: 320px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+}
+.photo-inner {
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.photo-inner img {
+  width: 100%;
+  display: block;
+}
+.photo-placeholder {
+  background: #2a2a2a;
+  aspect-ratio: 9/16;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: rgba(255,255,255,.3);
+}
+.photo-placeholder-icon { font-size: 40px; }
+.photo-placeholder-text { font-size: 13px; text-align: center; line-height: 1.5; }
+
+.photo-caption {
+  text-align: center;
+  font-size: 15px;
+  color: #777;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+/* Side-by-side photos */
+.photo-row {
+  display: flex;
+  gap: 16px;
+  margin: 24px 0;
+  justify-content: center;
+}
+.photo-row .photo-frame {
+  max-width: 200px;
+  margin: 0;
+}
+
+/* -- Steps -- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 24px 0;
+  border: 2px solid #e8e5e0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.step {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8e5e0;
+  background: #fff;
+}
+.step:last-child { border-bottom: none; }
+.step-left {
+  width: 64px;
+  flex-shrink: 0;
+  background: #E8440A;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 22px;
+}
+.step-num-big {
+  color: #fff;
+  font-size: 26px;
+  font-weight: 900;
+}
+.step-right {
+  flex: 1;
+  padding: 18px 20px;
+}
+.step-title {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+.step-body {
+  font-size: 17px;
+  color: #444;
+  line-height: 1.75;
+}
+.step-body strong { color: #E8440A; }
+
+/* -- Point Box -- */
+.point-box {
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin: 20px 0;
+  font-size: 17px;
+  line-height: 1.75;
+}
+.point-box.red    { background: #fff2ed; border: 2px solid #E8440A; }
+.point-box.green  { background: #f0fdf4; border: 2px solid #16a34a; }
+.point-box.blue   { background: #eff6ff; border: 2px solid #1a56db; }
+.point-box.yellow { background: #fffbeb; border: 2px solid #d97706; }
+.point-box.gray   { background: #f8f8f6; border: 2px solid #ccc; }
+.point-box-title {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.point-box.red    .point-box-title { color: #E8440A; }
+.point-box.green  .point-box-title { color: #16a34a; }
+.point-box.blue   .point-box-title { color: #1a56db; }
+.point-box.yellow .point-box-title { color: #d97706; }
+.point-box.gray   .point-box-title { color: #555; }
+
+/* -- Supplier Cards -- */
+.supplier-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+}
+.supplier-card {
+  background: #fff;
+  border: 2px solid #e8e5e0;
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+.supplier-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.supplier-name { font-size: 18px; font-weight: 900; }
+.supplier-method {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 8px;
+  margin-left: auto;
+}
+.method-email { background: #eff6ff; color: #1a56db; }
+.method-line  { background: #e6f9ee; color: #06c755; }
+.method-sms   { background: #f0fdf4; color: #16a34a; }
+.supplier-schedule { font-size: 16px; color: #555; line-height: 1.65; }
+.supplier-deadline {
+  font-size: 15px;
+  font-weight: 700;
+  color: #E8440A;
+  margin-top: 4px;
+}
+
+/* -- Q&A -- */
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 24px 0;
+  border: 2px solid #e8e5e0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.qa-item {
+  border-bottom: 2px solid #e8e5e0;
+  background: #fff;
+}
+.qa-item:last-child { border-bottom: none; }
+.qa-q {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 20px 20px 12px;
+}
+.qa-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900;
+  flex-shrink: 0;
+}
+.qa-icon-q { background: #E8440A; color: #fff; }
+.qa-icon-a { background: #1a56db; color: #fff; }
+.qa-text-q { font-size: 19px; font-weight: 700; line-height: 1.5; padding-top: 6px; }
+.qa-a {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 0 20px 20px;
+  background: #f9f7f4;
+}
+.qa-text-a { font-size: 17px; color: #333; line-height: 1.8; padding-top: 8px; }
+.qa-text-a strong { color: #E8440A; }
+
+/* -- Calendar Legend -- */
+.cal-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 17px;
+  padding: 10px 16px;
+  background: #fff;
+  border: 2px solid #e8e5e0;
+  border-radius: 12px;
+}
+.cal-sample {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* -- Big Note -- */
+.big-note {
+  background: #fff2ed;
+  border-left: 6px solid #E8440A;
+  border-radius: 0 12px 12px 0;
+  padding: 20px 24px;
+  margin: 24px 0;
+  font-size: 18px;
+  line-height: 1.75;
+}
+.big-note-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #E8440A;
+  margin-bottom: 8px;
+}
+
+/* -- Benefits Section -- */
+.benefit-section {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 56px 32px 64px;
+  border-bottom: 3px solid #f0ede8;
+}
+.benefit-section h2 {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.benefit-lead {
+  font-size: 16px;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+
+/* Hero benefit */
+.benefit-hero {
+  background: linear-gradient(135deg, #E8440A 0%, #ff6b35 100%);
+  border-radius: 20px;
+  padding: 28px 28px 24px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.benefit-hero::before {
+  content: '\2605';
+  position: absolute;
+  top: -10px; right: 16px;
+  font-size: 80px;
+  opacity: .15;
+  line-height: 1;
+}
+.benefit-hero-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 10px;
+}
+.benefit-hero-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 14px;
+}
+.benefit-hero-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.benefit-hero-list li {
+  font-size: 17px;
+  color: #fff;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.benefit-hero-list li::before {
+  content: '\2713';
+  font-weight: 900;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  background: rgba(255,255,255,.25);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Category benefits */
+.benefit-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.benefit-cat {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.benefit-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,.05);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.benefit-cat-icon { font-size: 22px; }
+.benefit-cat-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: #fff;
+}
+.benefit-items {
+  padding: 14px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 16px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.6;
+}
+.benefit-item-dot {
+  width: 8px; height: 8px;
+  background: #E8440A;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+.benefit-item.star {
+  color: #fff;
+  font-weight: 700;
+}
+.benefit-item.star .benefit-item-dot {
+  background: #ffd700;
+  width: 10px; height: 10px;
+  margin-top: 7px;
+}
+.benefit-item strong {
+  color: #ff8c5a;
+}
+
+/* Benefit numbers */
+.benefit-numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.benefit-number-card {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+}
+.benefit-number {
+  font-size: 36px;
+  font-weight: 900;
+  color: #E8440A;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.benefit-number-label {
+  font-size: 14px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.4;
+}
+
+/* -- Footer -- */
+.footer {
+  background: #1a1a1a;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  padding: 48px 24px;
+  font-size: 15px;
+  line-height: 2;
+}
+.footer strong { color: rgba(255,255,255,.8); }
+
+/* -- Print -- */
+@media print {
+  .cover { padding: 40px; }
+  .photo-frame { box-shadow: none; }
+  .section { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 17px; }
+  .cover h1 { font-size: 26px; }
+  .section h2 { font-size: 24px; }
+  .photo-row { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- == Cover == -->
+<div class="cover">
+  <div class="cover-logo">🥩</div>
+  <h1>Steak Teppei<br>Order App<br>User Guide</h1>
+  <p class="cover-sub">Makai Market · Ala Moana Center</p>
+  <div class="cover-notice">
+    📱 This guide explains<br>
+    how to use the<br>
+    smartphone ordering app
+  </div>
+</div>
+
+<!-- == Table of Contents == -->
+<div class="toc">
+  <h2>Contents</h2>
+  <ul class="toc-list">
+    <li><a href="#benefits" style="background:linear-gradient(135deg,#E8440A,#ff6b35);color:#fff;border-color:#E8440A;"><div class="toc-num" style="background:rgba(255,255,255,.25);color:#fff;">★</div>Features &amp; Benefits</a></li>
+    <li><a href="#install"><div class="toc-num">1</div>How to Install the App</a></li>
+    <li><a href="#order"><div class="toc-num">2</div>Ordering Process (Overview)</a></li>
+    <li><a href="#supplier"><div class="toc-num">3</div>Select a Supplier</a></li>
+    <li><a href="#calendar"><div class="toc-num">4</div>Select a Delivery Date</a></li>
+    <li><a href="#items"><div class="toc-num">5</div>Enter Items &amp; Quantities</a></li>
+    <li><a href="#send"><div class="toc-num">6</div>Send Your Order</a></li>
+    <li><a href="#suppliers-list"><div class="toc-num">7</div>Supplier List (Schedule)</a></li>
+    <li><a href="#sales"><div class="toc-num">8</div>View Sales Data</a></li>
+    <li><a href="#seasons"><div class="toc-num">9</div>Check Busy &amp; Slow Seasons</a></li>
+    <li><a href="#links"><div class="toc-num">10</div>Product Links</a></li>
+    <li><a href="#update"><div class="toc-num">11</div>App Updates</a></li>
+    <li><a href="#qa"><div class="toc-num">Q&A</div>Frequently Asked Questions</a></li>
+  </ul>
+</div>
+
+<!-- == Benefits Section == -->
+<div class="benefit-section" id="benefits">
+  <h2>What This App Can Do<br>Features &amp; Benefits</h2>
+  <p class="benefit-lead">Here's a summary of how this app makes ordering easier.</p>
+
+  <!-- Numbers -->
+  <div class="benefit-numbers">
+    <div class="benefit-number-card">
+      <div class="benefit-number">10</div>
+      <div class="benefit-number-label">Suppliers managed<br>in one app</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">53</div>
+      <div class="benefit-number-label">Product links<br>one tap away</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">5 min</div>
+      <div class="benefit-number-label">To complete an order<br>(once you're used to it)</div>
+    </div>
+    <div class="benefit-number-card">
+      <div class="benefit-number">$0</div>
+      <div class="benefit-number-label">No extra cost<br>Completely free</div>
+    </div>
+  </div>
+
+  <!-- Hero benefit -->
+  <div class="benefit-hero">
+    <div class="benefit-hero-label">⭐ Most Important Benefit</div>
+    <div class="benefit-hero-title">Dramatically reduces<br>ordering mistakes &amp; missed orders</div>
+    <ul class="benefit-hero-list">
+      <li>Deadline countdowns are auto-calculated and displayed (red &amp; orange warnings)</li>
+      <li>Non-delivery days are grayed out so you can't pick the wrong date</li>
+      <li>You always review the message before sending, preventing errors</li>
+      <li>Costco's minimum order ($1,000) is automatically calculated</li>
+      <li>Just select your name and the To, CC, and subject fields are auto-filled</li>
+    </ul>
+  </div>
+
+  <!-- Category benefits -->
+  <div class="benefit-cats">
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">📱</div>
+        <div class="benefit-cat-title">Ordering becomes dramatically faster</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Email, LINE, and SMS messages are auto-generated.</strong> Supplier name, delivery date, items, quantities, and signature are all pre-filled — almost no typing needed</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Manage all 10 suppliers in one app.</strong> No more switching between Gmail, LINE, and Messages</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Just tap the "+" button to set quantities. No complicated steps at all</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Your name is remembered from last time, so you don't need to select it again</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Items not on the standard list can be added freely with "Custom Item"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">⏰</div>
+        <div class="benefit-cat-title">Never miss a deadline</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>When the deadline is less than 2 hours away, it turns red as a warning.</strong> Prevents forgotten orders</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>"Due today" suppliers are shown in an orange banner when you open the app.</strong> You can see what needs to be done at a glance</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Complex deadlines like Coca-Cola's "previous Friday by 2:00 PM" are all auto-calculated</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Costco's "Monday delivery = previous Friday noon" and "Thursday delivery = previous Wednesday noon" are auto-determined</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">📊</div>
+        <div class="benefit-cat-title">Easily decide how much to order</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>"Same week last year" sales are shown as soon as you select a delivery date.</strong> Know how many cases you used this time last year to help decide order quantities</div>
+        </div>
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>On rainy or stormy days, "expect more customers" is auto-displayed.</strong> See the weather and know when to increase your order</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Busy periods like Golden Week, Obon, and Honolulu Marathon are clearly displayed</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Slow seasons (fewer customers) are also shown so you know when to order less</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>A 7-day weather forecast is always displayed on the app's home screen</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Busy and slow periods starting within the next 2 weeks are automatically listed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">📈</div>
+        <div class="benefit-cat-title">View sales data on your phone anytime</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>All sales data since 2019 on your phone.</strong> Check it anytime, anywhere — no computer needed</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>View sales by day, month, year, or time of day</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Year-over-year comparison (% increase or decrease vs. last year) at a glance</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Compare sales across busy periods by year (Golden Week, Obon, etc.)</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>See the correlation between weather and sales (how much sales increase on rainy days)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">🛒</div>
+        <div class="benefit-cat-title">Easy purchasing from Amazon, Sam's Club &amp; Webstaurant</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item star">
+          <div class="benefit-item-dot"></div>
+          <div><strong>Open any of 53 product links with one tap.</strong> No more searching for products every time</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Products are organized by category — food, cookware, cleaning supplies, and equipment — so you can find what you need quickly</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Search by product name to filter results</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-cat">
+      <div class="benefit-cat-header">
+        <div class="benefit-cat-icon">🔄</div>
+        <div class="benefit-cat-title">Hassle-free design</div>
+      </div>
+      <div class="benefit-items">
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>When a new version is released, it <strong>updates automatically.</strong> No manual updates needed</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Dark mode (dark screen) is automatically supported. Easier on the eyes at night</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Holidays and busy periods for Hawaii, Japan, the U.S., and Canada are all built in</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>No App Store download required. Just add it to your home screen from Safari</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-dot"></div>
+          <div>Zero cost. Completely free to use</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /benefit-cats -->
+</div><!-- /benefit-section -->
+
+<!-- == 1. Installation == -->
+<div class="section" id="install">
+  <div class="section-num"><div class="section-num-circle">1</div>Chapter 1</div>
+  <h2>How to Install the App</h2>
+  <p class="section-lead">The app is added to your iPhone's home screen from the Safari browser. You do not need to download it from the App Store.</p>
+
+  <div class="point-box blue">
+    <div class="point-box-title">ℹ️ One-time setup only</div>
+    You only need to do this once. After that, just tap the icon on your home screen to launch the app.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Open Safari</div>
+        <div class="step-body">Open <strong>Safari (the compass icon)</strong> on your iPhone.<br>(Not Chrome or Firefox)</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Enter the URL</div>
+        <div class="step-body">Type the following in the address bar at the top:<br><strong style="font-size:15px;word-break:break-all;">steakteppei.github.io/order-app</strong></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap the Share button</div>
+        <div class="step-body">Tap the <strong>square with an arrow pointing up (Share button)</strong> at the bottom of the screen.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Add to Home Screen"</div>
+        <div class="step-body">Scroll up on the menu that appears from the bottom, then tap <strong>"Add to Home Screen"</strong>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">5</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Add"</div>
+        <div class="step-body">Tap <strong>"Add"</strong> in the top right corner. The icon will be added to your home screen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photos: Installation steps -->
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 1: Share button screen -->
+          <img src="images/manual/写真1.jpg" alt="Photo 1">
+        </div>
+      </div>
+      <div class="photo-caption">The page opened in Safari</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 2: Add to Home Screen -->
+          <img src="images/manual/写真2.jpg" alt="Photo 2">
+        </div>
+      </div>
+      <div class="photo-caption">Select "Add to Home Screen"</div>
+    </div>
+  </div>
+
+  <!-- Photo: Home screen icon -->
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 3: iPhone home screen icon -->
+          <img src="images/manual/写真3.jpg" alt="Photo 3">
+    </div>
+  </div>
+  <div class="photo-caption">The icon is added to your home screen</div>
+
+  <div class="big-note">
+    <div class="big-note-title">⚠️ Important</div>
+    From now on, always launch the app by tapping the <strong>Steak Teppei icon</strong> on your home screen.<br>
+    Do not open it from Safari.
+  </div>
+</div>
+
+<!-- == 2. Ordering Process == -->
+<div class="section" id="order">
+  <div class="section-num"><div class="section-num-circle">2</div>Chapter 2</div>
+  <h2>Ordering Process (Overview)</h2>
+  <p class="section-lead">Every order follows the same 4 steps. Once you get the hang of it, it takes less than 5 minutes.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 4: App home screen -->
+          <img src="images/manual/写真4.jpg" alt="Photo 4">
+    </div>
+  </div>
+  <div class="photo-caption">The app's home screen</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Select a supplier</div>
+        <div class="step-body"><strong>Tap</strong> the supplier button at the top of the screen. The selected button turns orange.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Select a delivery date</div>
+        <div class="step-body"><strong>Tap</strong> a date on the calendar. Grayed-out dates cannot be selected.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Enter quantities</div>
+        <div class="step-body">Press <strong>"+"</strong> to enter the quantity. Items left at 0 are not included in the order.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Send the order</div>
+        <div class="step-body">Tap the orange <strong>"Preview &amp; Send"</strong> button, review the contents, and send.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == 3. Select a Supplier == -->
+<div class="section" id="supplier">
+  <div class="section-num"><div class="section-num-circle">3</div>Chapter 3</div>
+  <h2>Select a Supplier</h2>
+  <p class="section-lead">There are 10 supplier buttons at the top of the screen. Tap the one you want to order from — it turns orange.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 5: Supplier selected (orange button) -->
+          <img src="images/manual/写真5.jpg" alt="Photo 5">
+    </div>
+  </div>
+  <div class="photo-caption">The selected supplier turns orange</div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">📮 About sending methods</div>
+    Below each supplier button, you'll see "via Gmail," "via LINE," or "via Text Message." This indicates how the order will be sent. The app automatically opens the right app for you.
+  </div>
+</div>
+
+<!-- == 4. Calendar == -->
+<div class="section" id="calendar">
+  <div class="section-num"><div class="section-num-circle">4</div>Chapter 4</div>
+  <h2>Select a Delivery Date</h2>
+  <p class="section-lead">After selecting a supplier, only the days they can deliver will appear in white. Grayed-out days are unavailable.</p>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 6: Calendar (before selection) -->
+          <img src="images/manual/写真6.jpg" alt="Photo 6">
+        </div>
+      </div>
+      <div class="photo-caption">Before selection</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 7: Calendar (after selection) -->
+          <img src="images/manual/写真7.jpg" alt="Photo 7">
+        </div>
+      </div>
+      <div class="photo-caption">After selection (orange)</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:20px;font-weight:900;margin:24px 0 14px;">Calendar Color Guide</h3>
+  <div class="cal-legend">
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#E8440A;color:#fff;">15</div>
+      <div><strong>Selected date</strong> (orange)</div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#ddd;color:#999;">8</div>
+      <div><strong>Unavailable date</strong> (gray)<br><span style="font-size:15px;color:#777;">Holiday or non-delivery day</span></div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#fef9c3;color:#ca8a04;">12</div>
+      <div><strong>Marathon week</strong> (yellow)<br><span style="font-size:15px;color:#777;">Especially busy during Honolulu Marathon</span></div>
+    </div>
+    <div class="cal-legend-item">
+      <div class="cal-sample" style="background:#f1f5f9;color:#94a3b8;">22</div>
+      <div><strong>Slow season</strong> (light gray)<br><span style="font-size:15px;color:#777;">Fewer customers expected. Order conservatively</span></div>
+    </div>
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">⏰ Watch the order deadline!</div>
+    After selecting a date, the deadline is shown below the calendar.<br>
+    <strong style="color:#dc2626;">Red text</strong> means the deadline is within 2 hours. <strong style="color:#d97706;">Orange</strong> means within 24 hours. Hurry!
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 8: Weather and deadline display -->
+          <img src="images/manual/写真8.jpg" alt="Photo 8">
+    </div>
+  </div>
+  <div class="photo-caption">Weather and deadline are displayed for the delivery date</div>
+
+  <div class="point-box green">
+    <div class="point-box-title">🌤️ Weather &amp; Sales</div>
+    When you select a delivery date, the weather forecast for that day is also shown. Rainy or stormy days tend to bring more customers. If you see the "👥↑" icon, consider ordering a bit more than usual.
+  </div>
+
+  <h3 style="font-size:20px;font-weight:900;margin:24px 0 14px;">Upcoming Busy &amp; Slow Periods</h3>
+  <p style="font-size:17px;color:#555;margin-bottom:16px;">Below the calendar, events and busy periods starting within the next 2 weeks are displayed. Use this to help decide order quantities.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 9: Upcoming Busy Periods -->
+          <img src="images/manual/写真9.jpg" alt="Photo 9">
+    </div>
+  </div>
+  <div class="photo-caption">Events starting within 2 weeks are displayed</div>
+</div>
+
+<!-- == 5. Items & Quantities == -->
+<div class="section" id="items">
+  <div class="section-num"><div class="section-num-circle">5</div>Chapter 5</div>
+  <h2>Enter Items &amp; Quantities</h2>
+  <p class="section-lead">After selecting a supplier and date, the product list appears. Use the "+" button to increase the quantity you need.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "+" to increase the quantity</div>
+        <div class="step-body">Tap the <strong>"+"</strong> button on the right side of each product to increase the count.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "−" to decrease</div>
+        <div class="step-body">If you added too many, tap the <strong>"−"</strong> button to reduce the count.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap the number to type directly</div>
+        <div class="step-body">Tap the number in the center to bring up the keyboard and type the quantity directly.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 10: Product list (before input) -->
+          <img src="images/manual/写真10.jpg" alt="Photo 10">
+        </div>
+      </div>
+      <div class="photo-caption">Before entering quantities</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 11: Product list (after input) -->
+          <img src="images/manual/写真11.jpg" alt="Photo 11">
+        </div>
+      </div>
+      <div class="photo-caption">After entering quantities</div>
+    </div>
+  </div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">🛒 Costco (minimum order required)</div>
+    Costco has a minimum order of <strong>$1,000</strong>. As you select items, the running total is automatically displayed at the bottom of the screen. Once you exceed $1,000, a green "✓ Min. order met" message appears.
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 12: Costco subtotal bar -->
+      <img src="images/manual/写真12.jpg" alt="Photo 12">
+    </div>
+  </div>
+  <div class="photo-caption">Costco shows the running total in real time</div>
+
+  <div class="point-box gray">
+    <div class="point-box-title">📝 Adding a note</div>
+    Below the product list, there is a "Note (optional)" field. Use it for any special requests. (Example: "Please call before delivery")
+  </div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">➕ Adding items not on the list</div>
+    Tap "+ Add custom item" to type in any product name and add it to your order.
+  </div>
+</div>
+
+<!-- == 6. Send Your Order == -->
+<div class="section" id="send">
+  <div class="section-num"><div class="section-num-circle">6</div>Chapter 6</div>
+  <h2>Send Your Order</h2>
+  <p class="section-lead">After entering quantities, tap the orange "Preview &amp; Send" button. Review the contents before sending.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">1</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap "Preview &amp; Send"</div>
+        <div class="step-body">Tap the orange button at the very bottom of the screen.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">2</div></div>
+      <div class="step-right">
+        <div class="step-title">Select your name</div>
+        <div class="step-body">Tap your name from <strong>Aki, Kacee, or Shaine</strong>. Once selected, the app remembers it for next time.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">3</div></div>
+      <div class="step-right">
+        <div class="step-title">Review the order</div>
+        <div class="step-body">The order message is displayed on screen. Check that the supplier name, delivery date, items, and quantities are correct.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">4</div></div>
+      <div class="step-right">
+        <div class="step-title">Tap the send button</div>
+        <div class="step-body">Tap the blue button (Gmail / LINE / Text Message). The corresponding app will open with the message already filled in. Just hit send.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="photo-row">
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 13: Preview & Send before name selection -->
+          <img src="images/manual/写真13.jpg" alt="Photo 13">
+        </div>
+      </div>
+      <div class="photo-caption">Before selecting a name</div>
+    </div>
+    <div>
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <!-- Photo 14: Preview & Send with message -->
+          <img src="images/manual/写真14.jpg" alt="Photo 14">
+        </div>
+      </div>
+      <div class="photo-caption">Message preview screen</div>
+    </div>
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">📋 If sending doesn't work</div>
+    Tap the "Copy Order Message" button to copy the order contents.<br>
+    Then manually open Gmail, LINE, or Messages, paste the text, and send.
+  </div>
+
+  <div class="point-box red">
+    <div class="point-box-title">⚠️ Always check before sending</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+      <li>✅ Supplier name is correct</li>
+      <li>✅ Delivery date is correct</li>
+      <li>✅ Items and quantities are correct</li>
+      <li>✅ Your name is selected</li>
+    </ul>
+  </div>
+</div>
+
+<!-- == 7. Supplier List == -->
+<div class="section" id="suppliers-list">
+  <div class="section-num"><div class="section-num-circle">7</div>Chapter 7</div>
+  <h2>Supplier List (Schedule)</h2>
+  <p class="section-lead">Here is a summary of each supplier's delivery days and order deadlines. Always check before placing an order.</p>
+
+  <div class="supplier-cards">
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Ala Moana Produce</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon, Wed, Fri only</div>
+      <div class="supplier-deadline">⏰ Deadline: By 6:00 AM on the day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">ATM International</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon–Fri (excluding holidays)</div>
+      <div class="supplier-deadline">⏰ Deadline: By 7:00 AM on the day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Apax Hawaii</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon, Thu only</div>
+      <div class="supplier-deadline">⏰ Deadline: By 12:00 PM the day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Coca-Cola Hawaii</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery day: Tue only</div>
+      <div class="supplier-deadline">⏰ Deadline: By 2:00 PM on Friday of the previous week</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Costco Wholesale</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon, Thu only<br>Minimum order: $1,000</div>
+      <div class="supplier-deadline">⏰ Mon delivery: By 12:00 PM previous Fri<br>⏰ Thu delivery: By 12:00 PM previous Wed</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Eskimo Candy Oahu</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon–Fri (excluding holidays)</div>
+      <div class="supplier-deadline">⏰ Deadline: By 3:00 PM the day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Fukuoka Package</div>
+        <span class="supplier-method method-email">Gmail</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon, Wed, Fri only</div>
+      <div class="supplier-deadline">⏰ Deadline: By 12:00 PM the day before delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Fresh Island Fish</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon–Sat (excluding holidays)</div>
+      <div class="supplier-deadline">⏰ Deadline: By 7:00 AM on the day of delivery</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Wismettac</div>
+        <span class="supplier-method method-line">LINE</span>
+      </div>
+      <div class="supplier-schedule">Delivery day: Fri only</div>
+      <div class="supplier-deadline">⏰ Deadline: By 12:00 PM the day before (Thu)</div>
+    </div>
+
+    <div class="supplier-card">
+      <div class="supplier-card-header">
+        <div class="supplier-name">Wong's Meat Market</div>
+        <span class="supplier-method method-sms">SMS</span>
+      </div>
+      <div class="supplier-schedule">Delivery days: Mon–Fri (excluding holidays)</div>
+      <div class="supplier-deadline">⏰ Deadline: By 2:00 PM the day before delivery</div>
+    </div>
+  </div>
+</div>
+
+<!-- == 8. Sales Data == -->
+<div class="section" id="sales">
+  <div class="section-num"><div class="section-num-circle">8</div>Chapter 8</div>
+  <h2>View Sales Data</h2>
+  <p class="section-lead">Tap the "Sales Data" button on the home screen to view sales information. Use it to help decide how much to order.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 15: Sales Data button -->
+      <img src="images/manual/写真15.jpg" alt="Photo 15">
+    </div>
+  </div>
+  <div class="photo-caption">Tap the "Sales Data" button</div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">📊 Available data</div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+      <li>📅 <strong>Busy Periods</strong>: Compare sales during past busy periods</li>
+      <li>📆 <strong>Daily Sales</strong>: Daily sales for the last 30 days</li>
+      <li>🗓️ <strong>Monthly</strong>: Monthly sales trends</li>
+      <li>📈 <strong>Yearly</strong>: Yearly sales (from 2019)</li>
+      <li>🕐 <strong>By Hour</strong>: Sales by time of day</li>
+      <li>🌧️ <strong>Weather</strong>: Weather vs. sales correlation (with today's &amp; tomorrow's forecast)</li>
+      <li>🍽️ <strong>Items</strong>: Sales by product</li>
+    </ul>
+  </div>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 16: Sales Data Busy Periods tab -->
+      <img src="images/manual/写真16.jpg" alt="Photo 16">
+    </div>
+  </div>
+  <div class="photo-caption">Compare sales across busy periods</div>
+</div>
+
+<!-- == 9. Busy & Slow Seasons == -->
+<div class="section" id="seasons">
+  <div class="section-num"><div class="section-num-circle">9</div>Chapter 9</div>
+  <h2>Check Busy &amp; Slow Seasons</h2>
+  <p class="section-lead">Tap the "Busy &amp; Slow Seasons" button on the home screen to view event calendars for the U.S., Japan, and Hawaii.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 17: Seasons page -->
+      <img src="images/manual/写真17.jpg" alt="Photo 17">
+    </div>
+  </div>
+  <div class="photo-caption">The Busy &amp; Slow Seasons calendar page</div>
+
+  <div class="point-box green">
+    <div class="point-box-title">🗓️ Filter by region</div>
+    Use the buttons at the top of the page to filter by region:<br>
+    🇺🇸 US · 🇯🇵 Japan · 🏯 Hawaii · 🇨🇦 Canada
+  </div>
+
+  <div class="point-box red">
+    <div class="point-box-title">🔴 NOW badge</div>
+    A red "NOW" badge appears next to any busy or slow period that is currently active. It shows at the top of the list so you can see it right away.
+  </div>
+
+  <div class="big-note">
+    <div class="big-note-title">📉 During Slow Season</div>
+    When a gray "Slow Season" label is displayed, it means fewer customers are expected.<br>Consider ordering <strong>20–30% less</strong> than usual.
+  </div>
+</div>
+
+<!-- == 10. Product Links == -->
+<div class="section" id="links">
+  <div class="section-num"><div class="section-num-circle">10</div>Chapter 10</div>
+  <h2>Product Links</h2>
+  <p class="section-lead">Tap the "Product Links" button on the home screen to see links to 53 products from Amazon, Sam's Club, and Webstaurant. Tap a product name to open it in your browser.</p>
+
+  <div class="photo-frame">
+    <div class="photo-inner">
+      <!-- Photo 18: Product Links page -->
+      <img src="images/manual/写真18.jpg" alt="Photo 18">
+    </div>
+  </div>
+  <div class="photo-caption">Tap a product name to open it in the browser</div>
+
+  <div class="point-box blue">
+    <div class="point-box-title">🔍 How to find a product</div>
+    Type a product name in the "Search products..." field at the top to filter the list.<br>
+    You can also tap the "Amazon," "Sam's," or "Webst." buttons to filter by store.
+  </div>
+</div>
+
+<!-- == 11. App Updates == -->
+<div class="section" id="update">
+  <div class="section-num"><div class="section-num-circle">11</div>Chapter 11</div>
+  <h2>App Updates</h2>
+  <p class="section-lead">The app updates automatically. No special action is required.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">✓</div></div>
+      <div class="step-right">
+        <div class="step-title">Auto-updates</div>
+        <div class="step-body">Every time you open the app, it automatically checks for a new version. If one is available, it updates automatically.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num-big">✓</div></div>
+      <div class="step-right">
+        <div class="step-title">Check the current version</div>
+        <div class="step-body">The version number (e.g., "v5.3") is shown at the very bottom of the home screen.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="point-box yellow">
+    <div class="point-box-title">🔄 If the app doesn't update</div>
+    Fully close the app (double-tap the Home button and swipe the app up), then reopen it.
+  </div>
+</div>
+
+<!-- == Q&A == -->
+<div class="section" id="qa">
+  <div class="section-num"><div class="section-num-circle">Q&A</div>FAQ</div>
+  <h2>Frequently Asked Questions</h2>
+  <p class="section-lead">If you run into any issues, check here first.</p>
+
+  <div class="qa-list">
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The app won't open / the screen is blank</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          First, <strong>fully close the app</strong> and reopen it.<br>
+          1. Double-tap the Home button (or swipe up from the bottom of the screen)<br>
+          2. Swipe the Steak Teppei app up to close it<br>
+          3. Tap the icon on your home screen to reopen<br><br>
+          If it still doesn't work, check if you're <strong>connected to Wi-Fi</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The "Preview &amp; Send" button is grayed out and can't be tapped</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Make sure all three of the following are done:<br>
+          ✅ <strong>Selected a supplier</strong> (button is orange)<br>
+          ✅ <strong>Selected a delivery date</strong> (tapped on the calendar)<br>
+          ✅ <strong>Entered at least one quantity</strong> (not all zeros)<br><br>
+          Once all three are done, the button turns orange and becomes tappable.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The date I want is grayed out and can't be selected</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Grayed-out dates are either non-delivery days for that supplier or past dates.<br><br>
+          If you need a delivery on a holiday or special occasion, tap <strong>"Holiday / Special Schedule"</strong> and turn the switch ON. This will make all dates selectable.<br>
+          However, you should confirm with the supplier first. A "special schedule" note will be automatically included in the order message.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">I sent an order by mistake</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          There is no cancel function in the app.<br>
+          Open <strong>Gmail, LINE, or Messages</strong> directly and contact the supplier to make corrections.<br>
+          The sooner you reach out, the better.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">After tapping send, Gmail doesn't open and nothing happens</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Tap the <strong>"Copy Order Message"</strong> button to copy the order contents.<br>
+          Then open the <strong>Gmail app</strong> manually, create a new email, enter the recipient, paste the text, and send.<br><br>
+          The To and CC addresses are displayed on the app screen.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">My Costco order doesn't reach $1,000</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Below the product list, you'll see <strong>"$XX more to reach $1,000 min"</strong> showing how much more you need.<br>
+          Increase quantities of other items you need until you exceed $1,000.<br>
+          Once you pass $1,000, a green <strong>"✓ Min. order met"</strong> message appears.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The app seems stuck on an old version</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Try fully restarting the app:<br>
+          1. Double-tap the Home button and swipe the Steak Teppei app up to close it<br>
+          2. Make sure your iPhone is <strong>connected to Wi-Fi</strong><br>
+          3. Tap the icon on your home screen to reopen the app<br><br>
+          This will automatically update the app to the latest version.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">The weather shows "Weather unavailable"</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          This appears when you're not connected to the internet.<br>
+          Connect to <strong>Wi-Fi or mobile data</strong>, then reopen the app.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">What does the red "NOW" badge mean?</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          It indicates a busy or slow period that is currently in progress.<br>
+          For example, if "Japan Golden Week" shows a "NOW" badge, it means there are currently more Japanese tourists than usual.<br>
+          Use this to adjust your order quantities accordingly.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">What does the "👥↑" icon mean?</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          This icon appears on days when rain or storms are forecasted.<br>
+          Based on past data, <strong>rainy days tend to bring more customers</strong>.<br>
+          "👥↑" means "expect more customers" and "👥↑↑" means "expect significantly more."<br>
+          Consider ordering a bit extra the day before.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">I forgot to add the app to my home screen. Can I do it again?</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Yes, you can do it as many times as you need.<br>
+          Open <strong>Safari</strong>, go to <code style="background:#f0ede8;padding:2px 6px;border-radius:4px;font-size:15px;">steakteppei.github.io/order-app</code>, and follow the steps in Chapter 1 again.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">
+        <div class="qa-icon qa-icon-q">Q</div>
+        <div class="qa-text-q">Can I add items that are not on the product list?</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-icon qa-icon-a">A</div>
+        <div class="qa-text-a">
+          Yes. Tap <strong>"+ Add custom item"</strong> below the product list and type in any product name.<br>
+          The added item will be included in the order message.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /qa-list -->
+</div>
+
+<!-- == Footer == -->
+<div class="footer">
+  <p><strong>Steak Teppei Order App</strong> User Guide</p>
+  <p>Version 5.3 · April 2026</p>
+  <p>Makai Market Food Court · Ala Moana Center · Honolulu, Hawaii</p>
+  <p style="margin-top:16px;font-size:13px;">steakteppei.github.io/order-app</p>
+</div>
+
+</body>
+</html>
