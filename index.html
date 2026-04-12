@@ -161,7 +161,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .ai-wrap{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);}
 .ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .ai-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.ai-badge{font-size:9px;font-weight:700;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 8px;border-radius:10px;}
+.ai-badge{font-size:9px;font-weight:700;background:linear-gradient(135deg,#1a73e8,#34a853);color:#fff;padding:2px 8px;border-radius:10px;}
 .ai-loading{font-size:11px;color:var(--text-hint);padding:10px 0;text-align:center;animation:ai-pulse 1.5s ease-in-out infinite;}
 @keyframes ai-pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 .ai-error{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
@@ -330,7 +330,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="ai-wrap" id="aiWrap">
       <div class="ai-header">
         <span class="ai-title">AI 7-Day Outlook</span>
-        <span class="ai-badge">✦ Claude AI</span>
+        <span class="ai-badge">✦ Gemini AI</span>
       </div>
       <div id="aiContent"><div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div></div>
     </div>
@@ -1187,10 +1187,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.11',
+  version: '5.12',
   date: 'April 12, 2026',
   items: [
-    { icon: '💰', text: 'AI Outlook: switched to Haiku model, removed auto-retry to prevent runaway API costs' }
+    { icon: '💰', text: 'AI Outlook: switched to Gemini 2.0 Flash-Lite — significantly lower cost' },
+    { icon: '🎨', text: 'AI Outlook badge updated to Gemini AI' }
   ]
 };
 
@@ -1761,7 +1762,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.11'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.12'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {

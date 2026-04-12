@@ -1,4 +1,4 @@
-const CACHE='st-order-v5.11';
+const CACHE='st-order-v5.12';
 const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html', './seasons.html', './manual.html', './manual_senior_en.html', './manual_senior_en_cell.html'];
 
 self.addEventListener('install', function(e){
