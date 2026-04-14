@@ -1187,10 +1187,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.13',
+  version: '5.14',
   date: 'April 12, 2026',
   items: [
-    { icon: '🔧', text: 'Fixed: AI Outlook prompt updated for Gemini compatibility (removed Claude-specific web search)' }
+    { icon: '🔒', text: 'Security: Cloudflare Worker hardened with origin check, secret key auth, bot detection, and prompt sanitization' }
   ]
 };
 
@@ -1522,7 +1522,10 @@ function callClaudeAPI(wdata, lyData){
   // Cloudflare Worker経由でGemini APIを呼び出す
   fetch('https://steak-teppei-ai.aki16-dan.workers.dev', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Client-Secret': 'ST2026-teppei-xK9mP3qR7nW2vY5j'
+    },
     body: JSON.stringify({ prompt: prompt })
   })
   .then(function(r){ return r.json(); })
@@ -1759,7 +1762,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.13'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.14'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
