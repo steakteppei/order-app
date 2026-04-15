@@ -219,6 +219,18 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn.go-btn-ready{background:var(--orange);}
 .clear-btn{width:100%;padding:11px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:transparent;color:var(--text-hint);margin-top:8px;letter-spacing:-.2px;}
 .clear-btn:active{opacity:.7;}
+.bug-report-btn{width:100%;padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:600;border:1.5px solid rgba(255,100,100,.3);background:transparent;color:rgba(255,100,100,.6);margin-top:4px;letter-spacing:-.2px;}
+.bug-report-btn:active{opacity:.7;}
+.bug-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:500;align-items:flex-end;justify-content:center;padding:0;}
+.bug-modal-overlay.open{display:flex;}
+.bug-modal{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;}
+.bug-modal-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+.bug-modal-sub{font-size:12px;color:var(--text-hint);margin-bottom:16px;}
+.bug-modal textarea{width:100%;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;resize:none;height:100px;margin-bottom:12px;}
+.bug-modal-info{font-size:10px;color:var(--text-hint);margin-bottom:16px;padding:10px;background:rgba(0,0,0,.1);border-radius:8px;word-break:break-all;}
+.bug-modal-btns{display:flex;gap:10px;}
+.bug-modal-send{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--orange);color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
+.bug-modal-cancel{padding:12px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:transparent;color:var(--text-hint);font-size:14px;cursor:pointer;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 .sales-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:12px;}
 .sales-btn:active{opacity:.85;transform:scale(.99);}
@@ -404,6 +416,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
+  <button class="bug-report-btn" onclick="openBugReport()">🐛 Report a Bug</button>
   <div class="app-version">Last updated: April 12, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
@@ -1184,13 +1197,73 @@ function goToSend(){
   window.location.href='send.html?d='+encoded;
 }
 
+// ── BUG REPORT ──
+var bugErrors = [];
+// Consoleエラーを自動キャプチャ
+(function(){
+  var origError = console.error.bind(console);
+  console.error = function(){
+    bugErrors.push(Array.from(arguments).join(' '));
+    if(bugErrors.length > 10) bugErrors.shift();
+    origError.apply(console, arguments);
+  };
+  window.addEventListener('error', function(e){
+    bugErrors.push(e.message + ' at ' + e.filename + ':' + e.lineno);
+    if(bugErrors.length > 10) bugErrors.shift();
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    bugErrors.push('Unhandled: ' + e.reason);
+    if(bugErrors.length > 10) bugErrors.shift();
+  });
+})();
+
+function openBugReport(){
+  var info = [
+    'Version: ' + (CHANGELOG.version || 'unknown'),
+    'Date: ' + new Date().toLocaleString('en-US', {timeZone:'Pacific/Honolulu'}),
+    'Browser: ' + navigator.userAgent.substring(0, 80),
+    'Screen: ' + window.innerWidth + 'x' + window.innerHeight,
+    'Supplier: ' + (selId || 'none'),
+    'Errors: ' + (bugErrors.length ? bugErrors.slice(-3).join(' | ') : 'none')
+  ].join('
+');
+  document.getElementById('bugInfo').textContent = info;
+  document.getElementById('bugComment').value = '';
+  document.getElementById('bugModal').classList.add('open');
+}
+
+function closeBugModal(e){
+  if(!e || e.target === document.getElementById('bugModal')){
+    document.getElementById('bugModal').classList.remove('open');
+  }
+}
+
+function sendBugReport(){
+  var comment = document.getElementById('bugComment').value.trim() || '(no description)';
+  var info = document.getElementById('bugInfo').textContent;
+  var body = 'Bug Report from Steak Teppei Order App
+
+'
+    + 'Description:
+' + comment + '
+
+'
+    + 'Auto-captured details:
+' + info;
+  var mailto = 'mailto:aki@teppei-usa.com'
+    + '?subject=' + encodeURIComponent('[Bug Report] Steak Teppei Order App v' + CHANGELOG.version)
+    + '&body=' + encodeURIComponent(body);
+  window.location.href = mailto;
+  closeBugModal();
+}
+
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.14',
+  version: '5.15',
   date: 'April 12, 2026',
   items: [
-    { icon: '🔒', text: 'Security: Cloudflare Worker hardened with origin check, secret key auth, bot detection, and prompt sanitization' }
+    { icon: '🐛', text: 'Bug Report button added — staff can report issues with auto-captured error details via Gmail' }
   ]
 };
 
@@ -1762,7 +1835,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.14'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.15'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
@@ -1822,5 +1895,18 @@ function doUpdate(){
   }
 }
 </script>
+<!-- Bug Report Modal -->
+<div class="bug-modal-overlay" id="bugModal" onclick="closeBugModal(event)">
+  <div class="bug-modal">
+    <div class="bug-modal-title">🐛 Report a Bug</div>
+    <div class="bug-modal-sub">Describe what happened. Error details will be included automatically.</div>
+    <textarea id="bugComment" placeholder="e.g. The order button didn't work when I tapped it..."></textarea>
+    <div class="bug-modal-info" id="bugInfo"></div>
+    <div class="bug-modal-btns">
+      <button class="bug-modal-cancel" onclick="closeBugModal()">Cancel</button>
+      <button class="bug-modal-send" onclick="sendBugReport()">Send via Gmail</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
