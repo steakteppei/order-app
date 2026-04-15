@@ -1241,15 +1241,9 @@ function closeBugModal(e){
 function sendBugReport(){
   var comment = document.getElementById('bugComment').value.trim() || '(no description)';
   var info = document.getElementById('bugInfo').textContent;
-  var body = 'Bug Report from Steak Teppei Order App
-
-'
-    + 'Description:
-' + comment + '
-
-'
-    + 'Auto-captured details:
-' + info;
+  var body = 'Bug Report from Steak Teppei Order App\r\n\r\n'
+    + 'Description:\r\n' + comment + '\r\n\r\n'
+    + 'Auto-captured details:\r\n' + info;
   var mailto = 'mailto:aki@teppei-usa.com'
     + '?subject=' + encodeURIComponent('[Bug Report] Steak Teppei Order App v' + CHANGELOG.version)
     + '&body=' + encodeURIComponent(body);
