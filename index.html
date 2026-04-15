@@ -1225,8 +1225,7 @@ function openBugReport(){
     'Screen: ' + window.innerWidth + 'x' + window.innerHeight,
     'Supplier: ' + (selId || 'none'),
     'Errors: ' + (bugErrors.length ? bugErrors.slice(-3).join(' | ') : 'none')
-  ].join('
-');
+  ].join('\r\n');
   document.getElementById('bugInfo').textContent = info;
   document.getElementById('bugComment').value = '';
   document.getElementById('bugModal').classList.add('open');
