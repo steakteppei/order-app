@@ -566,7 +566,7 @@ var V=[
    di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM | Min. order: $100',tbd:false,minOrder:100,
    ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 6:00 AM';},
-   items:[{n:'Lemon 140s Choice',u:'CS'},{n:'Onion Jumbo 50# Sack',u:'BAG'},{n:'Spring Mix 3#',u:'CS'}]},
+   items:[{n:'Lemon 140s Choice',u:'CS',p:61.97},{n:'Onion Jumbo 50# Sack',u:'SK',p:39.44},{n:'Spring Mix 3#',u:'CS',p:23.66}]},
   {id:'atm',name:'ATM International USA, Inc.',short:'ATM International',method:'line',
    di:'Delivery: Mon-Fri (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
    ok:function(dt){return dow(dt)>=1&&dow(dt)<=5&&!isHoliday(dt);},
@@ -1158,7 +1158,7 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.16',
+  version: '5.17',
   date: 'April 15, 2026',
   items: [
     { icon: '📊', text: 'Ala Moana Produce: $100 minimum order progress bar added' },
@@ -1736,7 +1736,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.16'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.17'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
