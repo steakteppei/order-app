@@ -1,13 +1,16 @@
-const CACHE='st-order-v5.15';
-const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html', './seasons.html', './manual.html', './manual_senior_en.html', './manual_senior_en_cell.html'];
+const CACHE='st-order-v5.16';
+const FILES=['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html', './seasons.html'];
 
 self.addEventListener('install', function(e){
+  // キャッシュに新しいファイルを追加するが、skipWaitingはしない
+  // → メッセージを受け取るまでwaiting状態で待機
   e.waitUntil(
     caches.open(CACHE).then(function(c){ return c.addAll(FILES); })
   );
 });
 
 self.addEventListener('activate', function(e){
+  // 古いキャッシュを全て削除
   e.waitUntil(
     caches.keys().then(function(keys){
       return Promise.all(
@@ -20,11 +23,6 @@ self.addEventListener('activate', function(e){
 });
 
 self.addEventListener('fetch', function(e){
-  // POST/PUT/DELETE はキャッシュ不可 → 素通り（Cloudflare Worker API呼び出し等）
-  if(e.request.method !== 'GET'){
-    e.respondWith(fetch(e.request));
-    return;
-  }
   e.respondWith(
     fetch(e.request).then(function(res){
       var clone = res.clone();

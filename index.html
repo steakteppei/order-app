@@ -161,7 +161,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 .ai-wrap{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);}
 .ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .ai-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.ai-badge{font-size:9px;font-weight:700;background:linear-gradient(135deg,#1a73e8,#34a853);color:#fff;padding:2px 8px;border-radius:10px;}
+.ai-badge{font-size:9px;font-weight:700;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 8px;border-radius:10px;}
 .ai-loading{font-size:11px;color:var(--text-hint);padding:10px 0;text-align:center;animation:ai-pulse 1.5s ease-in-out infinite;}
 @keyframes ai-pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 .ai-error{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
@@ -217,20 +217,6 @@ input:checked+.slider:before{transform:translateX(16px);}
 .go-btn:active{opacity:.85;}
 .go-btn.go-btn-dim{background:#aaa;}
 .go-btn.go-btn-ready{background:var(--orange);}
-.clear-btn{width:100%;padding:11px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:transparent;color:var(--text-hint);margin-top:8px;letter-spacing:-.2px;}
-.clear-btn:active{opacity:.7;}
-.bug-report-btn{width:100%;padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:600;border:1.5px solid rgba(255,100,100,.3);background:transparent;color:rgba(255,100,100,.6);margin-top:4px;letter-spacing:-.2px;}
-.bug-report-btn:active{opacity:.7;}
-.bug-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:500;align-items:flex-end;justify-content:center;padding:0;}
-.bug-modal-overlay.open{display:flex;}
-.bug-modal{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;}
-.bug-modal-title{font-size:16px;font-weight:700;margin-bottom:4px;}
-.bug-modal-sub{font-size:12px;color:var(--text-hint);margin-bottom:16px;}
-.bug-modal textarea{width:100%;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;resize:none;height:100px;margin-bottom:12px;}
-.bug-modal-info{font-size:10px;color:var(--text-hint);margin-bottom:16px;padding:10px;background:rgba(0,0,0,.1);border-radius:8px;word-break:break-all;}
-.bug-modal-btns{display:flex;gap:10px;}
-.bug-modal-send{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--orange);color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
-.bug-modal-cancel{padding:12px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:transparent;color:var(--text-hint);font-size:14px;cursor:pointer;}
 .app-version{text-align:center;font-size:10px;color:var(--text-hint);padding:8px 0 4px;opacity:.6;}
 .sales-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15);margin-bottom:12px;}
 .sales-btn:active{opacity:.85;transform:scale(.99);}
@@ -342,7 +328,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     <div class="ai-wrap" id="aiWrap">
       <div class="ai-header">
         <span class="ai-title">AI 7-Day Outlook</span>
-        <span class="ai-badge">✦ Gemini AI</span>
+        <span class="ai-badge">✦ Claude AI</span>
       </div>
       <div id="aiContent"><div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div></div>
     </div>
@@ -381,7 +367,6 @@ input:checked+.slider:before{transform:translateX(16px);}
   </div>
   <div class="card">
     <button class="go-btn" id="goBtn" onclick="goToSendOrHint()">Preview &amp; Send &rarr;</button>
-    <button class="clear-btn" id="clearBtn" onclick="clearAll()" style="display:none;">&#x2715; Clear All</button>
   </div>
 </div>
 <a class="sales-btn" href="sales.html">
@@ -408,16 +393,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-<a class="sales-btn" href="manual.html" style="background:linear-gradient(135deg,#2e1a2e 0%,#1e0e2e 100%);">
-  <span class="sales-btn-icon">📖</span>
-  <span class="sales-btn-text">
-    <span class="sales-btn-title">User Guide</span>
-    <span class="sales-btn-sub">How to use this app</span>
-  </span>
-  <span class="sales-btn-arrow">›</span>
-</a>
-  <button class="bug-report-btn" onclick="openBugReport()">🐛 Report a Bug</button>
-  <div class="app-version">Last updated: April 12, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
+  <div class="app-version">Last updated: April 15, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -587,7 +563,7 @@ var EC={
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
-   di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM | Min. order: $100',tbd:false,
+   di:'Delivery: Mon, Wed & Fri only | Order deadline: Same day by 6:00 AM | Min. order: $100',tbd:false,minOrder:100,
    ok:function(dt){return dow(dt)===1||dow(dt)===3||dow(dt)===5;},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 6:00 AM';},
    items:[{n:'Lemon 140s Choice',u:'CS'},{n:'Onion Jumbo 50# Sack',u:'BAG'},{n:'Spring Mix 3#',u:'CS'}]},
@@ -600,7 +576,7 @@ var V=[
    di:'Delivery: Mon & Thu only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===1||dow(dt)===4;},
    dl:function(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return 'Order by: '+p.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 12:00 PM';},
-   items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp Container (ML-83 Black)',u:'CS'},{n:'12 oz Paper Container',u:'CS'},{n:'12 oz Lid YS-390',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Chopstick Wooden',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'},{n:'Spoon Compostable 6in CPLA',u:'CS'},{n:'Tbag Lrg (Produce Roll)',u:'CS'}]},
+   items:[{n:'1 oz Cup (P100N)',u:'CS'},{n:'1 oz Lid (PL100N)',u:'CS'},{n:'2 oz Cup (P200N)',u:'CS'},{n:'2 oz Lid (PL200N)',u:'CS'},{n:'8in 3-Comp (ML-83 Black)',u:'CS'},{n:'12 oz Paper Container',u:'CS'},{n:'12 oz Lid YS-390',u:'CS'},{n:'16 oz PP Round (848)',u:'CS'},{n:'32 oz PP Bento Rectangle (828)',u:'CS'},{n:'Chopstick Wooden',u:'CS'},{n:'Dinner Napkin 2PLY',u:'CS'},{n:'Fork Compostable 6in CPLA',u:'CS'},{n:'Multifold Towel Trifold',u:'CS'},{n:'Spoon Compostable 6in CPLA',u:'CS'},{n:'Tbag Lrg (Produce Roll)',u:'CS'}]},
   {id:'cocacola',name:'Coca-Cola Bottling Co. of Hawaii',short:'Coca-Cola Hawaii',method:'sms',
    di:'Delivery: Tuesday only | Order deadline: Previous Friday by 2:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===2;},phone:'Coca Cola - Steak Teppei',
@@ -1014,9 +990,6 @@ function updateGoBtn(){
   var ready=!!(selId&&selDate&&hasQty);
   btn.classList.toggle('go-btn-ready',ready);
   btn.classList.toggle('go-btn-dim',!ready);
-  // Clear Allボタン：業者が選択されたら表示
-  var cb=document.getElementById('clearBtn');
-  if(cb) cb.style.display=selId?'':'none';
 }
 
 function goToSendOrHint(){
@@ -1043,20 +1016,6 @@ function saveState(){
       note:document.getElementById('orderNote').value.trim(),cy:cy,cm:cm};
     localStorage.setItem('st_order_state',JSON.stringify(state));
   }catch(e){}
-}
-function clearAll(){
-  selId=null;selDate=null;dateStr='';qty={};custom=[];flex=false;
-  document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
-  document.getElementById('calDisplay').textContent='No date selected';
-  var hint=document.getElementById('calHint');if(hint)hint.style.display='';
-  document.getElementById('flexToggle').checked=false;
-  var t=document.getElementById('flexTxt');t.textContent='OFF';t.className='toggle-txt';
-  document.getElementById('orderNote').value='';
-  var nb=document.getElementById('nextDelivery');if(nb)nb.style.display='none';
-  var sdw=document.getElementById('selectedDateWeather');if(sdw)sdw.style.display='none';
-  var dl=document.getElementById('deadlineInfo');if(dl)dl.style.display='none';
-  localStorage.removeItem('st_order_state');
-  renderItems();renderCal();updateGoBtn();
 }
 function restoreState(){
   try{
@@ -1185,8 +1144,7 @@ function applyRecentOrder(idx){
 
 function goToSend(){
   if(!selId||!selDate)return;
-  // send.htmlから戻ったときにリセットされるよう、状態を保存しない
-  localStorage.removeItem('st_order_state');
+  saveState();
   // ⑨ 送信前に最近の注文として保存
   saveRecentOrder();
   var all=getItems();var items=[];
@@ -1197,66 +1155,14 @@ function goToSend(){
   window.location.href='send.html?d='+encoded;
 }
 
-// ── BUG REPORT ──
-var bugErrors = [];
-// Consoleエラーを自動キャプチャ
-(function(){
-  var origError = console.error.bind(console);
-  console.error = function(){
-    bugErrors.push(Array.from(arguments).join(' '));
-    if(bugErrors.length > 10) bugErrors.shift();
-    origError.apply(console, arguments);
-  };
-  window.addEventListener('error', function(e){
-    bugErrors.push(e.message + ' at ' + e.filename + ':' + e.lineno);
-    if(bugErrors.length > 10) bugErrors.shift();
-  });
-  window.addEventListener('unhandledrejection', function(e){
-    bugErrors.push('Unhandled: ' + e.reason);
-    if(bugErrors.length > 10) bugErrors.shift();
-  });
-})();
-
-function openBugReport(){
-  var info = [
-    'Version: ' + (CHANGELOG.version || 'unknown'),
-    'Date: ' + new Date().toLocaleString('en-US', {timeZone:'Pacific/Honolulu'}),
-    'Browser: ' + navigator.userAgent.substring(0, 80),
-    'Screen: ' + window.innerWidth + 'x' + window.innerHeight,
-    'Supplier: ' + (selId || 'none'),
-    'Errors: ' + (bugErrors.length ? bugErrors.slice(-3).join(' | ') : 'none')
-  ].join('\r\n');
-  document.getElementById('bugInfo').textContent = info;
-  document.getElementById('bugComment').value = '';
-  document.getElementById('bugModal').classList.add('open');
-}
-
-function closeBugModal(e){
-  if(!e || e.target === document.getElementById('bugModal')){
-    document.getElementById('bugModal').classList.remove('open');
-  }
-}
-
-function sendBugReport(){
-  var comment = document.getElementById('bugComment').value.trim() || '(no description)';
-  var info = document.getElementById('bugInfo').textContent;
-  var body = 'Bug Report from Steak Teppei Order App\r\n\r\n'
-    + 'Description:\r\n' + comment + '\r\n\r\n'
-    + 'Auto-captured details:\r\n' + info;
-  var mailto = 'mailto:aki@teppei-usa.com'
-    + '?subject=' + encodeURIComponent('[Bug Report] Steak Teppei Order App v' + CHANGELOG.version)
-    + '&body=' + encodeURIComponent(body);
-  window.location.href = mailto;
-  closeBugModal();
-}
-
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.15',
-  date: 'April 12, 2026',
+  version: '5.16',
+  date: 'April 15, 2026',
   items: [
-    { icon: '🐛', text: 'Bug Report button added — staff can report issues with auto-captured error details via Gmail' }
+    { icon: '📊', text: 'Ala Moana Produce: $100 minimum order progress bar added' },
+    { icon: '✏️', text: 'Apax: 8in 3-Comp Container renamed to 8in 3-Comp for shorter order messages' }
   ]
 };
 
@@ -1405,7 +1311,6 @@ function wcToClass(wc){
 // 1日1回だけClaude APIを呼び出してキャッシュ。3人使っても同じ日は1回のみ。
 
 var AI_CACHE_KEY = 'st_ai_outlook';
-var AI_FETCHING = false; // 多重呼び出し防止フラグ
 
 function getTodayKey(){
   var d = new Date();
@@ -1433,10 +1338,8 @@ function loadAIOutlook(){
 }
 
 function fetchAIOutlook(){
-  if(AI_FETCHING) return; // 既に実行中なら無視
-  AI_FETCHING = true;
   var el = document.getElementById('aiContent');
-  if(!el){ AI_FETCHING = false; return; }
+  if(!el) return;
   el.innerHTML = '<div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div>';
 
   // 天気データを取得してからAI分析を実行
@@ -1577,21 +1480,20 @@ function callClaudeAPI(wdata, lyData){
     if(day.marathon) contextStr += '  Note: Honolulu Marathon week - extremely busy!\n';
   });
 
-  var prompt = contextStr + '\n\nBased on the data above, analyze customer traffic for Steak Teppei restaurant.\n'
-    + 'Consider: bad weather drives indoor mall traffic UP, good weather may reduce it. Spring Break and holidays increase tourism.\n\n'
+  var prompt = contextStr + '\n\nUsing the data above AND your web search to find:\n'
+    + '1. Latest Hawaii tourism news (visitor counts, new flights, hotel occupancy)\n'
+    + '2. Latest Hawaii local news that could affect restaurant traffic (events, construction, weather alerts)\n'
+    + '3. Latest Hawaii Tourism Authority (HTA) press releases\n\n'
     + 'Provide a JSON response ONLY (no markdown, no backticks) with this exact structure:\n'
-    + '{"days":[{"date":"MMM DD","dayName":"Monday","weatherIcon":"⛈️","tempF":82,"score":"HIGH","scoreLabel":"Very Busy","analysis":"2-3 sentence analysis combining weather and last year sales data. Be specific and actionable.","recommendation":"Specific order recommendation e.g. Order 20-25% more than usual"}]}\n\n'
-    + 'Score values: HIGH (expect very busy), BUSY (above average), NORMAL (average day), SLOW (below average)\n'
+    + '{"days":[{"date":"MMM DD","dayName":"Monday","weatherIcon":"⛈️","tempF":82,"score":"HIGH","scoreLabel":"Very Busy","analysis":"2-3 sentence analysis combining weather trend, last year data, and any relevant news. Be specific and actionable.","recommendation":"Specific order recommendation e.g. Order 20-25% more than usual"}]}\n\n'
+    + 'Score values: HIGH (expect very busy, bad weather or big event), BUSY (above average), NORMAL (average day), SLOW (below average)\n'
     + 'Keep each analysis to 2-3 sentences. Be direct and practical for restaurant staff.\n'
-    + 'Response must be valid JSON only. No markdown, no backticks, just pure JSON.';
+    + 'Response must be valid JSON only.';
 
-  // Cloudflare Worker経由でGemini APIを呼び出す
+  // Cloudflare Worker経由でClaude APIを呼び出す（APIキーを安全に保管）
   fetch('https://steak-teppei-ai.aki16-dan.workers.dev', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Client-Secret': 'ST2026-teppei-xK9mP3qR7nW2vY5j'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt: prompt })
   })
   .then(function(r){ return r.json(); })
@@ -1611,19 +1513,25 @@ function callClaudeAPI(wdata, lyData){
           generated: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
         };
         try{ localStorage.setItem(AI_CACHE_KEY, JSON.stringify(cacheObj)); }catch(e){}
-        AI_FETCHING = false;
         renderAIDays(parsed.days, cacheObj.generated, true);
       } else {
         throw new Error('No days in response');
       }
     }catch(e){
-      AI_FETCHING = false;
       el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
     }
   })
   .catch(function(){
-    AI_FETCHING = false;
-    el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
+    el.innerHTML = '<div class="ai-error">Analysis unavailable — retrying... <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry now</button></div>';
+    // 30秒後に自動リトライ（最大2回）
+    if(!callClaudeAPI._retries) callClaudeAPI._retries = 0;
+    if(callClaudeAPI._retries < 2){
+      callClaudeAPI._retries++;
+      setTimeout(function(){ fetchAIOutlook(); }, 30000);
+    } else {
+      callClaudeAPI._retries = 0;
+      el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
+    }
   });
 }
 
@@ -1828,7 +1736,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.15'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.16'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
@@ -1888,18 +1796,5 @@ function doUpdate(){
   }
 }
 </script>
-<!-- Bug Report Modal -->
-<div class="bug-modal-overlay" id="bugModal" onclick="closeBugModal(event)">
-  <div class="bug-modal">
-    <div class="bug-modal-title">🐛 Report a Bug</div>
-    <div class="bug-modal-sub">Describe what happened. Error details will be included automatically.</div>
-    <textarea id="bugComment" placeholder="e.g. The order button didn't work when I tapped it..."></textarea>
-    <div class="bug-modal-info" id="bugInfo"></div>
-    <div class="bug-modal-btns">
-      <button class="bug-modal-cancel" onclick="closeBugModal()">Cancel</button>
-      <button class="bug-modal-send" onclick="sendBugReport()">Send via Gmail</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
