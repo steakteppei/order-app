@@ -12,19 +12,23 @@
 <link rel="icon" type="image/png" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <script
-  src="https://js.sentry-cdn.com/YOUR_SENTRY_DSN.min.js"
+  src="https://js.sentry-cdn.com/758e2aebbd384c473b9415515356b3f1.min.js"
   crossorigin="anonymous"
   data-lazy="no"
 ></script>
 <script>
-  // Sentry初期化 - DSNを設定してください
-  // Sentry.onLoad(function() {
-  //   Sentry.init({
-  //     dsn: "YOUR_SENTRY_DSN_HERE",
-  //     environment: "production",
-  //     release: "st-order@5.18"
-  //   });
-  // });
+  Sentry.onLoad(function() {
+    Sentry.init({
+      dsn: "https://758e2aebbd384c473b9415515356b3f1@o4511197674995712.ingest.us.sentry.io/4511546078855168",
+      environment: "production",
+      release: "st-order@5.18",
+      ignoreErrors: [
+        'chrome-extension',
+        'Failed to execute 'put' on 'Cache'',
+        'Non-Error promise rejection'
+      ]
+    });
+  });
 </script>
 <style>
 
@@ -402,7 +406,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: April 15, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
+  <div class="app-version">Last updated: June 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -1167,9 +1171,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.18',
+  version: '5.19',
   date: 'April 15, 2026',
   items: [
+    { icon: '🔍', text: 'Sentry error monitoring activated — errors now auto-reported to dashboard' },
     { icon: '🗑️', text: 'AI 7-Day Outlook removed' },
     { icon: '🐟', text: 'Fresh Island Fish: Shrimp 21/25 and Chicken Thighs added' },
     { icon: '📱', text: 'PWA icon, manifest, and favicon added — app icon now shows correctly' },
@@ -1469,7 +1474,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.18'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.19'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
