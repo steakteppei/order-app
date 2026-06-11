@@ -3,10 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ST Order">
 <title>Steak Teppei — Order App</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<script
+  src="https://js.sentry-cdn.com/YOUR_SENTRY_DSN.min.js"
+  crossorigin="anonymous"
+  data-lazy="no"
+></script>
+<script>
+  // Sentry初期化 - DSNを設定してください
+  // Sentry.onLoad(function() {
+  //   Sentry.init({
+  //     dsn: "YOUR_SENTRY_DSN_HERE",
+  //     environment: "production",
+  //     release: "st-order@5.18"
+  //   });
+  // });
+</script>
 <style>
 
 :root{--bg:#f5f4f2;--card:#fff;--border:rgba(0,0,0,.08);--border-md:rgba(0,0,0,.14);--text:#1a1a1a;--text-sub:#555;--text-hint:#999;--radius:16px;--radius-sm:10px;--orange:#E8440A;--orange-light:#fff2ed;--blue:#1a56db;--blue-light:#ebf1ff;--green-line:#06c755;--green-sms:#1a7a3c;--amber:#d97706;--amber-light:#fffbeb;--amber-border:#fbbf24;}
@@ -158,10 +177,6 @@ input:checked+.slider:before{transform:translateX(16px);}
 .weather-temp{font-size:10px;font-weight:700;color:var(--text);}
 .weather-loading{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
 /* ── AI 7-Day Analysis ── */
-.ai-wrap{margin-top:12px;padding-top:10px;border-top:.5px solid var(--border);}
-.ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.ai-title{font-size:10px;color:var(--text-hint);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.ai-badge{font-size:9px;font-weight:700;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:2px 8px;border-radius:10px;}
 .ai-loading{font-size:11px;color:var(--text-hint);padding:10px 0;text-align:center;animation:ai-pulse 1.5s ease-in-out infinite;}
 @keyframes ai-pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 .ai-error{font-size:11px;color:var(--text-hint);padding:8px 0;text-align:center;}
@@ -325,13 +340,7 @@ input:checked+.slider:before{transform:translateX(16px);}
       <div id="upcomingList"></div>
     </div>
 
-    <div class="ai-wrap" id="aiWrap">
-      <div class="ai-header">
-        <span class="ai-title">AI 7-Day Outlook</span>
-        <span class="ai-badge">✦ Claude AI</span>
-      </div>
-      <div id="aiContent"><div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div></div>
-    </div>
+
     <div class="ly-wrap" id="lyWrap" style="display:none">
       <div class="ly-title">Last Year — Same Week</div>
       <div id="lyList"><div class="ly-loading">Select a delivery date to see last year's sales</div></div>
@@ -601,7 +610,7 @@ var V=[
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
    ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
-   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
+   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'},{n:'Shrimp 21/25 White P&D T-On',u:'CS'},{n:'Chicken Thighs Boneless Skinless',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
    di:'Delivery: Friday only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===5;},
@@ -1158,11 +1167,13 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.17',
+  version: '5.18',
   date: 'April 15, 2026',
   items: [
-    { icon: '📊', text: 'Ala Moana Produce: $100 minimum order progress bar added' },
-    { icon: '✏️', text: 'Apax: 8in 3-Comp Container renamed to 8in 3-Comp for shorter order messages' }
+    { icon: '🗑️', text: 'AI 7-Day Outlook removed' },
+    { icon: '🐟', text: 'Fresh Island Fish: Shrimp 21/25 and Chicken Thighs added' },
+    { icon: '📱', text: 'PWA icon, manifest, and favicon added — app icon now shows correctly' },
+    { icon: '🔍', text: 'Sentry error monitoring integration prepared' }
   ]
 };
 
@@ -1307,284 +1318,6 @@ function wcToClass(wc){
 }
 
 
-// ══ AI 7-Day Outlook ══
-// 1日1回だけClaude APIを呼び出してキャッシュ。3人使っても同じ日は1回のみ。
-
-var AI_CACHE_KEY = 'st_ai_outlook';
-
-function getTodayKey(){
-  var d = new Date();
-  return d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
-}
-
-function loadAIOutlook(){
-  var el = document.getElementById('aiContent');
-  if(!el) return;
-
-  // キャッシュ確認：今日のデータがあればそれを使う
-  try{
-    var cached = localStorage.getItem(AI_CACHE_KEY);
-    if(cached){
-      var obj = JSON.parse(cached);
-      if(obj.date === getTodayKey() && obj.days && obj.days.length > 0){
-        renderAIDays(obj.days, obj.generated, false);
-        return;
-      }
-    }
-  }catch(e){}
-
-  // キャッシュなし → APIを呼び出す
-  fetchAIOutlook();
-}
-
-function fetchAIOutlook(){
-  var el = document.getElementById('aiContent');
-  if(!el) return;
-  el.innerHTML = '<div class="ai-loading">🤖 Analyzing weather, sales trends &amp; Hawaii news...</div>';
-
-  // 天気データを取得してからAI分析を実行
-  var weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=21.3069&longitude=-157.8583'
-    +'&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
-    +'&timezone=Pacific%2FHonolulu&forecast_days=7&temperature_unit=fahrenheit';
-
-  fetch(weatherUrl)
-    .then(function(r){ return r.json(); })
-    .then(function(wdata){
-      // 昨年売上データも取得
-      loadLYDataForAI(function(lyData){
-        callClaudeAPI(wdata, lyData);
-      });
-    })
-    .catch(function(){
-      // 天気取得失敗でも続行（天気なしで分析）
-      loadLYDataForAI(function(lyData){
-        callClaudeAPI(null, lyData);
-      });
-    });
-}
-
-function loadLYDataForAI(cb){
-  // 既にロード済みならそれを使う
-  if(lyCache){ cb(lyCache); return; }
-  var url='https://docs.google.com/spreadsheets/d/'+LY_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent('Daily Sales');
-  fetch(url)
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      try{
-        var json=JSON.parse(text.replace(/^[^\(]+\(/,'').replace(/\);?\s*$/,''));
-        var rows=json.table.rows.map(function(r){return r.c.map(function(c){return c?c.v:'';});});
-        lyCache={};
-        rows.forEach(function(r){
-          if(!r[0]) return;
-          var raw=r[0].toString();
-          var key;
-          var dm=raw.match(/Date\((\d+),(\d+),(\d+)\)/);
-          if(dm){
-            var y=parseInt(dm[1]),mo=parseInt(dm[2])+1,d=parseInt(dm[3]);
-            key=y+'-'+(mo<10?'0':'')+mo+'-'+(d<10?'0':'')+d;
-          } else { key=raw.substring(0,10); }
-          lyCache[key]={rev:parseFloat(r[1])||0,orders:parseInt(r[2])||0};
-        });
-        cb(lyCache);
-      }catch(e){ cb({}); }
-    })
-    .catch(function(){ cb({}); });
-}
-
-function buildContextForClaude(wdata, lyData){
-  var today = new Date();
-  var days = [];
-  var DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  for(var i=0; i<7; i++){
-    var d = new Date(today);
-    d.setDate(d.getDate() + i);
-    var y = d.getFullYear();
-    var mo = d.getMonth()+1;
-    var dd = d.getDate();
-    var key = y+'-'+(mo<10?'0':'')+mo+'-'+(dd<10?'0':'')+dd;
-    var dayName = DAY_NAMES[d.getDay()];
-    var dateLabel = MONTH_NAMES[d.getMonth()]+' '+dd+', '+y;
-
-    // 昨年同日
-    var lyKey = (y-1)+'-'+(mo<10?'0':'')+mo+'-'+(dd<10?'0':'')+dd;
-    var ly = (lyData && lyData[lyKey]) ? lyData[lyKey] : null;
-
-    // 天気
-    var weather = null;
-    if(wdata && wdata.daily){
-      for(var j=0; j<wdata.daily.time.length; j++){
-        if(wdata.daily.time[j] === key){
-          weather = {
-            code: wdata.daily.weathercode[j],
-            maxF: Math.round(wdata.daily.temperature_2m_max[j]),
-            minF: Math.round(wdata.daily.temperature_2m_min[j]),
-            pop: wdata.daily.precipitation_probability_max[j] || 0
-          };
-          break;
-        }
-      }
-    }
-
-    // 繁忙期・閑散期チェック
-    var busy = getEvent(key) || getJpBusy(key);
-    var slow = getSlowSeason(key);
-    var holiday = HI_NAMES[key] || null;
-    var marathon = getMarathon(key);
-
-    days.push({
-      i: i,
-      key: key,
-      dayName: dayName,
-      dateLabel: dateLabel,
-      weather: weather,
-      ly: ly,
-      busy: busy,
-      slow: slow,
-      holiday: holiday,
-      marathon: marathon
-    });
-  }
-  return days;
-}
-
-function callClaudeAPI(wdata, lyData){
-  var el = document.getElementById('aiContent');
-  var contextDays = buildContextForClaude(wdata, lyData);
-  var today = new Date();
-
-  // コンテキストを文字列化
-  var contextStr = 'Today is ' + contextDays[0].dateLabel + ' (' + contextDays[0].dayName + ').\n\n';
-  contextStr += 'Steak Teppei is a Japanese steak restaurant at Makai Market Food Court, Ala Moana Center, Honolulu, Hawaii.\n';
-  contextStr += 'The restaurant needs to order supplies 1-3 days in advance from 10 different suppliers.\n\n';
-
-  contextStr += 'DATA FOR NEXT 7 DAYS:\n';
-  contextDays.forEach(function(day, idx){
-    contextStr += '\n--- ' + day.dateLabel + ' (' + day.dayName + '):\n';
-    if(day.weather){
-      var wdesc = day.weather.code >= 80 ? 'Thunderstorm/Heavy rain' :
-                  day.weather.code >= 61 ? 'Rain' :
-                  day.weather.code >= 51 ? 'Drizzle' :
-                  day.weather.code >= 3  ? 'Cloudy' : 'Sunny/Clear';
-      contextStr += '  Weather: ' + wdesc + ', High ' + day.weather.maxF + 'F/' + Math.round((day.weather.maxF-32)*5/9) + 'C, Rain probability ' + day.weather.pop + '%\n';
-    }
-    if(day.ly){
-      contextStr += '  Last year same date: $' + Math.round(day.ly.rev) + ' revenue, ' + day.ly.orders + ' orders\n';
-    } else {
-      contextStr += '  Last year same date: no data\n';
-    }
-    if(day.busy)  contextStr += '  Special period: ' + day.busy + '\n';
-    if(day.slow)  contextStr += '  Note: Slow season (order conservatively)\n';
-    if(day.holiday) contextStr += '  Holiday: ' + day.holiday + '\n';
-    if(day.marathon) contextStr += '  Note: Honolulu Marathon week - extremely busy!\n';
-  });
-
-  var prompt = contextStr + '\n\nUsing the data above AND your web search to find:\n'
-    + '1. Latest Hawaii tourism news (visitor counts, new flights, hotel occupancy)\n'
-    + '2. Latest Hawaii local news that could affect restaurant traffic (events, construction, weather alerts)\n'
-    + '3. Latest Hawaii Tourism Authority (HTA) press releases\n\n'
-    + 'Provide a JSON response ONLY (no markdown, no backticks) with this exact structure:\n'
-    + '{"days":[{"date":"MMM DD","dayName":"Monday","weatherIcon":"⛈️","tempF":82,"score":"HIGH","scoreLabel":"Very Busy","analysis":"2-3 sentence analysis combining weather trend, last year data, and any relevant news. Be specific and actionable.","recommendation":"Specific order recommendation e.g. Order 20-25% more than usual"}]}\n\n'
-    + 'Score values: HIGH (expect very busy, bad weather or big event), BUSY (above average), NORMAL (average day), SLOW (below average)\n'
-    + 'Keep each analysis to 2-3 sentences. Be direct and practical for restaurant staff.\n'
-    + 'Response must be valid JSON only.';
-
-  // Cloudflare Worker経由でClaude APIを呼び出す（APIキーを安全に保管）
-  fetch('https://steak-teppei-ai.aki16-dan.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: prompt })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    var text = data.text || '';
-    // JSON部分を抽出
-    try{
-      var jsonStr = text.trim();
-      // バッククォートやマークダウンを除去
-      jsonStr = jsonStr.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-      var parsed = JSON.parse(jsonStr);
-      if(parsed.days && parsed.days.length > 0){
-        // キャッシュに保存
-        var cacheObj = {
-          date: getTodayKey(),
-          days: parsed.days,
-          generated: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
-        };
-        try{ localStorage.setItem(AI_CACHE_KEY, JSON.stringify(cacheObj)); }catch(e){}
-        renderAIDays(parsed.days, cacheObj.generated, true);
-      } else {
-        throw new Error('No days in response');
-      }
-    }catch(e){
-      el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
-    }
-  })
-  .catch(function(){
-    el.innerHTML = '<div class="ai-error">Analysis unavailable — retrying... <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry now</button></div>';
-    // 30秒後に自動リトライ（最大2回）
-    if(!callClaudeAPI._retries) callClaudeAPI._retries = 0;
-    if(callClaudeAPI._retries < 2){
-      callClaudeAPI._retries++;
-      setTimeout(function(){ fetchAIOutlook(); }, 30000);
-    } else {
-      callClaudeAPI._retries = 0;
-      el.innerHTML = '<div class="ai-error">Analysis unavailable. <button class="ai-refresh-btn" onclick="fetchAIOutlook()">Retry</button></div>';
-    }
-  });
-}
-
-function renderAIDays(days, generated, isNew){
-  var el = document.getElementById('aiContent');
-  if(!el) return;
-
-  var html = '<div class="ai-days">';
-  var scoreClasses = { HIGH:'score-high', BUSY:'score-mid', NORMAL:'score-normal', SLOW:'score-low' };
-
-  days.forEach(function(day, idx){
-    var sc = scoreClasses[day.score] || 'score-normal';
-    var id = 'ai-day-'+idx;
-    html += '<div class="ai-day">'
-      + '<div class="ai-day-header" onclick="toggleAIDay(\''+id+'\')">'
-      + '<span class="ai-day-weather">'+(day.weatherIcon||'🌤️')+'</span>'
-      + '<span class="ai-day-date"><strong>'+day.date+'</strong> <span style="font-weight:400;color:var(--text-hint);">'+day.dayName+'</span></span>'
-      + (day.tempF ? '<span class="ai-day-temp">'+day.tempF+'°F</span>' : '')
-      + '<span class="ai-day-score '+sc+'">'+day.scoreLabel+'</span>'
-      + '<span class="ai-day-arrow" id="arr-'+id+'">›</span>'
-      + '</div>'
-      + '<div class="ai-day-body" id="'+id+'">'
-      + '<div style="padding-top:8px;">'+day.analysis+'</div>'
-      + '<div class="ai-day-rec">📦 '+day.recommendation+'</div>'
-      + '</div>'
-      + '</div>';
-  });
-  html += '</div>';
-
-  // 最初の日を自動展開
-  html += '<div class="ai-updated">Updated ' + generated
-    + (isNew ? ' · fresh' : ' · cached')
-    + ' <button class="ai-refresh-btn" onclick="fetchAIOutlook()">↺ refresh</button></div>';
-
-  el.innerHTML = html;
-
-  // 最初のカードを自動展開
-  setTimeout(function(){
-    var first = document.getElementById('ai-day-0');
-    if(first){ first.classList.add('open'); }
-    var arr = document.getElementById('arr-ai-day-0');
-    if(arr){ arr.classList.add('open'); }
-  }, 100);
-}
-
-function toggleAIDay(id){
-  var body = document.getElementById(id);
-  var arr  = document.getElementById('arr-'+id);
-  if(!body) return;
-  body.classList.toggle('open');
-  if(arr) arr.classList.toggle('open');
-}
-
 // ── Push通知（⑭：締め切りリマインダー）──
 function requestPushPermission(){
   if(!('Notification' in window))return;
@@ -1620,7 +1353,7 @@ function schedulePushReminders(){
 // Push通知許可をリクエスト（初回起動時）
 requestPushPermission();
 
-renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();loadWeather();schedulePushReminders();loadAIOutlook();
+renderVendors();renderCal();checkBanner();restoreState();updateGoBtn();checkChangelog();renderUpcoming();loadWeather();schedulePushReminders();
 // ⑫ バージョン番号を表示
 var verEl=document.getElementById('appVerDisplay');
 if(verEl)verEl.textContent='v'+CHANGELOG.version;
@@ -1736,7 +1469,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.17'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.18'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {

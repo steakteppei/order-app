@@ -254,7 +254,7 @@ var V=[
    di:'Delivery: Mon-Sat (no holidays) | Order deadline: Same day by 7:00 AM',tbd:false,
    ok:function(dt){return dow(dt)!==0&&!isHoliday(dt);},phone:'BPO not included Fresh Island Fish - Steak Teppei',
    dl:function(dt){return 'Order by: '+dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' by 7:00 AM';},
-   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'}]},
+   items:[{n:'Beef Vein Steak Choice 20/8oz',u:'CS'},{n:'Shrimp 21/25 White P&D T-On',u:'CS'},{n:'Chicken Thighs Boneless Skinless',u:'CS'}]},
   {id:'wismettac',name:'Wismettac Asian Foods, Inc.',short:'Wismettac',method:'line',
    di:'Delivery: Friday only | Order deadline: Previous day by 12:00 PM',tbd:false,
    ok:function(dt){return dow(dt)===5;},
