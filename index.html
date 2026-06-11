@@ -24,7 +24,7 @@
       release: "st-order@5.18",
       ignoreErrors: [
         'chrome-extension',
-        'Failed to execute 'put' on 'Cache'',
+        "Failed to execute 'put' on 'Cache'",
         'Non-Error promise rejection'
       ]
     });
@@ -1171,9 +1171,10 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.19',
+  version: '5.20',
   date: 'April 15, 2026',
   items: [
+    { icon: '🔧', text: 'Fixed: Sentry ignoreErrors syntax error causing app crash on iOS' },
     { icon: '🔍', text: 'Sentry error monitoring activated — errors now auto-reported to dashboard' },
     { icon: '🗑️', text: 'AI 7-Day Outlook removed' },
     { icon: '🐟', text: 'Fresh Island Fish: Shrimp 21/25 and Chicken Thighs added' },
@@ -1474,7 +1475,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.19'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = '5.20'; // ★ バージョンアップ時はここも更新する
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
