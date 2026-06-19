@@ -17,15 +17,17 @@
   data-lazy="no"
 ></script>
 <script>
+  window.APP_VERSION = '5.21'; // ★ バージョンはここ1か所だけ更新すればSentry releaseもAPP_VERSIONも同期する
   Sentry.onLoad(function() {
     Sentry.init({
       dsn: "https://758e2aebbd384c473b9415515356b3f1@o4511197674995712.ingest.us.sentry.io/4511546078855168",
       environment: "production",
-      release: "st-order@5.18",
+      release: "st-order@" + window.APP_VERSION,
       ignoreErrors: [
         'chrome-extension',
         "Failed to execute 'put' on 'Cache'",
-        'Non-Error promise rejection'
+        'Non-Error promise rejection',
+        'sw.js load failed'
       ]
     });
   });
@@ -406,7 +408,7 @@ input:checked+.slider:before{transform:translateX(16px);}
   </span>
   <span class="sales-btn-arrow">›</span>
 </a>
-  <div class="app-version">Last updated: June 10, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
+  <div class="app-version">Last updated: June 19, 2026 &nbsp;·&nbsp; <a href="changelog.html" style="color:var(--text-hint);text-decoration:underline;">Version History</a> &nbsp;·&nbsp; <span id="appVerDisplay"></span></div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -1171,15 +1173,11 @@ function goToSend(){
 // ── CHANGELOG ──
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
-  version: '5.20',
-  date: 'June 10, 2026',
+  version: '5.21',
+  date: 'June 19, 2026',
   items: [
-    { icon: '🔧', text: 'Fixed: Sentry ignoreErrors syntax error causing app crash on iOS' },
-    { icon: '🔍', text: 'Sentry error monitoring activated — errors now auto-reported to dashboard' },
-    { icon: '🗑️', text: 'AI 7-Day Outlook removed' },
-    { icon: '🐟', text: 'Fresh Island Fish: Shrimp 21/25 and Chicken Thighs added' },
-    { icon: '📱', text: 'PWA icon, manifest, and favicon added — app icon now shows correctly' },
-    { icon: '🔍', text: 'Sentry error monitoring integration prepared' }
+    { icon: '🛠️', text: 'Fixed: preview screen could throw a background error when the network dropped mid-order' },
+    { icon: '🔍', text: 'Error monitoring now reports the correct app version (was stuck on an old number)' }
   ]
 };
 
@@ -1475,7 +1473,7 @@ document.addEventListener('visibilitychange', function(){
 // version.jsonをサーバーから毎回直接取得してバージョンを比較
 // キャッシュを完全にバイパスするためno-storeを使用
 
-var APP_VERSION = '5.20'; // ★ バージョンアップ時はここも更新する
+var APP_VERSION = window.APP_VERSION; // バージョンはページ冒頭の window.APP_VERSION で一元管理
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {

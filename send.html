@@ -172,7 +172,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     <button class="back-btn" onclick="goBack()">&larr; Back to Order</button>
   </div>
 </div>
-<div class="app-version">Last updated: April 08, 2026</div>
+<div class="app-version">Last updated: June 19, 2026</div>
 <script>
 
 // Hawaii State + US Federal Holidays (observed dates)
@@ -474,7 +474,7 @@ if('serviceWorker' in navigator){
         }
       });
     });
-  });
+  }).catch(function(){}); // ネットワーク断でSW登録が失敗しても未処理エラーにしない
   var refreshing=false;
   navigator.serviceWorker.addEventListener('controllerchange',function(){
     if(!refreshing){refreshing=true;window.location.reload();}
