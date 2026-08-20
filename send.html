@@ -153,7 +153,7 @@ input:checked+.slider:before{transform:translateX(16px);}
 </style>
 </head>
 <body>
-<div class="update-banner" id="updateBanner" onclick="doUpdate()">&#x1f504; New version available &mdash; tap to update</div>
+
 
 <div class="app">
   <div class="header">
@@ -371,27 +371,20 @@ init();
 </script>
 
 <script>
+// ── Service Worker ──
+// v5.24〜: index.html と同じ登録条件に揃える。
+// updateViaCache を付けずに登録すると、同一スコープの登録が既定値 'imports' で
+// 上書きされ、importScripts 由来のファイルが HTTP キャッシュから供給されていた。
+// 更新バナーは廃止し、sw.js 側の skipWaiting で自動的に切り替える。
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(function(reg){
-    reg.addEventListener('updatefound',function(){
-      var nw=reg.installing;
-      nw.addEventListener('statechange',function(){
-        if(nw.state==='installed'&&navigator.serviceWorker.controller){
-          document.getElementById('updateBanner').classList.add('show');
-        }
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
+    .then(function(reg){
+      reg.update();
+      document.addEventListener('visibilitychange', function(){
+        if(!document.hidden) reg.update();
       });
-    });
-  }).catch(function(){}); // ネットワーク断でSW登録が失敗しても未処理エラーにしない
-  var refreshing=false;
-  navigator.serviceWorker.addEventListener('controllerchange',function(){
-    if(!refreshing){refreshing=true;window.location.reload();}
-  });
-}
-function doUpdate(){
-  navigator.serviceWorker.getRegistration().then(function(reg){
-    if(reg&&reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
-    else window.location.reload();
-  });
+    })
+    .catch(function(){});
 }
 </script>
 </body>

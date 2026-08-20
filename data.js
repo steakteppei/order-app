@@ -4,7 +4,8 @@
 // 注意: ここは純粋なデータ＆計算のみ。document/window 参照は入れないこと
 //       （sw.js が importScripts で読み込むため）。
 
-var APP_VERSION='5.23'; // ★ バージョンはここ1か所だけ更新する（version.json も同じ番号に）
+var APP_VERSION='5.24'; // ★ v5.24〜 sw.js の SW_VERSION / version.json も同じ番号に揃える
+                        //   （sw.js は自身にバージョンを持つ。理由は CLAUDE.md 参照）
 
 var HI_NAMES={
   '2026-01-01':"New Year's Day",

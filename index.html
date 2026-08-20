@@ -377,7 +377,7 @@ input:checked+.slider:before{transform:translateX(16px);}
     </div>
     <div class="note-wrap">
       <div class="note-label">Note (optional)</div>
-      <textarea id="orderNote" placeholder="e.g. Please call before delivery..." oninput="autoResize(this)"></textarea>
+      <textarea id="orderNote" placeholder="e.g. Please call before delivery..." oninput="autoResize(this);saveState()"></textarea>
     </div>
   </div>
   <div class="card">
@@ -787,6 +787,11 @@ function updateGoBtn(){
   var ready=!!(selId&&selDate&&hasQty);
   btn.classList.toggle('go-btn-ready',ready);
   btn.classList.toggle('go-btn-dim',!ready);
+  // v5.24〜: 入力のたびに状態を保存する。
+  // updateGoBtn() は業者選択・日付選択・数量変更・flex切替・最近の注文読込の
+  // すべてから呼ばれる共通の終端処理なので、ここ1箇所で入力途中の状態を守れる。
+  // （以前は goToSend() でしか保存されず、バージョン更新のリロードで入力が消えた）
+  saveState();
 }
 
 function goToSendOrHint(){
@@ -819,8 +824,9 @@ function restoreState(){
     var raw=localStorage.getItem('st_order_state');
     if(!raw)return;
     var s=JSON.parse(raw);
-    // 業者・日付・数量が揃っていない場合は復元しない（送信完了後のクリア状態）
-    if(!s.selId||!s.dateStr)return;
+    // 業者が未選択なら復元しない。
+    // v5.24〜: 日付未選択でも数量・備考は復元する（旧条件では消えていた）。
+    if(!s.selId)return;
     selId=s.selId;flex=s.flex||false;qty=s.qty||{};custom=s.custom||[];
     cy=s.cy||today.getFullYear();cm=s.cm||today.getMonth();
     document.querySelectorAll('.vbtn').forEach(function(b){b.classList.remove('selected');});
@@ -956,10 +962,11 @@ function goToSend(){
 // ★ アップデートのたびに version・date・items を更新する
 var CHANGELOG = {
   version: APP_VERSION,
-  date: 'June 19, 2026',
+  date: 'August 20, 2026',
   items: [
-    { icon: '🛠️', text: 'Internal cleanup: vendor and holiday data unified into one source for safer updates' },
-    { icon: '📴', text: 'Fixed: offline caching no longer throws background errors' }
+    { icon: '🔄', text: 'Fixed: app now updates reliably to the latest version' },
+    { icon: '👥', text: 'Nao and Harold added to the sender list' },
+    { icon: '✉️', text: 'Order messages now show who placed the order' }
   ]
 };
 
@@ -1252,10 +1259,21 @@ document.addEventListener('visibilitychange', function(){
 
 <script>
 // ── バージョンチェック（Service Worker非依存・iOS PWA対応）──
-// version.jsonをサーバーから毎回直接取得してバージョンを比較
-// キャッシュを完全にバイパスするためno-storeを使用
+// v5.24〜: 比較対象を localStorage ではなく「実際に読み込まれた APP_VERSION」に変更。
+//
+//   旧実装は localStorage の st_app_version と比較していたため、
+//   「差分を検知 → 記録を新版に更新 → リロード → しかし HTTP キャッシュから
+//     古い data.js が返る」という順序で、記録上のバージョンだけ進み、
+//   実際に読み込まれた data.js は古いまま二度と再取得されない状態になっていた。
+//   （v5.23 で送信者ボタンが表示されなかった原因のひとつ）
+//
+//   APP_VERSION と直接比較すれば「新しい data.js を実際に読めたか」を判定できる。
+//   読めるまでリロードで再試行し、無限ループを防ぐため試行回数を制限する。
 
 // APP_VERSION は data.js で定義済み（このファイルでは再定義しない）
+
+var VER_RETRY_KEY = 'st_ver_retry';
+var VER_RETRY_MAX = 2;
 
 function checkVersion(){
   fetch('./version.json?_=' + Date.now(), {
@@ -1265,23 +1283,28 @@ function checkVersion(){
   .then(function(r){ return r.json(); })
   .then(function(data){
     var serverVer = String(data.version);
-    var localVer  = localStorage.getItem('st_app_version');
+    localStorage.setItem('st_app_version', serverVer);
 
-    if(localVer && localVer !== serverVer){
-      // バージョンが変わっていたら全ページをハードリロード
-      localStorage.setItem('st_app_version', serverVer);
-      // Service Workerのキャッシュも全削除してからリロード
-      if('caches' in window){
-        caches.keys().then(function(keys){
-          Promise.all(keys.map(function(k){ return caches.delete(k); }))
-            .then(function(){ window.location.reload(true); });
-        });
-      } else {
-        window.location.reload(true);
-      }
+    // 今このページが読み込んでいる data.js のバージョンと突き合わせる
+    if(serverVer === String(APP_VERSION)){
+      sessionStorage.removeItem(VER_RETRY_KEY);   // 最新版を掴めた
+      return;
+    }
+
+    // 古い data.js を掴んでいる。キャッシュを捨ててリロードで再試行する
+    var tries = parseInt(sessionStorage.getItem(VER_RETRY_KEY) || '0', 10);
+    if(tries >= VER_RETRY_MAX) return;            // 諦めて通常表示（無限ループ防止）
+    sessionStorage.setItem(VER_RETRY_KEY, String(tries + 1));
+
+    // リロードで入力途中の内容を失わないよう、直前に必ず保存する
+    try{ saveState(); }catch(e){}
+    var done = function(){ window.location.reload(); };
+    if('caches' in window){
+      caches.keys()
+        .then(function(keys){ return Promise.all(keys.map(function(k){ return caches.delete(k); })); })
+        .then(done).catch(done);
     } else {
-      // 初回または同じバージョン → 保存
-      localStorage.setItem('st_app_version', serverVer);
+      done();
     }
   })
   .catch(function(){
@@ -1297,14 +1320,25 @@ document.addEventListener('visibilitychange', function(){
   if(!document.hidden) checkVersion();
 });
 
-// Service Workerは登録だけしてキャッシュ管理に使用（更新検知には使わない）
+// ── Service Worker ──
+// updateViaCache:'none' で sw.js を HTTP キャッシュ経由にしない。
+// v5.24〜 sw.js は自身にバージョンを持つため、リリースごとにバイト列が変わり
+// ブラウザが確実に新しい SW を検知できる。install 側で skipWaiting するので
+// スタッフの操作なしで切り替わる。
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
+    .then(function(reg){
+      reg.update();
+      document.addEventListener('visibilitychange', function(){
+        if(!document.hidden) reg.update();
+      });
+    })
     .catch(function(){});
 }
 
 function doUpdate(){
   localStorage.removeItem('st_app_version');
+  sessionStorage.removeItem(VER_RETRY_KEY);
   if('caches' in window){
     caches.keys().then(function(keys){
       Promise.all(keys.map(function(k){ return caches.delete(k); }))

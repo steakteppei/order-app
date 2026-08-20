@@ -30,17 +30,20 @@ Steak Teppei（Ala Moana Center / Makai Market Food Court）の発注アプリ�
 
 ## バージョン管理ルール
 
-バージョンを上げるときは**以下5箇所を必ず同時に更新する**。
+バージョンを上げるときは**以下6箇所を必ず同時に更新する**。
 
 | ファイル | 箇所 |
 |---|---|
-| `data.js` | `var APP_VERSION='5.23';` — 数字の一次ソース |
+| `data.js` | `var APP_VERSION='5.24';` — アプリ側の一次ソース |
+| `sw.js` | `const SW_VERSION = '5.24';` — **v5.24〜。data.js とは独立に持つ** |
 | `version.json` | `version` と `deployed`（ISO 8601） |
 | `changelog.html` | `VERSIONS` 配列の**先頭**に新エントリを追加 |
-| `index.html` | `Last updated: <日付>` |
+| `index.html` | `Last updated: <日付>` と `CHANGELOG` の `date` / `items` |
 | `send.html` | `Last updated: <日付>` |
 
-`sw.js` と `index.html` は `APP_VERSION` を参照するだけなので直接編集しない。
+> **`sw.js` の更新を忘れないこと。** ブラウザが Service Worker の更新を検知する判定は
+> 「sw.js 本体のバイト比較」。ここを据え置くと**新しい SW が一切配信されない**。
+> 番号が data.js と二重管理になるのは承知の上で、確実性を優先している（経緯は後述）。
 
 ---
 
@@ -81,28 +84,63 @@ return base.cc.split(',').filter(function(e){return e.trim()!==sObj.email;}).joi
 
 ## 既知の未解決問題
 
-### Service Worker のキャッシュ更新が効かないケース
+（現時点で未解決の問題は「給与 CSV の旧コミット残存」のみ。下記参照）
 
-**新規ファイル追加時、Service Worker のキャッシュ更新が正しく効かないケースがある。**
-v5.23 で `data.js` の `SENDERS` が古いキャッシュに阻まれ、送信者ボタンが表示されない障害が発生した。
+---
 
-想定される原因（未確定）:
+## 解決済みの重大な不具合 — v5.24 の自動更新修正
 
-`sw.js` はキャッシュ名を `'st-order-v'+APP_VERSION` で決めているが、その `APP_VERSION` は
-`importScripts('./data.js')` で読み込まれる。この `data.js` 自体が古いキャッシュから
-供給されると、SW は**古いバージョン名のキャッシュを使い続ける**循環に陥る。
+**症状**: v5.23 で `data.js` の `SENDERS` が古いキャッシュに阻まれ、
+スタッフ端末で送信者ボタンが表示されない障害が発生した。
 
-```js
-importScripts('./data.js');
-const CACHE='st-order-v'+APP_VERSION;   // ← APP_VERSION の供給元が古いと更新されない
-```
+**原因は2つ重なっていた。**
 
-暫定の対処: 端末側でアプリを再読み込み、または Safari / Chrome のサイトデータを削除する。
+**① sw.js のバイト列が毎リリース同一だった。**
+ブラウザの SW 更新判定は sw.js 本体のバイト比較。バージョンを
+`importScripts('./data.js')` から受け取る設計では、変わるのは data.js だけで
+sw.js は永久に不変。よって新 SW が install されず `activate` も走らず、
+古いキャッシュが消えなかった。さらに古いキャッシュ由来の data.js が
+古い CACHE 名を供給する自己参照ループにもなっていた。
 
-未着手の検討案:
-- `sw.js` 内にバージョンをハードコードして `data.js` 依存を切る
-- `importScripts` に cache-busting クエリを付ける（`./data.js?v=...`）
-- `install` 時に `skipWaiting()` させる（現状は更新バナー経由の手動更新）
+**② HTTP キャッシュの10分窓と `checkVersion()` の判定順序。**
+GitHub Pages は全ファイルに `Cache-Control: max-age=600` を返す。
+旧 `checkVersion()` は localStorage の `st_app_version` と比較していたため、
+「差分検知 → 記録を新版に更新 → リロード → しかし HTTP キャッシュから古い
+data.js が返る」で**記録上のバージョンだけ進み、実際の data.js は古いまま固定**
+された。加えて `send.html` の SW 登録に `updateViaCache:'none'` が無く、
+同一スコープの登録を既定値 `'imports'` で上書きしていた。
+
+**対策（v5.24）**
+
+- `sw.js` は `importScripts` を撤廃し `SW_VERSION` を自身に持つ
+- `sw.js` の `install` で `skipWaiting()`、`activate` で旧キャッシュ全削除 + `clients.claim()`
+- `sw.js` の fetch は同一オリジン GET を `cache:'no-cache'` で必ず再検証（navigate は除外）
+- `checkVersion()` の比較対象を **実際に読み込まれた `APP_VERSION`** に変更。
+  新しい data.js を掴めるまでリロードで再試行し、`sessionStorage` で2回に制限
+- `index.html` / `send.html` とも `{updateViaCache:'none'}` で登録し、起動時と復帰時に `reg.update()`
+- 更新バナーは廃止（スタッフの操作なしで切り替わる）
+
+**設計上の注意**: 上記②のため、**バージョン判定に localStorage の記録だけを使わないこと。**
+「実際に読み込まれたコードのバージョン」と突き合わせないと、記録だけが進む状態を検知できない。
+
+### 発注入力の保存（v5.24 で同時に修正）
+
+`checkVersion()` は復帰時にも走り、バージョン差分があればリロードする。
+v5.23 以前は `saveState()` が `goToSend()` からしか呼ばれておらず、
+**「Go」を押す前にリロードが起きると入力が失われ、しかも前回送信時の状態が
+復元されて別の注文が表示される**状態だった。
+
+v5.24 での対策:
+
+- `updateGoBtn()` の終端で `saveState()` を呼ぶ。
+  この関数は業者選択・日付選択・数量変更・flex切替・最近の注文読込の
+  すべてから呼ばれる共通の終端処理なので、ここ1箇所で入力全体を保存できる。
+- 備考欄は `updateGoBtn()` を通らないため `oninput` で個別に保存する。
+- `checkVersion()` のリロード直前にも `saveState()` を呼ぶ。
+- `restoreState()` の復元条件を `selId` のみに緩和（日付未選択でも数量・備考を戻す）。
+
+> **状態を変える処理を追加するときは `updateGoBtn()` を通すか、
+> 個別に `saveState()` を呼ぶこと。** 通らない経路は保存されない。
 
 ### 給与 CSV が GitHub の旧コミットに残存
 
