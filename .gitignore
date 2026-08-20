@@ -1,0 +1,14 @@
+# 給与・勤怠データ（個人情報を含むため絶対にコミットしない）
+*.csv
+*timesheet*
+*payroll*.csv
+
+# API キー・シークレットを含む設定ファイル
+config.js
+.env
+.env.*
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+desktop.ini
