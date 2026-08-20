@@ -173,18 +173,14 @@ input:checked+.slider:before{transform:translateX(16px);}
     <button class="back-btn" onclick="goBack()">&larr; Back to Order</button>
   </div>
 </div>
-<div class="app-version">Last updated: June 19, 2026</div>
+<div class="app-version">Last updated: August 20, 2026</div>
 <script>
 
 // 共通データ（業者V・メール宛先EC・祝日・共通関数）は data.js に一元化（head で読込済み）
 var MB={email:'badge-email',sms:'badge-sms',line:'badge-line'};
 var data=null,msg='',sender=null;
 
-var SENDERS=[
-  {key:'aki',  label:'Aki',   email:'aki@teppei-usa.com'},
-  {key:'kacee',label:'Kacee', email:'kacee@teppei-usa.com'},
-  {key:'shaine',label:'Shaine',email:'shaine@teppei-usa.com'}
-];
+// SENDERS（送信者リスト）は data.js に一元化（head で読込済み）
 
 function init(){
   var params=new URLSearchParams(window.location.search);
@@ -268,13 +264,16 @@ function buildMsg(v,senderKey){
   b+=(lines.length?lines.join('\n'):'  (No items selected)');
   if(data.note)b+='\n\nNote: '+data.note;
   b+='\n\nReceiving Hours: 10:00 AM - 8:00 PM';
-  b+='\n\nPlease confirm receipt. Thank you!\n\nBest regards,\nSteak Teppei';
+  b+='\n\nPlease confirm receipt. Thank you!';
+  // 送信者名を署名に入れる。Nao / Harold は共有アドレスのため、
+  // 業者側はこの署名でしか発注者を区別できない。
+  b+='\n\nBest regards,\n'+(sObj?sObj.label+'\n':'')+'Steak Teppei';
   msg=b;
 }
 
 function getCC(vendorId){
   var base=EC[vendorId];
-  if(!base)return 'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com';
+  if(!base)return DEFAULT_CC;
   var sObj=getSenderObj();
   if(!sObj)return base.cc;
   return base.cc.split(',').filter(function(e){return e.trim()!==sObj.email;}).join(',');
@@ -294,7 +293,7 @@ function renderSend(v){
   var copy='<button class="send-btn btn-copy" id="copyBtn" onclick="copyOrder()"'+(locked?' disabled style="opacity:.35;cursor:not-allowed"':'')+'>Copy Order Message</button><div class="copied" id="copiedBadge">Copied to clipboard!</div>';
   var area='';
   if(m==='email'){
-    var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var ec=EC[v.id]||{to:'',cc:DEFAULT_CC};
     var cc=getCC(v.id);
     area='<div class="email-wrap"><div class="email-hdr">';
     area+='<div class="ef"><span class="efl">To</span><span class="efv">'+ec.to+'</span></div>';
@@ -343,7 +342,7 @@ function doSend(){
   if(!sender){alert('Please select your name first.');return;}
   var v=gv(data.vendorId);
   if(v.method==='email'){
-    var ec=EC[v.id]||{to:'',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'};
+    var ec=EC[v.id]||{to:'',cc:DEFAULT_CC};
     var cc=getCC(v.id);
     var s=encodeURIComponent('Order Request - Steak Teppei ('+data.dateStr+')');
     var body=msg.split('\n').join('\r\n');

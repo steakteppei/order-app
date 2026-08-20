@@ -4,7 +4,7 @@
 // 注意: ここは純粋なデータ＆計算のみ。document/window 参照は入れないこと
 //       （sw.js が importScripts で読み込むため）。
 
-var APP_VERSION='5.22'; // ★ バージョンはここ1か所だけ更新する（version.json も同じ番号に）
+var APP_VERSION='5.23'; // ★ バージョンはここ1か所だけ更新する（version.json も同じ番号に）
 
 var HI_NAMES={
   '2026-01-01':"New Year's Day",
@@ -165,11 +165,28 @@ function isHoliday(dt){var s=dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(d
 function pad(n){return n<10?'0'+n:String(n);}
 function dow(dt){return dt.getDay();}
 function prevBusinessDay(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(dow(p)===0||dow(p)===6||isHoliday(p))p.setDate(p.getDate()-1);return p;}
+// ── 送信者（発注担当者）──
+// send.html の「Sent by」ボタン・本文の署名・CC の自動除外に使う。
+// email は EC の cc に載っているアドレスと完全一致させること
+//（getCC() が送信者本人のアドレスを CC から外すため）。
+// 注意: Nao と Harold は共有アドレス admin@teppei-usa.com を使う。
+//       同じアドレスの送信者が複数いても、CC には admin@ を1回だけ載せる。
+var SENDERS=[
+  {key:'aki',   label:'Aki',    email:'aki@teppei-usa.com'},
+  {key:'kacee', label:'Kacee',  email:'kacee@teppei-usa.com'},
+  {key:'shaine',label:'Shaine', email:'shaine@teppei-usa.com'},
+  {key:'nao',   label:'Nao',    email:'admin@teppei-usa.com'},
+  {key:'harold',label:'Harold', email:'admin@teppei-usa.com'}
+];
+
+// EC に業者が無い場合のフォールバック CC（社内全員）
+var DEFAULT_CC='aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com';
+
 var EC={
-  eskimo:{to:'oahuorders@eskimocandy.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
-  alamoana:{to:'order@alamoanaproduce.com',cc:'todd@alamoanaproduce.com,aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
-  costco:{to:'w687mbd9@costco.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'},
-  fukuoka:{to:'hi-sales@fukupa.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com'}
+  eskimo:{to:'oahuorders@eskimocandy.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
+  alamoana:{to:'order@alamoanaproduce.com',cc:'todd@alamoanaproduce.com,aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
+  costco:{to:'w687mbd9@costco.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
+  fukuoka:{to:'hi-sales@fukupa.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'}
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
