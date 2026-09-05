@@ -11,7 +11,7 @@
 //   ループにもなっていた。
 //
 //   → リリース時は data.js の APP_VERSION と この SW_VERSION の両方を更新すること。
-const SW_VERSION = '5.24';
+const SW_VERSION = '5.25';
 const CACHE = 'st-order-v' + SW_VERSION;
 const FILES = ['./', './index.html', './send.html', './sales.html', './changelog.html', './links.html', './seasons.html', './data.js'];
 

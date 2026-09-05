@@ -4,7 +4,7 @@
 // 注意: ここは純粋なデータ＆計算のみ。document/window 参照は入れないこと
 //       （sw.js が importScripts で読み込むため）。
 
-var APP_VERSION='5.24'; // ★ v5.24〜 sw.js の SW_VERSION / version.json も同じ番号に揃える
+var APP_VERSION='5.25'; // ★ v5.24〜 sw.js の SW_VERSION / version.json も同じ番号に揃える
                         //   （sw.js は自身にバージョンを持つ。理由は CLAUDE.md 参照）
 
 var HI_NAMES={
@@ -173,21 +173,19 @@ function prevBusinessDay(dt){var p=new Date(dt);p.setDate(p.getDate()-1);while(d
 // 注意: Nao と Harold は共有アドレス admin@teppei-usa.com を使う。
 //       同じアドレスの送信者が複数いても、CC には admin@ を1回だけ載せる。
 var SENDERS=[
-  {key:'aki',   label:'Aki',    email:'aki@teppei-usa.com'},
-  {key:'kacee', label:'Kacee',  email:'kacee@teppei-usa.com'},
   {key:'shaine',label:'Shaine', email:'shaine@teppei-usa.com'},
   {key:'nao',   label:'Nao',    email:'admin@teppei-usa.com'},
   {key:'harold',label:'Harold', email:'admin@teppei-usa.com'}
 ];
 
 // EC に業者が無い場合のフォールバック CC（社内全員）
-var DEFAULT_CC='aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com';
+var DEFAULT_CC='shaine@teppei-usa.com,admin@teppei-usa.com';
 
 var EC={
-  eskimo:{to:'oahuorders@eskimocandy.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
-  alamoana:{to:'order@alamoanaproduce.com',cc:'todd@alamoanaproduce.com,aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
-  costco:{to:'w687mbd9@costco.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
-  fukuoka:{to:'hi-sales@fukupa.com',cc:'aki@teppei-usa.com,kacee@teppei-usa.com,shaine@teppei-usa.com,admin@teppei-usa.com'}
+  eskimo:{to:'oahuorders@eskimocandy.com',cc:'shaine@teppei-usa.com,admin@teppei-usa.com'},
+  alamoana:{to:'order@alamoanaproduce.com',cc:'todd@alamoanaproduce.com,shaine@teppei-usa.com,admin@teppei-usa.com'},
+  costco:{to:'w687mbd9@costco.com',cc:'shaine@teppei-usa.com,admin@teppei-usa.com'},
+  fukuoka:{to:'hi-sales@fukupa.com',cc:'shaine@teppei-usa.com,admin@teppei-usa.com'}
 };
 var V=[
   {id:'alamoana',name:'Ala Moana Produce',short:'Ala Moana Produce',method:'email',
